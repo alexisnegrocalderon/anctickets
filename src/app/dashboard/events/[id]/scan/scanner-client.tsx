@@ -7,7 +7,7 @@ interface ScanResult {
   message: string;
 }
 
-export default function ScannerClient() {
+export default function ScannerClient({ eventId }: { eventId: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [result, setResult] = useState<ScanResult | null>(null);
   const [checking, setChecking] = useState(false);
@@ -36,7 +36,7 @@ export default function ScannerClient() {
               const res = await fetch("/api/tickets/validate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ qrCode: decodedText }),
+                body: JSON.stringify({ qrCode: decodedText, eventId }),
               });
               const data = await res.json();
               setResult({

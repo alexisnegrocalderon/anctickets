@@ -1,6 +1,9 @@
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import type { Event } from "@/lib/database.types";
+import { and, eq, inArray, isNull, or } from "drizzle-orm";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { eventStaff, events, organizationMemberships } from "@/lib/db/schema";
 import ScannerClient from "./scanner-client";
 
 export default async function ScanPage({
@@ -9,21 +12,23 @@ export default async function ScanPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) redirect("/login");
 
-  const { data: event } = await supabase
-    .from("events")
-    .select("*")
-    .eq("id", id)
-    .single<Event>();
+  const [event] = await db
+    .select({ title: events.title })
+    .from(events)
+    .leftJoin(organizationMemberships, and(eq(organizationMemberships.organizationId, events.organizationId), eq(organizationMemberships.userId, session.user.id)))
+    .leftJoin(eventStaff, and(eq(eventStaff.eventId, events.id), eq(eventStaff.userId, session.user.id)))
+    .where(and(
+      eq(events.id, id),
+      or(
+        inArray(organizationMemberships.role, ["owner", "manager"]),
+        and(eq(eventStaff.canScan, true), isNull(eventStaff.revokedAt))
+      )
+    ));
 
-  if (!event || event.organizer_id !== user.id) {
-    notFound();
-  }
+  if (!event) notFound();
 
   return (
     <div className="mx-auto max-w-md">
@@ -31,7 +36,7 @@ export default async function ScanPage({
         Validar entradas
       </h1>
       <p className="mb-6 text-sm text-neutral-500">{event.title}</p>
-      <ScannerClient />
+      <ScannerClient eventId={id} />
     </div>
   );
 }

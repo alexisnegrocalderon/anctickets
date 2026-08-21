@@ -1,77 +1,45 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import type { TicketStatus } from "@/lib/database.types";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { assertDatabaseConfigured, sql } from "@/lib/db";
 
-interface TicketWithRelations {
-  id: string;
-  status: TicketStatus;
-  ticket_types: { name: string } | null;
-  orders: { events: { title: string } | null } | null;
-}
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   }
 
   const body = await request.json();
   const qrCode = String(body.qrCode ?? "").trim();
+  const eventId = String(body.eventId ?? "").trim();
 
-  if (!qrCode) {
-    return NextResponse.json({ error: "Código QR faltante" }, { status: 400 });
+  if (!uuidPattern.test(qrCode) || !uuidPattern.test(eventId)) {
+    return NextResponse.json({ error: "Código QR o evento inválido" }, { status: 400 });
   }
 
-  // RLS garantiza que solo el organizador dueño del evento pueda ver/actualizar.
-  const { data: ticket, error: fetchError } = await supabase
-    .from("tickets")
-    .select("id, status, ticket_types(name), orders(events(title))")
-    .eq("qr_code", qrCode)
-    .maybeSingle<TicketWithRelations>();
+  try {
+    assertDatabaseConfigured();
+    const result = await sql.query(
+      "select * from validate_ticket_checkin($1::uuid, $2::uuid, $3)",
+      [qrCode, eventId, session.user.id]
+    ) as unknown as Array<{ result: "accepted" | "already_used" | "not_found"; ticket_id: string | null }>;
+    const checkin = result[0];
 
-  if (fetchError) {
-    return NextResponse.json({ error: fetchError.message }, { status: 500 });
+    if (!checkin || checkin.result === "not_found") {
+      return NextResponse.json({ valid: false, message: "Entrada no encontrada para este evento" }, { status: 404 });
+    }
+    if (checkin.result === "already_used") {
+      return NextResponse.json({ valid: false, message: "Esta entrada ya fue utilizada", ticketId: checkin.ticket_id });
+    }
+    return NextResponse.json({ valid: true, message: "Entrada válida — acceso permitido", ticketId: checkin.ticket_id });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "No se pudo validar la entrada";
+    if (message.includes("staff_not_authorized")) {
+      return NextResponse.json({ valid: false, message: "Tu cuenta no tiene permiso de puerta para este evento" }, { status: 403 });
+    }
+    console.error("Ticket validation failed", error);
+    return NextResponse.json({ error: "No se pudo validar la entrada" }, { status: 500 });
   }
-
-  if (!ticket) {
-    return NextResponse.json(
-      { valid: false, message: "Entrada no encontrada o no autorizada" },
-      { status: 404 }
-    );
-  }
-
-  if (ticket.status === "used") {
-    return NextResponse.json({
-      valid: false,
-      message: "Esta entrada ya fue utilizada",
-      ticket,
-    });
-  }
-
-  if (ticket.status === "cancelled") {
-    return NextResponse.json({
-      valid: false,
-      message: "Esta entrada fue cancelada",
-      ticket,
-    });
-  }
-
-  const { error: updateError } = await supabase
-    .from("tickets")
-    .update({ status: "used", used_at: new Date().toISOString() })
-    .eq("id", ticket.id);
-
-  if (updateError) {
-    return NextResponse.json({ error: updateError.message }, { status: 500 });
-  }
-
-  return NextResponse.json({
-    valid: true,
-    message: "Entrada válida — acceso permitido",
-    ticket,
-  });
 }

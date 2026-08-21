@@ -1,20 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { authClient } from "@/lib/auth-client";
 
 export default function GoogleSignInButton() {
   const [loading, setLoading] = useState(false);
 
   async function signInWithGoogle() {
     setLoading(true);
-    const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
+    await authClient.signIn.social({
       provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      callbackURL: "/dashboard/tickets",
     });
+    setLoading(false);
   }
 
   return (

@@ -1,17 +1,7 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import GoogleSignInButton from "./google-sign-in-button";
+import MagicLinkForm from "./magic-link-form";
 
-export default async function LoginPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-    redirect("/");
-  }
-
+export default function LoginPage() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col items-center justify-center gap-6 px-4 text-center">
       <div>
@@ -21,6 +11,12 @@ export default async function LoginPage() {
         </p>
       </div>
       <GoogleSignInButton />
+      <div className="flex w-full items-center gap-3 text-xs text-neutral-400">
+        <span className="h-px flex-1 bg-neutral-200" />
+        <span>o</span>
+        <span className="h-px flex-1 bg-neutral-200" />
+      </div>
+      <MagicLinkForm />
     </div>
   );
 }

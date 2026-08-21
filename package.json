@@ -6,11 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "^1.5.1",
+    "@neondatabase/serverless": "^1.0.2",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
+    "better-auth": "^1.7.1",
+    "drizzle-orm": "^0.45.2",
     "html5-qrcode": "^2.3.8",
     "mercadopago": "^3.4.0",
     "next": "16.3.1",
@@ -25,6 +32,8 @@
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
+    "drizzle-kit": "^0.31.8",
     "eslint": "^9",
     "eslint-config-next": "16.3.1",
     "tailwindcss": "^4",

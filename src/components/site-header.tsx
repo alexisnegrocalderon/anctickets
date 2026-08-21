@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import SignOutButton from "./sign-out-button";
 
 export default async function SiteHeader() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   return (
     <header className="border-b border-neutral-200 bg-white">
@@ -18,7 +17,7 @@ export default async function SiteHeader() {
           <Link href="/" className="hover:text-neutral-900">
             Eventos
           </Link>
-          {user ? (
+          {session ? (
             <>
               <Link href="/dashboard/events" className="hover:text-neutral-900">
                 Mis eventos
@@ -26,14 +25,7 @@ export default async function SiteHeader() {
               <Link href="/dashboard/tickets" className="hover:text-neutral-900">
                 Mis entradas
               </Link>
-              <form action="/auth/signout" method="post">
-                <button
-                  type="submit"
-                  className="rounded-full border border-neutral-300 px-4 py-1.5 text-neutral-700 hover:bg-neutral-50"
-                >
-                  Cerrar sesión
-                </button>
-              </form>
+              <SignOutButton />
             </>
           ) : (
             <Link
