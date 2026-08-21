@@ -7,22 +7,22 @@ export default async function SiteHeader() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   return (
-    <header className="border-b border-neutral-200 bg-white">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-        <Link href="/" className="text-lg font-extrabold tracking-tight text-neutral-900">
-          ANC<span className="text-orange-500">Tickets</span>
+    <header className="border-b border-white/10 bg-[#090909] text-[#f5f4f1]">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
+        <Link href="/" className="text-lg font-black italic leading-[.8] tracking-[-.08em] text-[#f5f4f1]">
+          ANC<br />TICKETS
         </Link>
 
-        <nav className="flex items-center gap-5 text-sm font-medium text-neutral-600">
-          <Link href="/" className="hover:text-neutral-900">
+        <nav className="flex items-center gap-4 text-sm font-medium text-neutral-300 sm:gap-6">
+          <Link href="/#eventos" className="transition hover:text-[#c3adff]">
             Eventos
           </Link>
           {session ? (
             <>
-              <Link href="/dashboard/events" className="hover:text-neutral-900">
+              <Link href="/dashboard/events" className="transition hover:text-[#c3adff]">
                 Mis eventos
               </Link>
-              <Link href="/dashboard/tickets" className="hover:text-neutral-900">
+              <Link href="/dashboard/tickets" className="hidden transition hover:text-[#c3adff] sm:block">
                 Mis entradas
               </Link>
               <SignOutButton />
@@ -30,9 +30,9 @@ export default async function SiteHeader() {
           ) : (
             <Link
               href="/login"
-              className="rounded-full bg-neutral-900 px-4 py-1.5 text-white hover:bg-neutral-700"
+              className="rounded-full bg-[#a77fff] px-4 py-2 text-xs font-black tracking-[.1em] text-black transition hover:bg-[#c6b0ff]"
             >
-              Iniciar sesión
+              INGRESAR
             </Link>
           )}
         </nav>

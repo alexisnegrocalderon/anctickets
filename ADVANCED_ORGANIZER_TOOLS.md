@@ -13,7 +13,7 @@ La idea de una oferta avanzada se conserva como evolución de producto, no como 
 | Esencial | Productor que necesita publicar y controlar una noche. | Eventos pagados, ventas, descuentos acotados, embajadores básicos, staff por evento y check-in. | Es la experiencia de lanzamiento. |
 | Operación avanzada | Productor recurrente con varios eventos o equipos. | Roles de equipo más finos, turnos de puerta, exportaciones programadas, reportes de caja y auditoría ampliada. | Sin precio ni cobro definidos. |
 | Crecimiento | Productor que vende a través de comunidades o campañas. | Atribución por canal, embajadores con liquidación, descuentos por segmento, campañas programadas y analytics de conversión. | Sin automatización de pagos. |
-| Control especial | Operaciones con requerimientos excepcionales. | Accesos especiales limitados, invitaciones, lista de cortesía y aprobaciones de excepción. | Siempre con auditoría, cupo y aprobación; no disponible inicialmente. |
+| Control especial | Operaciones con requerimientos excepcionales. | Accesos especiales limitados, invitaciones, lista de cortesía y aprobaciones de excepción. | Siempre con auditoría, cupo y aprobación; no disponible inicialmente." |
 
 ## Herramientas que merecen evaluación posterior
 
@@ -35,3 +35,4 @@ Una oferta avanzada no debe convertir el flujo básico en una experiencia recort
 Antes de diseñar precios o procesar un pago de plataforma, ANC debe medir durante los primeros eventos qué productores repiten, qué tareas ejecutan manualmente y cuáles piden con mayor frecuencia. Una señal mínima para evaluar cada módulo es que varias organizaciones activas lo soliciten y que su ausencia tenga un costo operativo claro para ellas.
 
 > El siguiente paso no es cobrar: es observar los primeros productores y elegir un solo módulo avanzado que realmente simplifique su trabajo.
+
