@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
-import SiteHeader from "@/components/site-header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,19 +16,17 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ANC Tickets",
   description:
-    "Ticketera express de ANC — crea tu evento, vende entradas y recibe el pago directo en tu cuenta de Mercado Pago.",
+    "Crea tu evento, vende entradas y recibe el pago directo en tu cuenta de Mercado Pago con costo de plataforma ANC $0.",
 };
 
+/** Estilo ANC: el layout raíz deja que cada experiencia controle su propia navegación y contraste. */
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-neutral-50">
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">{children}</div>
-      </body>
+      <body className="min-h-full bg-[#090909] text-[#f5f4f1]">{children}</body>
     </html>
   );
 }
