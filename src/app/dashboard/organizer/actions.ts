@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { ambassadors, auditLog, discountCodes, events, eventStaff, organizationActivationRequests, organizationMemberships, organizations, users } from "@/lib/db/schema";
+import { ambassadors, auditLog, discountCodes, events, eventStaff, organizationActivationRequests, organizationMemberships, organizations, ticketTypes, users } from "@/lib/db/schema";
 import { requireCurrentUser, requireOrganizationManager } from "@/lib/organizer";
 
 const slugify = (value: string) => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 56);
@@ -56,6 +56,36 @@ export async function createOrganizerEvent(formData: FormData) {
   revalidatePath(`/dashboard/organizer/${slug}/events`);
 }
 
+export async function createImmersiveEvent(formData: FormData) {
+  const slug = text(formData, "slug");
+  const { organization, user } = await requireOrganizationManager(slug);
+  const title = text(formData, "title");
+  const eventDate = text(formData, "eventDate");
+  const accessMode = text(formData, "accessMode");
+  const saleMode = text(formData, "saleMode");
+  if (!title || !eventDate || !accessMode) throw new Error("Completa los momentos esenciales para guardar el evento.");
+  const price = (name: string) => {
+    const value = Number(text(formData, name));
+    if (!Number.isFinite(value) || value <= 0) throw new Error("Las entradas deben tener un valor mayor que cero.");
+    return value.toFixed(2);
+  };
+  const capacity = (name: string) => {
+    const value = Number(text(formData, name));
+    if (!Number.isInteger(value) || value <= 0) throw new Error("Define cupos positivos para cada entrada.");
+    return value;
+  };
+  const salesStart = saleMode === "scheduled" ? new Date(text(formData, "salesStart")) : new Date();
+  if (Number.isNaN(salesStart.getTime())) throw new Error("Define cuándo se abren las ventas.");
+  const eventSlug = `${organization.slug}-${slugify(title)}-${Date.now().toString().slice(-5)}`;
+  const [event] = await db.insert(events).values({ organizationId: organization.id, title, slug: eventSlug, eventDate: new Date(eventDate), venue: text(formData, "venue") || null, category: text(formData, "category") || null, description: text(formData, "description") || null, imageUrl: text(formData, "imageUrl") || null }).returning();
+  const rows = accessMode === "presale"
+    ? [{ eventId: event.id, name: "Preventa", basePrice: price("presalePrice"), capacity: capacity("presaleCapacity"), salesStart }, { eventId: event.id, name: "General", basePrice: price("generalPrice"), capacity: capacity("generalCapacity"), salesStart }]
+    : [{ eventId: event.id, name: text(formData, "ticketName") || "Entrada general", basePrice: price("ticketPrice"), capacity: capacity("ticketCapacity"), salesStart }];
+  await db.insert(ticketTypes).values(rows);
+  await recordAudit(organization.id, user.id, "event", event.id, "immersive_draft_created", { accessMode, saleMode, ticketTypes: rows.length });
+  redirect(`/dashboard/organizer/${slug}/events`);
+}
+
 export async function createDiscountCode(formData: FormData) {
   const slug = text(formData, "slug");
   const { organization, user } = await requireOrganizationManager(slug);
@@ -64,6 +94,7 @@ export async function createDiscountCode(formData: FormData) {
   const type = text(formData, "type") === "fixed" ? "fixed" : "percentage";
   const value = text(formData, "value");
   if (!eventId || !code || Number(value) < 0) throw new Error("Completa los datos del descuento.");
+  if (type === "percentage" && Number(value) >= 100) throw new Error("Los descuentos del 100% se gestionan como accesos especiales con cupos y comisión adicional.");
   const [discount] = await db.insert(discountCodes).values({ eventId, code, internalName: text(formData, "internalName") || code, type, value, maxRedemptions: text(formData, "maxRedemptions") ? Number(text(formData, "maxRedemptions")) : null, maxPerBuyer: Number(text(formData, "maxPerBuyer") || "1"), createdBy: user.id }).returning();
   await recordAudit(organization.id, user.id, "discount_code", discount.id, "created", { code, type, value });
   revalidatePath(`/dashboard/organizer/${slug}/promotions`);
