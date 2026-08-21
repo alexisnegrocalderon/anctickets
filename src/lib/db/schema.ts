@@ -20,6 +20,10 @@ export const eventStatus = pgEnum("event_status", ["draft", "published", "cancel
 export const orderStatus = pgEnum("order_status", ["pending", "approved", "rejected", "cancelled", "expired"]);
 export const ticketStatus = pgEnum("ticket_status", ["valid", "used", "cancelled"]);
 export const reservationStatus = pgEnum("reservation_status", ["active", "converted", "expired", "cancelled"]);
+export const organizationStatus = pgEnum("organization_status", ["draft", "review", "active", "suspended"]);
+export const activationRequestStatus = pgEnum("activation_request_status", ["pending", "approved", "rejected"]);
+export const discountType = pgEnum("discount_type", ["percentage", "fixed"]);
+export const ambassadorCommissionType = pgEnum("ambassador_commission_type", ["none", "percentage", "fixed"]);
 
 const auditDates = {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -81,6 +85,13 @@ export const organizations = pgTable("organizations", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
+  status: organizationStatus("status").notNull().default("draft"),
+  description: text("description"),
+  logoUrl: text("logo_url"),
+  supportEmail: text("support_email"),
+  contactName: text("contact_name"),
+  contactPhone: text("contact_phone"),
+  websiteUrl: text("website_url"),
   ...auditDates,
 });
 
@@ -108,6 +119,7 @@ export const events = pgTable("events", {
   title: text("title").notNull(),
   slug: text("slug").notNull().unique(),
   description: text("description"),
+  category: text("category"),
   venue: text("venue"),
   eventDate: timestamp("event_date", { withTimezone: true }).notNull(),
   imageUrl: text("image_url"),
@@ -210,3 +222,73 @@ export const paymentEvents = pgTable("payment_events", {
   processedAt: timestamp("processed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [unique("payment_events_provider_external_unique").on(table.provider, table.externalEventId)]);
+
+export const organizationActivationRequests = pgTable("organization_activation_requests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  organizationId: uuid("organization_id").notNull().unique().references(() => organizations.id, { onDelete: "cascade" }),
+  requestedBy: text("requested_by").notNull().references(() => users.id),
+  status: activationRequestStatus("status").notNull().default("pending"),
+  note: text("note"),
+  reviewedBy: text("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  ...auditDates,
+});
+
+export const discountCodes = pgTable("discount_codes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  code: text("code").notNull(),
+  internalName: text("internal_name").notNull(),
+  type: discountType("type").notNull(),
+  value: numeric("value", { precision: 12, scale: 2 }).notNull(),
+  startsAt: timestamp("starts_at", { withTimezone: true }),
+  endsAt: timestamp("ends_at", { withTimezone: true }),
+  maxRedemptions: integer("max_redemptions"),
+  maxPerBuyer: integer("max_per_buyer").notNull().default(1),
+  isActive: boolean("is_active").notNull().default(true),
+  createdBy: text("created_by").notNull().references(() => users.id),
+  ...auditDates,
+}, (table) => [unique("discount_codes_event_code_unique").on(table.eventId, table.code), index("discount_codes_event_idx").on(table.eventId)]);
+
+export const ambassadors = pgTable("ambassadors", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  email: text("email"),
+  code: text("code").notNull(),
+  commissionType: ambassadorCommissionType("commission_type").notNull().default("none"),
+  commissionValue: numeric("commission_value", { precision: 12, scale: 2 }).notNull().default("0"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdBy: text("created_by").notNull().references(() => users.id),
+  ...auditDates,
+}, (table) => [unique("ambassadors_event_code_unique").on(table.eventId, table.code), index("ambassadors_event_idx").on(table.eventId)]);
+
+export const discountCodeRedemptions = pgTable("discount_code_redemptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  discountCodeId: uuid("discount_code_id").notNull().references(() => discountCodes.id),
+  orderId: uuid("order_id").notNull().unique().references(() => orders.id),
+  buyerId: text("buyer_id").notNull().references(() => users.id),
+  discountAmount: numeric("discount_amount", { precision: 12, scale: 2 }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [index("discount_redemptions_code_buyer_idx").on(table.discountCodeId, table.buyerId)]);
+
+export const ambassadorAttributions = pgTable("ambassador_attributions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ambassadorId: uuid("ambassador_id").notNull().references(() => ambassadors.id),
+  orderId: uuid("order_id").notNull().unique().references(() => orders.id),
+  commissionAmount: numeric("commission_amount", { precision: 12, scale: 2 }).notNull().default("0"),
+  settledAt: timestamp("settled_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [index("ambassador_attributions_ambassador_idx").on(table.ambassadorId)]);
+
+export const auditLog = pgTable("audit_log", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  organizationId: uuid("organization_id").references(() => organizations.id, { onDelete: "set null" }),
+  actorUserId: text("actor_user_id").references(() => users.id, { onDelete: "set null" }),
+  entityType: text("entity_type").notNull(),
+  entityId: text("entity_id").notNull(),
+  action: text("action").notNull(),
+  before: jsonb("before").notNull().default({}),
+  after: jsonb("after").notNull().default({}),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [index("audit_log_org_created_idx").on(table.organizationId, table.createdAt), index("audit_log_entity_idx").on(table.entityType, table.entityId)]);
