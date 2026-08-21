@@ -30,8 +30,8 @@ export async function sendTicketConfirmationEmail(params: {
     )
   ).join("");
 
-  await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL ?? "ANC Tickets <tickets@ancdigital.cl>",
+  const { error } = await resend.emails.send({
+    from: process.env.EMAIL_FROM ?? "ANC Tickets <tickets@ancdigital.cl>",
     to: params.to,
     subject: `Tus entradas para ${params.eventTitle}`,
     html: `
@@ -45,4 +45,5 @@ export async function sendTicketConfirmationEmail(params: {
       </div>
     `,
   });
+  if (error) throw new Error("Resend rejected ticket confirmation email.");
 }

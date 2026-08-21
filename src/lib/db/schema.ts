@@ -84,6 +84,16 @@ export const organizations = pgTable("organizations", {
   ...auditDates,
 });
 
+export const mpAccounts = pgTable("mp_accounts", {
+  organizationId: uuid("organization_id").primaryKey().references(() => organizations.id, { onDelete: "cascade" }),
+  mpUserId: text("mp_user_id").notNull(),
+  accessToken: text("access_token").notNull(),
+  refreshToken: text("refresh_token"),
+  publicKey: text("public_key"),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
+  ...auditDates,
+});
+
 export const organizationMemberships = pgTable("organization_memberships", {
   id: uuid("id").primaryKey().defaultRandom(),
   organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),

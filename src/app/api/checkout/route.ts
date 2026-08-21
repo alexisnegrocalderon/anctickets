@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { and, eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { assertDatabaseConfigured, db, sql } from "@/lib/db";
+import { events, mpAccounts, ticketTypes } from "@/lib/db/schema";
 import { calculateFees } from "@/lib/fees";
 import { createMpPreference } from "@/lib/mercadopago";
-import type { Event, MpAccount, TicketType } from "@/lib/database.types";
 
 interface CheckoutItemInput {
   ticketTypeId: string;
@@ -11,12 +13,8 @@ interface CheckoutItemInput {
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user || !user.email) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user.email) {
     return NextResponse.json({ error: "Debes iniciar sesión" }, { status: 401 });
   }
 
@@ -28,12 +26,71 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Solicitud inválida" }, { status: 400 });
   }
 
-  const { data: event } = await supabase
-    .from("events")
-    .select("*")
-    .eq("id", eventId)
-    .single<Event>();
+  if (!eventId || !Array.isArray(items) || items.length === 0) {
+    return NextResponse.json({ error: "Solicitud inválida" }, { status: 400 });
+  }
 
+  try {
+    assertDatabaseConfigured();
+    const [event] = await db
+      .select({ eventId: events.id, eventTitle: events.title, organizationId: events.organizationId, organizerAccessToken: mpAccounts.accessToken })
+      .from(events)
+      .innerJoin(mpAccounts, eq(mpAccounts.organizationId, events.organizationId))
+      .where(and(eq(events.id, eventId), eq(events.status, "published")));
+
+    if (!event) {
+      return NextResponse.json({ error: "Evento no disponible o sin Mercado Pago conectado" }, { status: 404 });
+    }
+
+    const availableTypes = await db.select().from(ticketTypes).where(eq(ticketTypes.eventId, eventId));
+    let basePriceSum = 0;
+    const validatedItems: Array<{ ticketTypeId: string; name: string; basePrice: number; quantity: number }> = [];
+
+    for (const item of items) {
+      const ticketType = availableTypes.find((entry) => entry.id === item.ticketTypeId);
+      const quantity = Number(item.quantity);
+      if (!ticketType || !Number.isInteger(quantity) || quantity <= 0) {
+        return NextResponse.json({ error: "Entrada inválida" }, { status: 400 });
+      }
+      const basePrice = Number(ticketType.basePrice);
+      basePriceSum += basePrice * quantity;
+      validatedItems.push({ ticketTypeId: ticketType.id, name: ticketType.name, basePrice, quantity });
+    }
+
+    const fees = calculateFees(basePriceSum);
+    const checkoutRows = await sql.query(
+      "select * from create_checkout_order($1,$2::uuid,$3::jsonb,$4::numeric,$5::numeric,$6::numeric,$7::numeric,$8,now() + interval '10 minutes')",
+      [session.user.id, eventId, JSON.stringify(validatedItems.map((item) => ({ ticket_type_id: item.ticketTypeId, quantity: item.quantity }))), fees.totalAmount, fees.serviceFeeAmount, fees.mpFeeAmount, fees.ancFeeAmount, session.user.email]
+    ) as unknown as Array<{ order_id: string; reservation_id: string }>;
+    const checkout = checkoutRows[0];
+    if (!checkout) throw new Error("No se pudo crear la reserva de checkout");
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL!;
+    try {
+      const preference = await createMpPreference({
+        organizerAccessToken: event.organizerAccessToken,
+        items: validatedItems.map((item) => ({ title: `${event.eventTitle} — ${item.name}`, quantity: item.quantity, unit_price: calculateFees(item.basePrice).totalAmount })),
+        marketplaceFee: fees.ancFeeAmount,
+        externalReference: checkout.order_id,
+        payerEmail: session.user.email,
+        successUrl: `${siteUrl}/dashboard/tickets?order=${checkout.order_id}`,
+        failureUrl: `${siteUrl}/events/${eventId}?checkout=failed`,
+        pendingUrl: `${siteUrl}/dashboard/tickets?order=${checkout.order_id}`,
+        notificationUrl: `${siteUrl}/api/webhooks/mercadopago`,
+      });
+      await sql.query("update orders set mp_preference_id = $1, updated_at = now() where id = $2::uuid", [preference.id, checkout.order_id]);
+      return NextResponse.json({ initPoint: preference.init_point });
+    } catch (error) {
+      await sql.query("select cancel_checkout_order($1::uuid)", [checkout.order_id]);
+      throw error;
+    }
+  } catch (error) {
+    console.error("Checkout failed", error);
+    return NextResponse.json({ error: "No se pudo iniciar el pago" }, { status: 500 });
+  }
+
+  /* Legacy Supabase path intentionally removed below. */
+  /*
   if (!event || event.status !== "published") {
     return NextResponse.json({ error: "Evento no disponible" }, { status: 404 });
   }
@@ -155,5 +212,5 @@ export async function POST(request: Request) {
       { error: "No se pudo iniciar el pago con Mercado Pago" },
       { status: 500 }
     );
-  }
+  } */
 }

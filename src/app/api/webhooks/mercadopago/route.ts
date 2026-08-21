@@ -1,158 +1,105 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { InvalidWebhookSignatureError, WebhookSignatureValidator } from "mercadopago";
+import { assertDatabaseConfigured, sql } from "@/lib/db";
 import { getMpPayment } from "@/lib/mercadopago";
 import { sendTicketConfirmationEmail } from "@/lib/email";
-import type { Event, Order, OrderItem, TicketType } from "@/lib/database.types";
+
+type OrderWithEvent = {
+  id: string;
+  status: "pending" | "approved" | "rejected" | "cancelled" | "expired";
+  buyer_email: string;
+  title: string;
+  event_date: string;
+  venue: string | null;
+};
+
+type IssuedTicket = { ticket_id: string; ticket_type_id: string; qr_code: string };
+
+function getPaymentId(url: URL, body: unknown) {
+  const fromQuery = url.searchParams.get("data.id") ?? url.searchParams.get("id");
+  if (fromQuery) return fromQuery;
+  if (body && typeof body === "object" && "data" in body) {
+    const data = (body as { data?: { id?: unknown } }).data;
+    return data?.id ? String(data.id) : null;
+  }
+  return null;
+}
 
 export async function POST(request: Request) {
   const url = new URL(request.url);
-  const paymentId =
-    url.searchParams.get("data.id") ?? url.searchParams.get("id");
-  const type = url.searchParams.get("type") ?? url.searchParams.get("topic");
+  const payload = await request.json().catch(() => null);
+  const paymentId = getPaymentId(url, payload);
+  const topic = url.searchParams.get("type") ?? url.searchParams.get("topic") ?? (payload as { type?: string } | null)?.type;
 
-  let resolvedPaymentId = paymentId;
+  if (!paymentId) return NextResponse.json({ error: "missing payment id" }, { status: 400 });
 
-  if (!resolvedPaymentId) {
-    try {
-      const body = await request.json();
-      resolvedPaymentId = body?.data?.id ?? null;
-    } catch {
-      // sin body JSON, seguimos con lo que vino en query params
-    }
-  }
-
-  if (type && type !== "payment") {
-    return NextResponse.json({ received: true });
-  }
-
-  if (!resolvedPaymentId) {
-    return NextResponse.json({ error: "missing payment id" }, { status: 400 });
-  }
-
-  const admin = createAdminClient();
+  const secret = process.env.MP_WEBHOOK_SECRET;
+  if (!secret) return NextResponse.json({ error: "webhook not configured" }, { status: 503 });
 
   try {
-    const payment = await getMpPayment(String(resolvedPaymentId));
-    const orderId = payment.external_reference as string | undefined;
-
-    if (!orderId) {
-      return NextResponse.json({ error: "missing external_reference" }, { status: 400 });
+    WebhookSignatureValidator.validate({
+      xSignature: request.headers.get("x-signature"),
+      xRequestId: request.headers.get("x-request-id"),
+      dataId: paymentId,
+      secret,
+      toleranceSeconds: 300,
+    });
+  } catch (error) {
+    if (error instanceof InvalidWebhookSignatureError) {
+      return NextResponse.json({ error: "invalid webhook signature" }, { status: 401 });
     }
+    console.error("Webhook signature validation failed", error);
+    return NextResponse.json({ error: "webhook validation failed" }, { status: 401 });
+  }
 
-    const { data: order } = await admin
-      .from("orders")
-      .select("*")
-      .eq("id", orderId)
-      .single<Order>();
+  if (topic && topic !== "payment") return NextResponse.json({ received: true });
 
-    if (!order) {
-      return NextResponse.json({ error: "order not found" }, { status: 404 });
-    }
+  try {
+    assertDatabaseConfigured();
+    const payment = await getMpPayment(paymentId);
+    const orderId = typeof payment.external_reference === "string" ? payment.external_reference : null;
+    if (!orderId) return NextResponse.json({ error: "missing external_reference" }, { status: 400 });
 
-    // Idempotencia: si ya fue procesada como aprobada, no repetir generación de tickets.
-    if (order.status === "approved") {
-      return NextResponse.json({ received: true });
-    }
+    const eventKey = `${paymentId}:${payment.status ?? "unknown"}`;
+    const paymentEvents = await sql.query(
+      "insert into payment_events (provider, external_event_id, event_type, payload) values ($1,$2,$3,$4::jsonb) on conflict (provider, external_event_id) do update set payload = excluded.payload returning id, processed_at",
+      ["mercadopago", eventKey, topic ?? "payment", JSON.stringify(payload ?? {})]
+    ) as unknown as Array<{ id: string; processed_at: string | null }>;
+    const paymentEvent = paymentEvents[0];
+    if (!paymentEvent) throw new Error("No se pudo registrar el evento de pago");
+    if (paymentEvent.processed_at) return NextResponse.json({ received: true });
+
+    const orders = await sql.query(
+      "select o.id, o.status, o.buyer_email, e.title, e.event_date, e.venue from orders o join events e on e.id = o.event_id where o.id = $1::uuid",
+      [orderId]
+    ) as unknown as OrderWithEvent[];
+    const order = orders[0];
+    if (!order) return NextResponse.json({ error: "order not found" }, { status: 404 });
 
     if (payment.status !== "approved") {
-      await admin
-        .from("orders")
-        .update({
-          status: payment.status === "rejected" ? "rejected" : "pending",
-          mp_payment_id: String(resolvedPaymentId),
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", orderId);
-
+      const nextStatus = payment.status === "rejected" ? "rejected" : "pending";
+      await sql.query("update orders set status = $1::order_status, mp_payment_id = $2, updated_at = now() where id = $3::uuid", [nextStatus, paymentId, orderId]);
+      await sql.query("update payment_events set processed_at = now() where id = $1::uuid", [paymentEvent.id]);
       return NextResponse.json({ received: true });
     }
 
-    const { data: orderItems } = await admin
-      .from("order_items")
-      .select("*")
-      .eq("order_id", orderId)
-      .returns<OrderItem[]>();
+    await sql.query("select * from finalize_paid_order($1::uuid, $2)", [orderId, paymentId]);
+    const tickets = await sql.query(
+      "select t.id as ticket_id, t.ticket_type_id, t.qr_code, tt.name as ticket_type_name from tickets t join ticket_types tt on tt.id = t.ticket_type_id where t.order_id = $1::uuid order by t.created_at",
+      [orderId]
+    ) as unknown as Array<IssuedTicket & { ticket_type_name: string }>;
 
-    if (!orderItems || orderItems.length === 0) {
-      return NextResponse.json({ error: "order has no items" }, { status: 400 });
-    }
-
-    const ticketsToInsert: { order_id: string; ticket_type_id: string }[] = [];
-    for (const item of orderItems) {
-      for (let i = 0; i < item.quantity; i++) {
-        ticketsToInsert.push({
-          order_id: orderId,
-          ticket_type_id: item.ticket_type_id,
-        });
-      }
-    }
-
-    const { data: insertedTickets, error: ticketsError } = await admin
-      .from("tickets")
-      .insert(ticketsToInsert)
-      .select("id, qr_code, ticket_type_id");
-
-    if (ticketsError) {
-      throw new Error(ticketsError.message);
-    }
-
-    for (const item of orderItems) {
-      const { data: ticketType } = await admin
-        .from("ticket_types")
-        .select("sold_count")
-        .eq("id", item.ticket_type_id)
-        .single<Pick<TicketType, "sold_count">>();
-
-      await admin
-        .from("ticket_types")
-        .update({
-          sold_count: (ticketType?.sold_count ?? 0) + item.quantity,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", item.ticket_type_id);
-    }
-
-    await admin
-      .from("orders")
-      .update({
-        status: "approved",
-        mp_payment_id: String(resolvedPaymentId),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", orderId);
-
-    const { data: event } = await admin
-      .from("events")
-      .select("*")
-      .eq("id", order.event_id)
-      .single<Event>();
-
-    const { data: ticketTypes } = await admin
-      .from("ticket_types")
-      .select("id, name")
-      .eq("event_id", order.event_id)
-      .returns<Pick<TicketType, "id" | "name">[]>();
-
-    const ticketTypeNameById = new Map(
-      (ticketTypes ?? []).map((tt) => [tt.id, tt.name])
-    );
-
-    if (event && insertedTickets) {
-      await sendTicketConfirmationEmail({
-        to: order.buyer_email,
-        eventTitle: event.title,
-        eventDate: event.event_date,
-        venue: event.venue,
-        tickets: insertedTickets.map((t) => ({
-          ticketTypeName: ticketTypeNameById.get(t.ticket_type_id) ?? "Entrada",
-          qrCode: t.qr_code,
-        })),
-      });
-    }
-
+    await sendTicketConfirmationEmail({
+      to: order.buyer_email,
+      eventTitle: order.title,
+      eventDate: order.event_date,
+      venue: order.venue,
+      tickets: tickets.map((ticket) => ({ ticketTypeName: ticket.ticket_type_name, qrCode: ticket.qr_code })),
+    });
+    await sql.query("update payment_events set processed_at = now() where id = $1::uuid", [paymentEvent.id]);
     return NextResponse.json({ received: true });
-  } catch (err) {
-    console.error("Error procesando webhook de Mercado Pago:", err);
+  } catch (error) {
+    console.error("Mercado Pago webhook processing failed", error);
     return NextResponse.json({ error: "internal error" }, { status: 500 });
   }
 }
