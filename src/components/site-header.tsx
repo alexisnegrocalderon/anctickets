@@ -7,7 +7,7 @@ export default async function SiteHeader() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   return (
-    <header className="border-b border-white/10 bg-[#090909] text-[#f5f4f1]">
+    <header className="relative z-50 min-h-[65px] border-b border-white/10 bg-black/35 text-[#f5f4f1] backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
         <Link href="/" className="text-lg font-black italic leading-[.8] tracking-[-.08em] text-[#f5f4f1]">
           ANC<br />TICKETS
