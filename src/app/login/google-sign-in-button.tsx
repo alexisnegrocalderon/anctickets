@@ -19,7 +19,7 @@ export default function GoogleSignInButton() {
     <button
       onClick={signInWithGoogle}
       disabled={loading}
-      className="flex w-full items-center justify-center gap-3 rounded-full border border-neutral-300 bg-white px-6 py-3 text-sm font-medium text-neutral-800 shadow-sm transition hover:bg-neutral-50 disabled:opacity-60"
+      className="flex w-full items-center justify-center gap-3 rounded-xl border border-white/30 bg-white px-6 py-3 text-sm font-bold text-neutral-900 shadow-sm transition hover:bg-[#c6b0ff] disabled:opacity-60"
     >
       <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
         <path
