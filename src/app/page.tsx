@@ -1,78 +1,15 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import type { Event } from "@/lib/database.types";
 
-export default async function Home() {
-  const supabase = await createClient();
-  const { data: events } = await supabase
-    .from("events")
-    .select("*")
-    .eq("status", "published")
-    .order("event_date", { ascending: true })
-    .returns<Event[]>();
-
+export default function Home() {
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
-      <section className="mb-10 rounded-2xl bg-neutral-900 px-8 py-12 text-white">
-        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-          Vende entradas sin comisiones para ti.
-        </h1>
-        <p className="mt-3 max-w-xl text-neutral-300">
-          El comprador paga un cargo de servicio del 10%, tú recibes el valor
-          íntegro de tu entrada directo en tu cuenta de Mercado Pago, al
-          instante.
-        </p>
-        <Link
-          href="/dashboard/events/new"
-          className="mt-6 inline-block rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white hover:bg-orange-400"
-        >
-          Crear mi evento
-        </Link>
+    <main className="min-h-screen bg-[#090909] text-[#f5f4f1]">
+      <section className="relative isolate min-h-[82vh] overflow-hidden border-b border-white/10 px-5 py-7 sm:px-10">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_72%_32%,#9b6cff_0%,#28164b_23%,#090909_58%)] opacity-70" />
+        <div className="absolute inset-0 -z-10 opacity-20" style={{ backgroundImage: "radial-gradient(#f5f4f1 0.65px, transparent 0.65px)", backgroundSize: "5px 5px" }} />
+        <nav className="mx-auto flex max-w-7xl items-center justify-between"><span className="text-lg font-black italic tracking-[-.08em]">ANC<br />TICKETS</span><Link href="/login" className="rounded-full border border-white/30 px-4 py-2 text-xs font-bold tracking-[.14em] transition hover:border-[#b695ff] hover:text-[#b695ff]">INGRESAR</Link></nav>
+        <div className="mx-auto flex min-h-[66vh] max-w-7xl flex-col justify-end pb-10"><p className="text-xs font-bold tracking-[.28em] text-[#c3adff]">CHILE / EVENTOS EN VIVO</p><h1 className="mt-5 max-w-4xl text-6xl font-black leading-[.82] tracking-[-.09em] sm:text-8xl lg:text-9xl">TU NOCHE<br /><span className="text-[#a77fff]">EMPIEZA</span> AQUÍ.</h1><div className="mt-10 flex flex-wrap items-center gap-4"><Link href="/login" className="rounded-xl bg-[#a77fff] px-5 py-3 text-sm font-black text-black transition hover:bg-[#c6b0ff]">CREAR MI EVENTO →</Link><p className="max-w-xs text-sm leading-6 text-neutral-300">Una plataforma para crear, vender y controlar el acceso a experiencias reales.</p></div></div>
       </section>
-
-      <h2 className="mb-4 text-xl font-bold text-neutral-900">
-        Próximos eventos
-      </h2>
-
-      {!events || events.length === 0 ? (
-        <p className="text-neutral-500">Todavía no hay eventos publicados.</p>
-      ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
-          {events.map((event) => (
-            <Link
-              key={event.id}
-              href={`/events/${event.id}`}
-              className="group overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition hover:shadow-md"
-            >
-              <div className="aspect-video w-full bg-neutral-200">
-                {event.image_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={event.image_url}
-                    alt={event.title}
-                    className="h-full w-full object-cover"
-                  />
-                ) : null}
-              </div>
-              <div className="p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-orange-500">
-                  {new Date(event.event_date).toLocaleDateString("es-CL", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </p>
-                <h3 className="mt-1 font-semibold text-neutral-900 group-hover:text-orange-600">
-                  {event.title}
-                </h3>
-                {event.venue ? (
-                  <p className="mt-1 text-sm text-neutral-500">{event.venue}</p>
-                ) : null}
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
+      <section className="mx-auto grid max-w-7xl gap-px bg-white/10 md:grid-cols-3"><article className="bg-[#090909] p-7"><p className="text-xs font-bold tracking-[.2em] text-[#a77fff]">01 / PRODUCTORES</p><h2 className="mt-4 text-2xl font-black tracking-[-.05em]">Crea la noche<br />sin formularios.</h2><p className="mt-4 text-sm leading-6 text-neutral-400">Seis decisiones guiadas, borrador automático y un preview vivo de tu evento.</p></article><article className="bg-[#090909] p-7"><p className="text-xs font-bold tracking-[.2em] text-[#a77fff]">02 / PÚBLICO</p><h2 className="mt-4 text-2xl font-black tracking-[-.05em]">Accede con<br />una entrada clara.</h2><p className="mt-4 text-sm leading-6 text-neutral-400">Compra, QR y tu entrada en un solo recorrido pensado para móvil.</p></article><article className="bg-[#090909] p-7"><p className="text-xs font-bold tracking-[.2em] text-[#a77fff]">03 / PUERTA</p><h2 className="mt-4 text-2xl font-black tracking-[-.05em]">Control en<br />tiempo real.</h2><p className="mt-4 text-sm leading-6 text-neutral-400">Staff por evento, validación atómica y protección contra dobles ingresos.</p></article></section>
     </main>
   );
 }
