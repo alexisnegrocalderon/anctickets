@@ -25,15 +25,15 @@ Para productores con eventos anteriores, la pantalla inicial ofrece **“Repetir
 
 El catálogo normal solo permite entradas de valor positivo. No se ofrece “entrada gratis” ni se permite crear una categoría a precio cero. Las opciones base son una entrada, preventa + general y acceso personalizado; todos los precios deben ser mayores que cero.
 
-Los accesos sin costo y los descuentos del 100% son una **excepción comercial**. Se presentan en una sección separada de “accesos especiales”, requieren un cupo limitado y una razón visible para auditoría. Su uso agrega un 1% de comisión sobre el valor de referencia de la entrada seleccionada. El resumen debe mostrar siempre cupo especial, valor de referencia, comisión adicional y responsable que lo creó.
+Los accesos sin costo y los descuentos del 100% quedan **fuera del lanzamiento inicial**. No se muestran en el creador, no aparecen como opción de descuento y no deben habilitarse por soporte. El producto inicial solo vende entradas de valor positivo y permite descuentos que no lleguen a 100%.
 
-| Regla | Comportamiento |
+| Regla | Comportamiento de lanzamiento |
 | --- | --- |
 | Entrada normal | Precio estrictamente mayor que 0. |
 | Descuento habitual | No puede llegar a 100%. |
-| Acceso especial | Cupo máximo obligatorio, motivo y valor de referencia. |
-| 100% de descuento | Se procesa como acceso especial; aplica +1% de comisión sobre el valor de referencia. |
-| Auditoría | Registra creador, fecha, cupo, motivo y cada redención. |
+| Invitaciones gratuitas | No disponibles. |
+| Acceso especial | No disponible; se evaluará como herramienta avanzada futura. |
+| Auditoría | Los descuentos permitidos registran creador, fecha y cada redención. |
 
 ## Composición de pantalla
 
