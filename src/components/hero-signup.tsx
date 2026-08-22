@@ -4,6 +4,7 @@
  * Estilo ANC — Rave Editorial Noir: interfaz mono-lineal sobre video nocturno;
  * movimiento preciso, panel de registro con Google y lila reservado para conversión.
  */
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -44,8 +45,11 @@ export default function HeroSignup() {
   return (
     <>
       <header className="anc-hero-nav">
-        <Link href="/" className="anc-hero-wordmark" aria-label="ANC Tickets, inicio">
-          ANC<span>TICKETS</span>
+        <Link href="/" className="anc-hero-wordmark-link" aria-label="ANC Tickets, inicio">
+          <Image src="/anc-mark.png" alt="" width={32} height={32} priority />
+          <span className="anc-hero-wordmark">
+            ANC<span>TICKETS</span>
+          </span>
         </Link>
 
         <nav className="anc-desktop-nav" aria-label="Navegación principal">

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -27,8 +28,9 @@ export default async function DashboardLayout({
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
           <Link
             href="/"
-            className="text-lg font-black italic tracking-tight text-[#f5f4f1]"
+            className="flex items-center gap-2 text-lg font-black italic tracking-tight text-[#f5f4f1]"
           >
+            <Image src="/anc-mark.png" alt="" width={30} height={30} priority />
             ANC<span className="text-[#a77fff]">TICKETS</span>
           </Link>
 

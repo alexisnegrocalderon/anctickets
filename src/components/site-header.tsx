@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
@@ -10,8 +11,12 @@ export default async function SiteHeader() {
   return (
     <header className="border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-        <Link href="/" className="text-lg font-extrabold tracking-tight text-neutral-900">
-          ANC<span className="text-orange-500">Tickets</span>
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-neutral-900"
+        >
+          <Image src="/anc-mark.png" alt="" width={28} height={28} priority />
+          ANC<span className="text-[#a77fff]">Tickets</span>
         </Link>
 
         <nav className="flex items-center gap-5 text-sm font-medium text-neutral-600">
