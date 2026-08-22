@@ -5,9 +5,12 @@ Ticketera express de **ANC** (sitio oficial [ancdigital.cl](https://ancdigital.c
 El comprador paga el valor de la entrada más un cargo de servicio del 10%
 (calculado sobre el total que paga). El organizador recibe el 100% del valor
 de su entrada directo en su cuenta de Mercado Pago, sin pagar nada por usar
-el sistema. Del cargo de servicio, Mercado Pago se queda con ~3,9% del total
-(su comisión de procesamiento) y ANC Tickets con la diferencia, ~6,1% del
-total (ver `src/lib/fees.ts`).
+el sistema. Del cargo de servicio, Mercado Pago se queda con ~3,8% del total
+(su comisión de procesamiento en pago único con tarjeta, incluyendo IVA) y
+ANC Tickets con la diferencia, ~6,2% del total (ver `src/lib/fees.ts`). El
+checkout solo admite pago único (sin cuotas): con cuotas la comisión real de
+Mercado Pago supera el cargo de servicio del 10%, lo que impediría
+garantizar que el organizador reciba el 100% de su entrada.
 
 ## Stack
 

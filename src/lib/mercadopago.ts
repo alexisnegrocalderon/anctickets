@@ -86,6 +86,13 @@ export async function createMpPreference(params: MpPreferenceParams) {
         },
         auto_return: "approved",
         notification_url: params.notificationUrl,
+        // Solo pago único: con cuotas, la comisión real de Mercado Pago supera
+        // el cargo de servicio y el organizador dejaría de recibir el 100%
+        // del valor de su entrada (ver src/lib/fees.ts).
+        payment_methods: {
+          installments: 1,
+          default_installments: 1,
+        },
       }),
     }
   );
