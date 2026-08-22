@@ -2,14 +2,19 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import GoogleSignInButton from "./google-sign-in-button";
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const { next } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (user) {
-    redirect("/");
+    redirect(next ?? "/dashboard/events");
   }
 
   return (
@@ -20,7 +25,7 @@ export default async function LoginPage() {
           Inicia sesión para comprar entradas o crear tus propios eventos.
         </p>
       </div>
-      <GoogleSignInButton />
+      <GoogleSignInButton next={next} />
     </div>
   );
 }
