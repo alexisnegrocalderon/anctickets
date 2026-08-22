@@ -1,0 +1,202 @@
+/*
+ * Estilo ANC — Rave Editorial Noir: cine nocturno, tipografía dura y movimiento contenido.
+ * Las animaciones privilegian opacidad/transform y se desactivan ante reducción de movimiento.
+ */
+:root {
+  --anc-lilac: #a77fff;
+  --anc-lilac-light: #c3adff;
+  --anc-ink: #090909;
+  --anc-warm-white: #f5f4f1;
+  --anc-line: rgba(255, 255, 255, 0.16);
+  --anc-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.anc-hero-scene {
+  background-position: center;
+  background-size: cover;
+  display: grid;
+  isolation: isolate;
+  min-height: max(100svh, 640px);
+  overflow: hidden;
+  position: relative;
+}
+
+.anc-hero-nav {
+  align-items: center;
+  border-bottom: 1px solid var(--anc-line);
+  display: flex;
+  justify-content: space-between;
+  left: 0;
+  padding: clamp(20px, 2.4vw, 34px) clamp(20px, 5vw, 100px);
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 30;
+}
+
+.anc-hero-wordmark {
+  color: var(--anc-warm-white);
+  display: inline-flex;
+  flex-direction: column;
+  font-size: clamp(18px, 1.65vw, 27px);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: -0.1em;
+  line-height: 0.68;
+  text-decoration: none;
+}
+
+.anc-hero-wordmark span { margin-left: 0.08em; }
+
+.anc-desktop-nav {
+  align-items: center;
+  display: flex;
+  gap: clamp(20px, 2.8vw, 52px);
+}
+
+.anc-desktop-nav a,
+.anc-panel-login,
+.anc-mobile-menu-links a {
+  color: var(--anc-warm-white);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(10px, 0.74vw, 13px);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 250ms ease, background 250ms ease, border-color 250ms ease;
+}
+
+.anc-desktop-nav a:hover,
+.anc-panel-login:hover { color: var(--anc-lilac-light); }
+
+.anc-desktop-nav .anc-nav-cta {
+  border: 1px solid rgba(255,255,255,.42);
+  padding: 13px 18px;
+}
+
+.anc-desktop-nav .anc-nav-cta:hover { background: rgba(255,255,255,.1); border-color: var(--anc-lilac-light); }
+
+.anc-menu-toggle { display: none; }
+
+.anc-hero-body {
+  align-items: center;
+  display: grid;
+  gap: clamp(42px, 8vw, 156px);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, min(34vw, 520px));
+  margin: 0 auto;
+  max-width: 1600px;
+  min-height: 100svh;
+  padding: clamp(118px, 13vh, 160px) clamp(20px, 5vw, 100px) clamp(42px, 5.6vh, 80px);
+  position: relative;
+  width: 100%;
+  z-index: 10;
+}
+
+.anc-hero-copy { animation: anc-rise-in 900ms var(--anc-ease) 110ms both; max-width: 750px; }
+.anc-eyebrow, .anc-panel-subtitle, .anc-hero-metrics, .anc-panel-chip {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(10px, .78vw, 13px);
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.anc-eyebrow { color: var(--anc-lilac-light); }
+.anc-hero-copy h1 {
+  color: var(--anc-warm-white);
+  font-size: clamp(4rem, 8.25vw, 9.5rem);
+  font-weight: 900;
+  letter-spacing: -.105em;
+  line-height: .76;
+  margin: clamp(22px, 3.1vw, 48px) 0 0 -.07em;
+}
+.anc-hero-copy h1 span { color: var(--anc-lilac); }
+.anc-hero-description { color: rgba(245,244,241,.88); font-size: clamp(16px, 1.2vw, 20px); line-height: 1.55; margin-top: clamp(24px, 2.6vw, 38px); max-width: 570px; }
+.anc-hero-metrics { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: clamp(28px, 3.4vw, 48px); color: rgba(245,244,241,.72); }
+
+.anc-signup-panel {
+  animation: anc-panel-in 1000ms var(--anc-ease) 210ms both;
+  align-self: center;
+  border-left: 1px solid rgba(195, 173, 255, .65);
+  padding-left: clamp(22px, 3vw, 48px);
+}
+.anc-panel-chip { background: rgba(167,127,255,.2); color: var(--anc-warm-white); display: inline-block; padding: 10px 12px; }
+.anc-signup-panel h2 { font-size: clamp(2.4rem, 3.8vw, 4.4rem); font-weight: 900; letter-spacing: -.09em; line-height: .82; margin-top: clamp(26px, 3vw, 44px); }
+.anc-panel-subtitle { color: rgba(245,244,241,.6); line-height: 1.5; margin-top: clamp(14px, 1.5vw, 22px); }
+.anc-signup-form { display: grid; gap: 13px; margin-top: clamp(34px, 4vw, 60px); }
+.anc-signup-form input { background: transparent; border: 0; border-bottom: 1px solid rgba(255,255,255,.45); border-radius: 0; color: white; font-size: clamp(16px, 1.1vw, 18px); outline: 0; padding: 0 2px 13px; transition: border-color 250ms ease; width: 100%; }
+.anc-signup-form input::placeholder { color: rgba(245,244,241,.52); }
+.anc-signup-form input:focus { border-bottom-color: var(--anc-lilac-light); }
+.anc-signup-form button { background: var(--anc-lilac); border: 0; border-radius: 0; color: #120d1b; cursor: pointer; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: clamp(10px, .74vw, 13px); font-weight: 800; letter-spacing: .15em; padding: 18px 16px; text-transform: uppercase; transition: transform 180ms var(--anc-ease), background 250ms ease; }
+.anc-signup-form button:hover { background: var(--anc-lilac-light); }
+.anc-signup-form button:active { transform: scale(.98); }
+.anc-signup-form button:disabled { cursor: not-allowed; opacity: .65; }
+.anc-form-status { font-size: 12px; line-height: 1.45; margin: 12px 0 0; min-height: 18px; }
+.anc-form-status.is-sent { color: #c7f1dd; }
+.anc-form-status.is-error { color: #f8a2ad; }
+.anc-panel-login { display: inline-block; margin-top: clamp(22px, 2.3vw, 34px); }
+
+.anc-mobile-menu { display: none; }
+.anc-ticker { border-bottom: 1px solid var(--anc-line); border-top: 1px solid var(--anc-line); overflow: hidden; padding: 14px 0; white-space: nowrap; }
+.anc-ticker-track { animation: anc-marquee 28s linear infinite; display: inline-flex; gap: 28px; min-width: max-content; }
+.anc-ticker-track span { color: rgba(245,244,241,.8); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
+.anc-ticker-track b { color: var(--anc-lilac); font-weight: 700; }
+
+.anc-scroll-cue { align-items: center; bottom: 28px; color: rgba(245,244,241,.62); display: flex; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 9px; font-weight: 700; gap: 10px; letter-spacing: .16em; position: absolute; right: clamp(20px, 5vw, 100px); z-index: 11; }
+.anc-scroll-cue i { animation: anc-scroll-pulse 1.6s var(--anc-ease) infinite; background: var(--anc-lilac); display: block; height: 1px; width: 36px; }
+
+.anc-motion-enabled [data-anc-reveal] { opacity: 0; transform: translateY(34px); transition: opacity 760ms var(--anc-ease), transform 860ms var(--anc-ease); }
+.anc-motion-enabled [data-anc-reveal].is-revealed { opacity: 1; transform: translateY(0); }
+.anc-motion-enabled [data-anc-reveal="right"] { transform: translateX(44px); }
+.anc-motion-enabled [data-anc-reveal="right"].is-revealed { transform: translateX(0); }
+
+@keyframes anc-rise-in { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes anc-panel-in { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes anc-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes anc-scroll-pulse { 0%,100% { transform: scaleX(.45); transform-origin: left; } 50% { transform: scaleX(1); transform-origin: left; } }
+
+@media (max-width: 900px) {
+  .anc-desktop-nav { display: none; }
+  .anc-menu-toggle { background: transparent; border: 0; cursor: pointer; display: block; height: 44px; padding: 0; position: relative; width: 44px; z-index: 61; }
+  .anc-menu-toggle span { background: white; height: 1px; left: 50%; position: absolute; transform: translateX(-50%); transition: transform 450ms var(--anc-ease), opacity 250ms ease; width: 22px; }
+  .anc-menu-toggle span:nth-child(1) { top: 15px; }
+  .anc-menu-toggle span:nth-child(2) { top: 21px; }
+  .anc-menu-toggle span:nth-child(3) { top: 27px; }
+  .anc-menu-toggle.is-open span:nth-child(1) { top: 21px; transform: translateX(-50%) rotate(45deg); }
+  .anc-menu-toggle.is-open span:nth-child(2) { opacity: 0; transform: translateX(-50%) scaleX(0); }
+  .anc-menu-toggle.is-open span:nth-child(3) { top: 21px; transform: translateX(-50%) rotate(-45deg); }
+  .anc-mobile-menu { align-items: center; backdrop-filter: blur(28px) saturate(140%); background: rgba(4,4,6,.96); clip-path: circle(2% at calc(100% - 42px) 42px); display: flex; inset: 0; justify-content: center; opacity: 0; pointer-events: none; position: fixed; transition: clip-path 700ms var(--anc-ease), opacity 450ms ease; z-index: 60; }
+  .anc-mobile-menu.is-open { clip-path: circle(150% at calc(100% - 42px) 42px); opacity: 1; pointer-events: auto; }
+  .anc-mobile-menu-links { align-items: center; display: flex; flex-direction: column; gap: 29px; }
+  .anc-mobile-menu-links a { font-size: clamp(20px, 6vw, 29px); letter-spacing: .11em; opacity: 0; transform: translateY(16px); transition: opacity 400ms ease calc(180ms + var(--item) * 70ms), transform 500ms var(--anc-ease) calc(180ms + var(--item) * 70ms); }
+  .anc-mobile-menu.is-open a { opacity: 1; transform: translateY(0); }
+  .anc-hero-body { gap: 40px; grid-template-columns: 1fr; padding-top: 122px; }
+  .anc-signup-panel { border-left: 0; border-top: 1px solid rgba(195,173,255,.65); max-width: 540px; padding-left: 0; padding-top: 24px; width: 100%; }
+  .anc-scroll-cue { display: none; }
+}
+
+@media (max-width: 640px) {
+  .anc-hero-scene { min-height: 100svh; }
+  .anc-hero-nav { padding: 18px 20px; }
+  .anc-hero-body { align-content: start; min-height: 100svh; padding: 100px 20px 42px; }
+  .anc-hero-copy h1 { font-size: clamp(3.15rem, 15vw, 5rem); }
+  .anc-hero-description { font-size: 15px; line-height: 1.55; margin-top: 22px; max-width: 390px; }
+  .anc-hero-metrics { font-size: 9px; gap: 9px 16px; margin-top: 24px; }
+  .anc-signup-panel h2 { font-size: 2.75rem; }
+  .anc-signup-form { margin-top: 27px; }
+}
+
+@media (max-height: 740px) and (min-width: 641px) {
+  .anc-hero-body { padding-bottom: 34px; padding-top: 102px; }
+  .anc-hero-copy h1 { font-size: clamp(4rem, 7vw, 6.8rem); }
+  .anc-hero-description { margin-top: 20px; }
+  .anc-hero-metrics { margin-top: 22px; }
+  .anc-signup-form { margin-top: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anc-hero-video { display: none; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
+
+.anc-menu-open { overflow: hidden; }
