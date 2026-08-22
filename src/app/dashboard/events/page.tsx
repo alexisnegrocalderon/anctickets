@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Event, Profile } from "@/lib/database.types";
+import { Badge, LinkButton, PageHeader } from "@/components/dashboard/ui";
+import CopyEventLinkButton from "@/components/dashboard/copy-event-link-button";
 
 const statusLabel: Record<Event["status"], string> = {
   draft: "Borrador",
@@ -8,10 +10,10 @@ const statusLabel: Record<Event["status"], string> = {
   cancelled: "Cancelado",
 };
 
-const statusClass: Record<Event["status"], string> = {
-  draft: "bg-white/10 text-neutral-300",
-  published: "bg-emerald-500/15 text-emerald-300",
-  cancelled: "bg-red-500/15 text-red-300",
+const statusTone: Record<Event["status"], "neutral" | "success" | "danger"> = {
+  draft: "neutral",
+  published: "success",
+  cancelled: "danger",
 };
 
 export default async function DashboardEventsPage() {
@@ -35,20 +37,13 @@ export default async function DashboardEventsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-[#f5f4f1]">
-          Mis eventos
-        </h1>
-        <Link
-          href="/dashboard/events/new"
-          className="rounded-full bg-[#a77fff] px-5 py-2 text-sm font-semibold text-[#120d1b] transition hover:bg-[#c3adff]"
-        >
-          + Nuevo evento
-        </Link>
-      </div>
+      <PageHeader
+        title="Mis eventos"
+        actions={<LinkButton variant="primary" href="/dashboard/events/new">+ Nuevo evento</LinkButton>}
+      />
 
       {!profile?.mp_connected ? (
-        <div className="mb-6 flex items-center justify-between rounded-xl border border-[#a77fff]/30 bg-[#a77fff]/10 px-5 py-4">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#a77fff]/30 bg-[#a77fff]/10 px-5 py-4">
           <div>
             <p className="font-semibold text-[#c3adff]">
               Conecta tu cuenta de Mercado Pago
@@ -58,12 +53,9 @@ export default async function DashboardEventsPage() {
               directo en tu cuenta.
             </p>
           </div>
-          <Link
-            href="/dashboard/mercadopago/connect"
-            className="whitespace-nowrap rounded-full bg-[#a77fff] px-4 py-2 text-sm font-semibold text-[#120d1b] transition hover:bg-[#c3adff]"
-          >
+          <LinkButton variant="primary" href="/dashboard/mercadopago/connect">
             Conectar Mercado Pago
-          </Link>
+          </LinkButton>
         </div>
       ) : null}
 
@@ -74,24 +66,25 @@ export default async function DashboardEventsPage() {
       ) : (
         <div className="divide-y divide-white/10 rounded-xl border border-white/10 bg-[#101010]">
           {events.map((event) => (
-            <Link
+            <div
               key={event.id}
-              href={`/dashboard/events/${event.id}/edit`}
-              className="flex items-center justify-between px-5 py-4 transition hover:bg-white/5"
+              className="flex flex-wrap items-center justify-between gap-3 px-5 py-4"
             >
-              <div>
-                <p className="font-semibold text-[#f5f4f1]">{event.title}</p>
+              <Link
+                href={`/dashboard/events/${event.id}/edit`}
+                className="min-w-0 flex-1 transition hover:opacity-80"
+              >
+                <p className="truncate font-semibold text-[#f5f4f1]">{event.title}</p>
                 <p className="text-sm text-neutral-400">
                   {new Date(event.event_date).toLocaleString("es-CL")}
                   {event.venue ? ` · ${event.venue}` : ""}
                 </p>
+              </Link>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge tone={statusTone[event.status]}>{statusLabel[event.status]}</Badge>
+                <CopyEventLinkButton eventId={event.id} />
               </div>
-              <span
-                className={`rounded-full px-3 py-1 text-xs font-semibold ${statusClass[event.status]}`}
-              >
-                {statusLabel[event.status]}
-              </span>
-            </Link>
+            </div>
           ))}
         </div>
       )}

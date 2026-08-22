@@ -72,26 +72,22 @@ export default function ScannerClient() {
       <div
         id="qr-scanner"
         ref={containerRef}
-        className="overflow-hidden rounded-xl border border-white/15"
+        className="overflow-hidden rounded-xl border border-white/15 bg-black [&_video]:w-full [&_video]:object-cover"
       />
 
-      {checking ? (
-        <p className="text-center text-sm text-neutral-400">Validando...</p>
-      ) : result ? (
-        <div
-          className={`rounded-lg px-4 py-3 text-center text-sm font-semibold ${
-            result.valid
-              ? "bg-emerald-500/15 text-emerald-300"
-              : "bg-red-500/15 text-red-300"
-          }`}
-        >
-          {result.message}
-        </div>
-      ) : (
-        <p className="text-center text-sm text-neutral-400">
-          Apunta la cámara al código QR de la entrada.
-        </p>
-      )}
+      <div
+        className={`rounded-xl px-4 py-4 text-center text-base font-semibold transition ${
+          checking
+            ? "bg-white/10 text-neutral-300"
+            : result
+              ? result.valid
+                ? "bg-emerald-500/15 text-emerald-300"
+                : "bg-red-500/15 text-red-300"
+              : "bg-white/5 text-neutral-400"
+        }`}
+      >
+        {checking ? "Validando..." : result ? result.message : "Apunta la cámara al código QR de la entrada"}
+      </div>
     </div>
   );
 }

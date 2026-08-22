@@ -13,7 +13,12 @@ async function requireUser() {
   return { supabase, user };
 }
 
-export async function createEvent(formData: FormData) {
+/**
+ * Crea el evento como borrador y devuelve su id, sin redirigir — la usa el wizard
+ * (`event-wizard.tsx`) para guardar apenas se completan los pasos obligatorios y
+ * seguir operando sobre ese mismo evento en los pasos siguientes.
+ */
+export async function createDraftEvent(formData: FormData): Promise<{ id: string }> {
   const { supabase, user } = await requireUser();
 
   const title = String(formData.get("title") ?? "").trim();
@@ -45,7 +50,7 @@ export async function createEvent(formData: FormData) {
   }
 
   revalidatePath("/dashboard/events");
-  redirect(`/dashboard/events/${data.id}/edit`);
+  return { id: data.id };
 }
 
 export async function updateEvent(eventId: string, formData: FormData) {

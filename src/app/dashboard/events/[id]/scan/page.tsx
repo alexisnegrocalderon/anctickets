@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Event } from "@/lib/database.types";
 import ScannerClient from "./scanner-client";
+import { PageHeader } from "@/components/dashboard/ui";
 
 export default async function ScanPage({
   params,
@@ -27,10 +28,7 @@ export default async function ScanPage({
 
   return (
     <div className="mx-auto max-w-md">
-      <h1 className="mb-1 text-2xl font-bold tracking-tight text-[#f5f4f1]">
-        Validar entradas
-      </h1>
-      <p className="mb-6 text-sm text-neutral-400">{event.title}</p>
+      <PageHeader title="Validar entradas" subtitle={event.title} />
       <ScannerClient />
     </div>
   );
