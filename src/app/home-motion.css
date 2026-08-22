@@ -204,6 +204,29 @@
 
 .anc-menu-open { overflow: hidden; }
 
+.anc-scroll-progress { background: rgba(255,255,255,.12); height: 3px; left: 0; position: fixed; right: 0; top: 0; z-index: 100; }
+.anc-scroll-progress span { background: var(--anc-lilac); display: block; height: 100%; transform: scaleX(0); transform-origin: left; width: 100%; }
+
+.anc-motion-enabled [data-anc-grow] { clip-path: inset(8% 5% 8% 5%); opacity: .72; transform: scale(.9); transition: clip-path 1000ms var(--anc-ease), opacity 800ms ease, transform 1100ms var(--anc-ease); }
+.anc-motion-enabled [data-anc-grow].is-growing { clip-path: inset(0); opacity: 1; transform: scale(1); }
+.anc-motion-enabled [data-anc-grow] img { transform: scale(1.12); transition: transform 1400ms var(--anc-ease); }
+.anc-motion-enabled [data-anc-grow].is-growing img { transform: scale(1); }
+
+.anc-editorial-strip { background: #0b0b0b; border-bottom: 1px solid var(--anc-line); overflow: hidden; padding: clamp(72px, 9vw, 128px) 0; }
+.anc-editorial-strip-inner { align-items: center; display: grid; gap: clamp(34px, 6vw, 90px); grid-template-columns: .72fr 1.28fr; margin: 0 auto; max-width: 1500px; padding: 0 clamp(20px, 5vw, 100px); }
+.anc-editorial-copy p:first-child { color: var(--anc-lilac-light); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 10px; font-weight: 700; letter-spacing: .18em; }
+.anc-editorial-copy h2 { font-size: clamp(2.6rem, 5.6vw, 6.8rem); font-weight: 900; letter-spacing: -.1em; line-height: .78; margin-top: 24px; }
+.anc-editorial-copy p:last-child { color: rgba(245,244,241,.66); font-size: 15px; line-height: 1.65; margin-top: 28px; max-width: 360px; }
+.anc-editorial-image { border: 1px solid var(--anc-line); min-height: clamp(420px, 52vw, 720px); overflow: hidden; position: relative; }
+.anc-editorial-image img { height: 100%; inset: 0; object-fit: cover; position: absolute; width: 100%; }
+.anc-editorial-image::after { background: linear-gradient(to top, rgba(9,9,9,.72), transparent 55%); content: ""; inset: 0; position: absolute; }
+.anc-editorial-image figcaption { bottom: 22px; color: var(--anc-warm-white); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 9px; font-weight: 700; left: 22px; letter-spacing: .16em; position: absolute; z-index: 2; }
+
+@media (max-width: 900px) {
+  .anc-editorial-strip-inner { grid-template-columns: 1fr; }
+  .anc-editorial-image { min-height: 420px; }
+}
+
 .anc-product-lab { background: #0b0b0b; border-bottom: 1px solid var(--anc-line); }
 .anc-lab-grid { display: grid; gap: 12px; grid-template-columns: 1.2fr .8fr; margin-top: clamp(48px, 7vw, 92px); }
 .anc-lab-card { background: #101010; border: 1px solid var(--anc-line); min-height: 360px; overflow: hidden; padding: clamp(20px, 2.3vw, 34px); position: relative; }

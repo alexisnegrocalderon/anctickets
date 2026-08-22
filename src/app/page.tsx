@@ -13,6 +13,7 @@ const heroVideo = "https://files.manuscdn.com/user_upload_by_module/session_file
 const heroPoster = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/tmjnuDhpwrWwdDyk.jpg";
 const braceletImage = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/ucGRmmUxeMRLDHAq.jpeg";
 const ticketImage = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/sJWyjPBFsNofukrp.jpg";
+const crowdImage = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/odnSxdePQnJFmYhJ.jpg";
 
 const steps = [
   { number: "01", title: "CREA TU FECHA.", description: "Arma el evento con una secuencia visual de seis decisiones. Sin formularios eternos." },
@@ -30,6 +31,7 @@ const operationalBenefits = [
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#090909] text-[#f5f4f1]">
+      <div className="anc-scroll-progress" aria-hidden="true"><span /></div>
       <HomeMotionEffects />
 
       <section className="anc-hero-scene" style={{ backgroundImage: `url(${heroPoster})` }}>
@@ -59,6 +61,20 @@ export default function Home() {
           <span>VENTA DIRECTA <b>✦</b> COSTO ANC $0 <b>✦</b> MERCADO PAGO CONECTADO <b>✦</b> CONTROL DE PUERTA <b>✦</b> VENTA DIRECTA <b>✦</b> COSTO ANC $0 <b>✦</b> MERCADO PAGO CONECTADO <b>✦</b> CONTROL DE PUERTA <b>✦</b></span>
         </div>
       </div>
+
+      <section className="anc-editorial-strip" aria-labelledby="editorial-title">
+        <div className="anc-editorial-strip-inner">
+          <div data-anc-reveal className="anc-editorial-copy">
+            <p>LA NOCHE EN MOVIMIENTO</p>
+            <h2 id="editorial-title">TU EVENTO<br />NO ES UN FORMULARIO.</h2>
+            <p>Es una experiencia que empieza antes de la puerta: venta, pago, ticket y acceso con una misma dirección visual.</p>
+          </div>
+          <figure data-anc-grow className="anc-editorial-image">
+            <img src={crowdImage} alt="Multitud levantando las manos durante una noche de música" />
+            <figcaption>ANC / VENTA + ACCESO</figcaption>
+          </figure>
+        </div>
+      </section>
 
       <section className="border-b border-white/10 bg-[#0d0d0d] px-5 py-6 sm:px-10">
         <div className="mx-auto grid max-w-7xl gap-5 text-xs font-bold tracking-[.14em] text-neutral-300 sm:grid-cols-3 sm:gap-8">
@@ -104,7 +120,7 @@ export default function Home() {
       <ProductInteractions />
 
       <section className="grid border-b border-white/10 lg:grid-cols-2">
-        <div data-anc-reveal className="relative min-h-[530px] overflow-hidden">
+        <div data-anc-grow className="relative min-h-[530px] overflow-hidden">
           <img src={braceletImage} alt="Pulsera ANC Tickets de color lila" className="h-full w-full object-cover object-center contrast-125" />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/70" />
           <div className="absolute bottom-7 left-7 border border-white/20 bg-black/50 px-4 py-3 text-[10px] font-black tracking-[.18em] text-white backdrop-blur-md sm:bottom-10 sm:left-10">CONTROL DE ACCESO / ANC</div>
@@ -132,7 +148,7 @@ export default function Home() {
           <h2 className="mt-4 text-5xl font-black leading-[.83] tracking-[-.09em] sm:text-7xl">UNA VENTA<br />QUE SE SIENTE<br />COMO TU EVENTO.</h2>
           <p className="mt-7 max-w-sm text-base leading-7 text-neutral-400">Tu audiencia llega a una página clara, compra en pocos pasos y entra con un QR listo para la puerta.</p>
         </div>
-        <div data-anc-reveal="right" className="relative min-h-[470px] overflow-hidden border border-white/10 bg-[#151515] p-7 sm:p-10">
+        <div data-anc-grow className="relative min-h-[470px] overflow-hidden border border-white/10 bg-[#151515] p-7 sm:p-10">
           <img src={ticketImage} alt="Ambiente nocturno de un evento" className="absolute inset-0 h-full w-full object-cover grayscale contrast-125" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
           <div className="relative flex h-full flex-col justify-end">
