@@ -36,8 +36,15 @@
   z-index: 30;
 }
 
-.anc-hero-wordmark {
+.anc-hero-wordmark-link {
+  align-items: center;
   color: var(--anc-warm-white);
+  display: inline-flex;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.anc-hero-wordmark {
   display: inline-flex;
   flex-direction: column;
   font-size: clamp(18px, 1.65vw, 27px);
@@ -45,10 +52,9 @@
   font-weight: 900;
   letter-spacing: -0.1em;
   line-height: 0.68;
-  text-decoration: none;
 }
 
-.anc-hero-wordmark span { margin-left: 0.08em; }
+.anc-hero-wordmark span { color: var(--anc-lilac); margin-left: 0.08em; }
 
 .anc-desktop-nav {
   align-items: center;
