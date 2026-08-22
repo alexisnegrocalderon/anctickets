@@ -58,6 +58,9 @@ Antes de correr el proyecto necesitas crear y configurar:
    los pagos vía API en el webhook.
 6. Configura la URL de notificaciones (webhooks) en el panel de tu app:
    `https://TU_DOMINIO/api/webhooks/mercadopago`.
+7. En la sección de notificaciones/webhooks de tu app, copia la **clave
+   secreta** (usada para firmar `x-signature`) a `MP_WEBHOOK_SECRET`. El
+   endpoint rechaza cualquier notificación cuya firma no coincida.
 
 ### 4. Resend (emails)
 

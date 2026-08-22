@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { calculateFees } from "@/lib/fees";
-import { createMpPreference } from "@/lib/mercadopago";
+import { createMpPreference, refreshMpOAuthToken } from "@/lib/mercadopago";
 import type { Event, MpAccount, TicketType } from "@/lib/database.types";
 
 interface CheckoutItemInput {
@@ -63,8 +63,41 @@ export async function POST(request: Request) {
     );
   }
 
+  let organizerAccessToken = mpAccount.access_token;
+
+  if (mpAccount.refresh_token && mpAccount.expires_at) {
+    const expiresAt = new Date(mpAccount.expires_at).getTime();
+    const isExpiringSoon = expiresAt - Date.now() < 5 * 60 * 1000;
+
+    if (isExpiringSoon) {
+      try {
+        const refreshed = await refreshMpOAuthToken(mpAccount.refresh_token);
+        organizerAccessToken = refreshed.access_token;
+
+        await admin
+          .from("mp_accounts")
+          .update({
+            access_token: refreshed.access_token,
+            refresh_token: refreshed.refresh_token,
+            expires_at: new Date(
+              Date.now() + refreshed.expires_in * 1000
+            ).toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("organizer_id", event.organizer_id);
+      } catch (err) {
+        console.error("Error renovando token de Mercado Pago:", err);
+        return NextResponse.json(
+          { error: "La conexión de Mercado Pago del organizador expiró. Debe reconectarla." },
+          { status: 400 }
+        );
+      }
+    }
+  }
+
   let basePriceSum = 0;
   const validatedItems: { ticketType: TicketType; quantity: number }[] = [];
+  const now = Date.now();
 
   for (const item of items) {
     const ticketType = ticketTypes.find((tt) => tt.id === item.ticketTypeId);
@@ -72,6 +105,20 @@ export async function POST(request: Request) {
 
     if (!ticketType || !Number.isInteger(quantity) || quantity <= 0) {
       return NextResponse.json({ error: "Entrada inválida" }, { status: 400 });
+    }
+
+    if (ticketType.sales_start && now < new Date(ticketType.sales_start).getTime()) {
+      return NextResponse.json(
+        { error: `La venta de "${ticketType.name}" aún no comienza` },
+        { status: 400 }
+      );
+    }
+
+    if (ticketType.sales_end && now > new Date(ticketType.sales_end).getTime()) {
+      return NextResponse.json(
+        { error: `La venta de "${ticketType.name}" ya finalizó` },
+        { status: 400 }
+      );
     }
 
     const remaining = ticketType.quantity - ticketType.sold_count;
@@ -127,7 +174,7 @@ export async function POST(request: Request) {
 
   try {
     const preference = await createMpPreference({
-      organizerAccessToken: mpAccount.access_token,
+      organizerAccessToken,
       items: validatedItems.map(({ ticketType, quantity }) => ({
         title: `${event.title} — ${ticketType.name}`,
         quantity,

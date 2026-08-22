@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMpPayment } from "@/lib/mercadopago";
+import { getMpPayment, verifyMpWebhookSignature } from "@/lib/mercadopago";
 import { sendTicketConfirmationEmail } from "@/lib/email";
 import type { Event, Order, OrderItem, TicketType } from "@/lib/database.types";
 
@@ -27,6 +27,17 @@ export async function POST(request: Request) {
 
   if (!resolvedPaymentId) {
     return NextResponse.json({ error: "missing payment id" }, { status: 400 });
+  }
+
+  const isValidSignature = verifyMpWebhookSignature({
+    xSignature: request.headers.get("x-signature"),
+    xRequestId: request.headers.get("x-request-id"),
+    dataId: String(resolvedPaymentId),
+  });
+
+  if (!isValidSignature) {
+    console.error("Firma inválida en webhook de Mercado Pago");
+    return NextResponse.json({ error: "invalid signature" }, { status: 401 });
   }
 
   const admin = createAdminClient();
