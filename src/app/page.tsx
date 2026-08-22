@@ -239,7 +239,13 @@ export default async function Home() {
 
       <footer className="border-t border-white/10 px-5 py-8 sm:px-10">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 text-[10px] font-bold tracking-[.12em] text-neutral-500 sm:flex-row sm:items-end sm:justify-between">
-          <span>ANC TICKETS / CHILE</span>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+            <span>ANC TICKETS / CHILE</span>
+            <span className="flex gap-4">
+              <Link href="/privacidad" className="transition hover:text-[#c3adff]">PRIVACIDAD</Link>
+              <Link href="/terminos" className="transition hover:text-[#c3adff]">TÉRMINOS</Link>
+            </span>
+          </div>
           <span className="max-w-lg text-left leading-5 sm:text-right">COSTO DE PLATAFORMA ANC: $0. LAS TARIFAS Y CONDICIONES DEL PROCESAMIENTO DE PAGO CORRESPONDEN A MERCADO PAGO.</span>
         </div>
       </footer>
