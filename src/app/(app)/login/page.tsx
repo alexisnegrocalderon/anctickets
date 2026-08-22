@@ -5,9 +5,9 @@ import GoogleSignInButton from "./google-sign-in-button";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; error?: string }>;
 }) {
-  const { next } = await searchParams;
+  const { next, error } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -25,6 +25,12 @@ export default async function LoginPage({
           Inicia sesión para comprar entradas o crear tus propios eventos.
         </p>
       </div>
+      {error ? (
+        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          No pudimos iniciar sesión. Intenta de nuevo; si el problema
+          persiste, contacta a soporte.
+        </p>
+      ) : null}
       <GoogleSignInButton next={next} />
     </div>
   );
