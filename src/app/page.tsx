@@ -188,7 +188,7 @@ export default async function Home() {
               {events.map((event) => (
                 <Link
                   key={event.id}
-                  href={`/events/${event.id}`}
+                  href={`/${event.slug}`}
                   data-cursor-hover
                   className="group overflow-hidden border border-white/10 bg-[#101010] transition hover:border-[#a77fff]"
                 >

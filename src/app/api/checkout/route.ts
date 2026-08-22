@@ -184,7 +184,7 @@ export async function POST(request: Request) {
       externalReference: order.id,
       payerEmail: user.email,
       successUrl: `${siteUrl}/dashboard/tickets?order=${order.id}`,
-      failureUrl: `${siteUrl}/events/${eventId}?checkout=failed`,
+      failureUrl: `${siteUrl}/${event.slug}?checkout=failed`,
       pendingUrl: `${siteUrl}/dashboard/tickets?order=${order.id}`,
       notificationUrl: `${siteUrl}/api/webhooks/mercadopago`,
     });

@@ -80,8 +80,8 @@ export default async function EditEventPage({
                 <Button variant="outline" type="submit">Pasar a borrador</Button>
               </form>
             )}
-            <CopyEventLinkButton eventId={id} />
-            <LinkButton href={`/events/${id}`}>Ver página pública</LinkButton>
+            <CopyEventLinkButton slug={event.slug} />
+            <LinkButton href={`/${event.slug}`}>Ver página pública</LinkButton>
             <LinkButton href={`/dashboard/events/${id}/scan`}>Validar entradas</LinkButton>
           </>
         }

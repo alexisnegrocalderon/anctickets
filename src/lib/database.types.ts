@@ -26,6 +26,7 @@ export type Event = {
   id: string;
   organizer_id: string;
   title: string;
+  slug: string;
   description: string | null;
   venue: string | null;
   event_date: string;

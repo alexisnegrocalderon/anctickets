@@ -7,10 +7,10 @@ const buttonBase =
   "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-[#f5f4f1] transition hover:border-[#c3adff] hover:text-[#c3adff]";
 
 export default function CopyEventLinkButton({
-  eventId,
+  slug,
   className = "",
 }: {
-  eventId: string;
+  slug: string;
   className?: string;
 }) {
   const [copied, setCopied] = useState(false);
@@ -19,7 +19,7 @@ export default function CopyEventLinkButton({
     event.preventDefault();
     event.stopPropagation();
 
-    const url = `${window.location.origin}/events/${eventId}`;
+    const url = `${window.location.origin}/${slug}`;
 
     try {
       await navigator.clipboard.writeText(url);

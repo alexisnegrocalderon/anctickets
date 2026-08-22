@@ -82,7 +82,7 @@ export default async function DashboardEventsPage() {
               </Link>
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={statusTone[event.status]}>{statusLabel[event.status]}</Badge>
-                <CopyEventLinkButton eventId={event.id} />
+                <CopyEventLinkButton slug={event.slug} />
               </div>
             </div>
           ))}

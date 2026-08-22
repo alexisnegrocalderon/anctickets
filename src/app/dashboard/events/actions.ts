@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { slugify } from "@/lib/slug";
 
 async function requireUser() {
   const supabase = await createClient();
@@ -11,6 +12,32 @@ async function requireUser() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   return { supabase, user };
+}
+
+/**
+ * Genera un slug único a partir del título — se llama una sola vez, al crear el
+ * evento, para que el link público quede estable aunque el título se edite después.
+ */
+async function generateUniqueSlug(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  title: string
+): Promise<string> {
+  const base = slugify(title) || "evento";
+  let candidate = base;
+  let attempt = 1;
+
+  while (true) {
+    const { data } = await supabase
+      .from("events")
+      .select("id")
+      .eq("slug", candidate)
+      .maybeSingle();
+
+    if (!data) return candidate;
+
+    attempt += 1;
+    candidate = `${base}-${attempt}`;
+  }
 }
 
 /**
@@ -31,11 +58,14 @@ export async function createDraftEvent(formData: FormData): Promise<{ id: string
     throw new Error("Título y fecha son obligatorios");
   }
 
+  const slug = await generateUniqueSlug(supabase, title);
+
   const { data, error } = await supabase
     .from("events")
     .insert({
       organizer_id: user.id,
       title,
+      slug,
       description: description || null,
       venue: venue || null,
       event_date: new Date(eventDate).toISOString(),
