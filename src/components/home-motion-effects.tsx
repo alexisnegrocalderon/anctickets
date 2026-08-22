@@ -8,6 +8,22 @@ export default function HomeMotionEffects() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     document.documentElement.classList.add("anc-motion-enabled");
+    const hero = document.querySelector<HTMLElement>(".anc-hero-scene");
+    let frame = 0;
+
+    function updateHeroDepth() {
+      if (hero) {
+        const depth = Math.min(window.scrollY * 0.035, 24);
+        hero.style.setProperty("--anc-scroll-y", `${depth}px`);
+        hero.style.setProperty("--anc-scroll-glow", `${Math.min(window.scrollY * 0.0007, 0.17)}`);
+      }
+      frame = 0;
+    }
+
+    function onScroll() {
+      if (!frame) frame = window.requestAnimationFrame(updateHeroDepth);
+    }
+
     const items = Array.from(document.querySelectorAll<HTMLElement>("[data-anc-reveal]"));
     const observer = new IntersectionObserver(
       (entries) => {
@@ -22,8 +38,12 @@ export default function HomeMotionEffects() {
     );
 
     items.forEach((item) => observer.observe(item));
+    updateHeroDepth();
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
       document.documentElement.classList.remove("anc-motion-enabled");
     };
   }, []);

@@ -6,6 +6,7 @@ import Link from "next/link";
 import AmbientSoundControl from "@/components/ambient-sound-control";
 import HeroSignup from "@/components/hero-signup";
 import HomeMotionEffects from "@/components/home-motion-effects";
+import ProductInteractions from "@/components/product-interactions";
 import "./home-motion.css";
 
 const heroVideo = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/GbHXpGORdFcoZgeV.mp4";
@@ -99,6 +100,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ProductInteractions />
 
       <section className="grid border-b border-white/10 lg:grid-cols-2">
         <div data-anc-reveal className="relative min-h-[530px] overflow-hidden">

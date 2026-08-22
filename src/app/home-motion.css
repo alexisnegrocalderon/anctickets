@@ -21,6 +21,8 @@
   position: relative;
 }
 
+.anc-hero-video { animation: anc-video-breathe 13s var(--anc-ease) infinite alternate; transform: scale(1.07) translateY(calc(var(--anc-scroll-y, 0px) * -.62)); will-change: transform; }
+
 .anc-hero-nav {
   align-items: center;
   border-bottom: 1px solid var(--anc-line);
@@ -93,7 +95,7 @@
   z-index: 10;
 }
 
-.anc-hero-copy { animation: anc-rise-in 900ms var(--anc-ease) 110ms both; max-width: 750px; }
+.anc-hero-copy { animation: anc-rise-in 650ms var(--anc-ease) 60ms both; max-width: 750px; }
 .anc-eyebrow, .anc-panel-subtitle, .anc-hero-metrics, .anc-panel-chip {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: clamp(10px, .78vw, 13px);
@@ -115,7 +117,7 @@
 .anc-hero-metrics { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: clamp(28px, 3.4vw, 48px); color: rgba(245,244,241,.72); }
 
 .anc-signup-panel {
-  animation: anc-panel-in 1000ms var(--anc-ease) 210ms both;
+  animation: anc-panel-in 720ms var(--anc-ease) 150ms both;
   align-self: center;
   border-left: 1px solid rgba(195, 173, 255, .65);
   padding-left: clamp(22px, 3vw, 48px);
@@ -138,7 +140,7 @@
 
 .anc-mobile-menu { display: none; }
 .anc-ticker { border-bottom: 1px solid var(--anc-line); border-top: 1px solid var(--anc-line); overflow: hidden; padding: 14px 0; white-space: nowrap; }
-.anc-ticker-track { animation: anc-marquee 28s linear infinite; display: inline-flex; gap: 28px; min-width: max-content; }
+.anc-ticker-track { animation: anc-marquee 21s linear infinite; display: inline-flex; gap: 28px; min-width: max-content; }
 .anc-ticker-track span { color: rgba(245,244,241,.8); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
 .anc-ticker-track b { color: var(--anc-lilac); font-weight: 700; }
 
@@ -152,6 +154,7 @@
 
 @keyframes anc-rise-in { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes anc-panel-in { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes anc-video-breathe { from { transform: scale(1.07) translateY(calc(var(--anc-scroll-y, 0px) * -.62)); } to { transform: scale(1.1) translateY(calc((var(--anc-scroll-y, 0px) * -.62) - 10px)); } }
 @keyframes anc-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes anc-scroll-pulse { 0%,100% { transform: scaleX(.45); transform-origin: left; } 50% { transform: scaleX(1); transform-origin: left; } }
 
@@ -200,3 +203,57 @@
 }
 
 .anc-menu-open { overflow: hidden; }
+
+.anc-product-lab { background: #0b0b0b; border-bottom: 1px solid var(--anc-line); }
+.anc-lab-grid { display: grid; gap: 12px; grid-template-columns: 1.2fr .8fr; margin-top: clamp(48px, 7vw, 92px); }
+.anc-lab-card { background: #101010; border: 1px solid var(--anc-line); min-height: 360px; overflow: hidden; padding: clamp(20px, 2.3vw, 34px); position: relative; }
+.anc-lab-card-head { align-items: center; color: var(--anc-lilac-light); display: flex; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 10px; font-weight: 700; justify-content: space-between; letter-spacing: .16em; }
+.anc-lab-card-head i { background: var(--anc-lilac); height: 7px; width: 7px; }
+.anc-lab-card-flow { grid-row: span 2; min-height: 732px; }
+.anc-flow-layout { display: grid; gap: clamp(24px, 3vw, 52px); grid-template-columns: minmax(116px, .62fr) minmax(0, 1fr); margin-top: clamp(46px, 6vw, 86px); }
+.anc-flow-controls { display: flex; flex-direction: column; }
+.anc-flow-controls button { background: transparent; border: 0; border-bottom: 1px solid var(--anc-line); color: rgba(245,244,241,.43); cursor: pointer; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; padding: 17px 0; text-align: left; transition: color 220ms ease, padding-left 280ms var(--anc-ease); }
+.anc-flow-controls button span { color: var(--anc-lilac); display: block; font-size: 9px; margin-bottom: 6px; }
+.anc-flow-controls button.is-active { color: var(--anc-warm-white); padding-left: 12px; }
+.anc-flow-screen { align-self: center; border-left: 1px solid var(--anc-lilac); padding-left: clamp(18px, 2.5vw, 34px); }
+.anc-system-label { color: var(--anc-lilac-light); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 9px; font-weight: 700; letter-spacing: .14em; }
+.anc-flow-screen h3 { font-size: clamp(2rem, 3.2vw, 4rem); font-weight: 900; letter-spacing: -.08em; line-height: .82; margin-top: 22px; }
+.anc-flow-screen > p:not(.anc-system-label) { color: rgba(245,244,241,.67); font-size: 14px; line-height: 1.6; margin-top: 25px; max-width: 280px; }
+.anc-flow-progress { background: rgba(255,255,255,.12); height: 2px; margin-top: 42px; overflow: hidden; width: 100%; }
+.anc-flow-progress span { background: var(--anc-lilac); display: block; height: 100%; transition: width 500ms var(--anc-ease); }
+.anc-payment-card, .anc-qr-card { display: flex; flex-direction: column; }
+.anc-payment-stage { align-items: center; display: grid; flex: 1; grid-template-columns: 70px minmax(70px, 1fr) 70px; margin-top: 12px; }
+.anc-ticket-node, .anc-account-node { align-items: center; border: 1px solid rgba(245,244,241,.42); display: flex; flex-direction: column; height: 70px; justify-content: center; position: relative; transition: border-color 350ms ease, background 350ms ease; width: 70px; }
+.anc-ticket-node span, .anc-account-node span { color: rgba(245,244,241,.52); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 8px; letter-spacing: .1em; }
+.anc-ticket-node b, .anc-account-node b { font-size: 19px; font-weight: 900; margin-top: 3px; }
+.anc-payment-rail { display: flex; gap: 7px; overflow: hidden; padding: 0 10px; }
+.anc-payment-rail em { background: rgba(245,244,241,.2); display: block; height: 1px; min-width: 100%; }
+.anc-payment-card.is-connected .anc-ticket-node, .anc-payment-card.is-connected .anc-account-node { background: rgba(167,127,255,.18); border-color: var(--anc-lilac); }
+.anc-payment-card.is-connected .anc-payment-rail em { animation: anc-payment-flow 1.15s linear infinite; background: var(--anc-lilac); }
+.anc-payment-copy { color: rgba(245,244,241,.64); font-size: 13px; line-height: 1.55; margin-top: 10px; max-width: 470px; }
+.anc-lab-action { align-self: flex-start; background: transparent; border: 1px solid rgba(245,244,241,.4); color: var(--anc-warm-white); cursor: pointer; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 10px; font-weight: 700; letter-spacing: .12em; margin-top: 25px; padding: 13px 15px; transition: background 220ms ease, border-color 220ms ease, color 220ms ease; }
+.anc-lab-action:hover { background: var(--anc-lilac); border-color: var(--anc-lilac); color: #160d22; }
+.anc-qr-stage { align-items: center; display: flex; flex: 1; justify-content: center; margin-top: 24px; min-height: 160px; overflow: hidden; position: relative; }
+.anc-qr-stage p { bottom: 0; color: rgba(245,244,241,.7); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 9px; font-weight: 700; letter-spacing: .16em; position: absolute; }
+.anc-qr-code { background: var(--anc-warm-white); display: grid; gap: 4px; grid-template-columns: repeat(3, 12px); grid-template-rows: repeat(3, 12px); height: 52px; padding: 8px; width: 52px; }
+.anc-qr-code span { background: #101010; }
+.anc-qr-code span:nth-child(2), .anc-qr-code span:nth-child(4), .anc-qr-code span:nth-child(9) { background: var(--anc-lilac); }
+.anc-scan-line { background: var(--anc-lilac); box-shadow: 0 0 14px rgba(167,127,255,.65); height: 1px; left: 20%; opacity: 0; position: absolute; top: 35%; width: 60%; }
+.anc-qr-card.is-valid .anc-scan-line { animation: anc-scan 700ms var(--anc-ease) both; opacity: 1; }
+.anc-qr-card.is-valid .anc-qr-code { box-shadow: 0 0 0 1px var(--anc-lilac), 0 0 38px rgba(167,127,255,.25); }
+@keyframes anc-payment-flow { from { transform: translateX(-108%); } to { transform: translateX(108%); } }
+@keyframes anc-scan { from { transform: translateY(-48px); } to { transform: translateY(57px); } }
+
+@media (max-width: 900px) {
+  .anc-lab-grid { grid-template-columns: 1fr; }
+  .anc-lab-card-flow { min-height: 500px; }
+}
+
+@media (max-width: 560px) {
+  .anc-lab-card { min-height: 330px; padding: 20px; }
+  .anc-lab-card-flow { min-height: 490px; }
+  .anc-flow-layout { gap: 20px; grid-template-columns: 104px minmax(0, 1fr); margin-top: 40px; }
+  .anc-flow-controls button { font-size: 9px; }
+  .anc-flow-screen h3 { font-size: 2rem; }
+  .anc-flow-screen > p:not(.anc-system-label) { font-size: 12px; }
+}
