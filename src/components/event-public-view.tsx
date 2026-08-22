@@ -8,10 +8,12 @@ export default function EventPublicView({
   event,
   ticketTypes,
   isLoggedIn,
+  organizerName,
 }: {
   event: Event;
   ticketTypes: TicketType[] | null;
   isLoggedIn: boolean;
+  organizerName: string | null;
 }) {
   const date = new Date(event.event_date);
   const day = date.toLocaleDateString("es-CL", { day: "2-digit" });
@@ -64,6 +66,11 @@ export default function EventPublicView({
           </div>
 
           <div className="p-6 sm:p-8">
+            {organizerName ? (
+              <p className="mb-3 font-mono text-[10px] font-bold uppercase tracking-[.18em] text-neutral-500">
+                Una producción de <span className="text-[#f5f4f1]">{organizerName}</span>
+              </p>
+            ) : null}
             {event.venue ? (
               <p className="font-mono text-xs font-bold uppercase tracking-[.18em] text-[#a77fff]">
                 {event.venue}

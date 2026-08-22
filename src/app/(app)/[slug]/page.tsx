@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import type { Event, TicketType } from "@/lib/database.types";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { Event, Profile, TicketType } from "@/lib/database.types";
 import EventPublicView from "@/components/event-public-view";
 
 async function getEvent(slug: string) {
@@ -67,5 +68,19 @@ export default async function EventPublicPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  return <EventPublicView event={event} ticketTypes={ticketTypes} isLoggedIn={!!user} />;
+  const admin = createAdminClient();
+  const { data: organizerProfile } = await admin
+    .from("profiles")
+    .select("organizer_name")
+    .eq("id", event.organizer_id)
+    .single<Pick<Profile, "organizer_name">>();
+
+  return (
+    <EventPublicView
+      event={event}
+      ticketTypes={ticketTypes}
+      isLoggedIn={!!user}
+      organizerName={organizerProfile?.organizer_name ?? null}
+    />
+  );
 }
