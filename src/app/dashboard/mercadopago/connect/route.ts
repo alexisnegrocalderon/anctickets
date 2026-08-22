@@ -1,18 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { getMpAuthorizeUrl } from "@/lib/mercadopago";
 
-export async function GET() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.redirect(
-      new URL("/login?next=/dashboard/events", process.env.NEXT_PUBLIC_SITE_URL)
-    );
-  }
-
-  return NextResponse.redirect(getMpAuthorizeUrl(user.id));
+/** La conexión heredada por usuario queda deshabilitada; la conexión válida será por organización en Neon. */
+export async function GET(request: Request) {
+  return NextResponse.redirect(new URL("/dashboard", request.url));
 }

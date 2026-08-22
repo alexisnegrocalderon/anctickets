@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { organizationMemberships, organizations } from "@/lib/db/schema";
+import { organizationMemberships, organizations, profiles } from "@/lib/db/schema";
 
 export type OrganizerRole = "owner" | "manager" | "staff";
 
@@ -27,4 +27,11 @@ export async function requireOrganizationManager(slug: string) {
   const access = await getOrganizerAccess(slug);
   if (!access || !["owner", "manager"].includes(access.role)) redirect("/dashboard");
   return access;
+}
+
+export async function requireAncAdmin() {
+  const user = await requireCurrentUser();
+  const [profile] = await db.select({ globalRole: profiles.globalRole }).from(profiles).where(eq(profiles.userId, user.id));
+  if (profile?.globalRole !== "anc_admin") redirect("/dashboard");
+  return user;
 }

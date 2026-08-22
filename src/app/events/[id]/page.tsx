@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import type { Event, TicketType } from "@/lib/database.types";
+import { and, asc, eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { events, ticketTypes } from "@/lib/db/schema";
 import BuyForm from "./buy-form";
 
 export default async function EventPublicPage({
@@ -9,34 +12,20 @@ export default async function EventPublicPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
-
-  const { data: event } = await supabase
-    .from("events")
-    .select("*")
-    .eq("id", id)
-    .single<Event>();
+  const [event] = await db.select().from(events).where(and(eq(events.id, id), eq(events.status, "published")));
 
   if (!event) notFound();
 
-  const { data: ticketTypes } = await supabase
-    .from("ticket_types")
-    .select("*")
-    .eq("event_id", id)
-    .order("base_price", { ascending: true })
-    .returns<TicketType[]>();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const eventTicketTypes = await db.select().from(ticketTypes).where(eq(ticketTypes.eventId, event.id)).orderBy(asc(ticketTypes.basePrice));
+  const session = await auth.api.getSession({ headers: await headers() });
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
       <div className="mb-6 overflow-hidden rounded-2xl bg-neutral-200">
-        {event.image_url ? (
+        {event.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={event.image_url}
+            src={event.imageUrl}
             alt={event.title}
             className="aspect-video w-full object-cover"
           />
@@ -46,7 +35,7 @@ export default async function EventPublicPage({
       </div>
 
       <p className="text-sm font-semibold uppercase tracking-wide text-orange-500">
-        {new Date(event.event_date).toLocaleString("es-CL", {
+        {new Date(event.eventDate).toLocaleString("es-CL", {
           dateStyle: "full",
           timeStyle: "short",
         })}
@@ -65,15 +54,15 @@ export default async function EventPublicPage({
 
       <section className="mt-8 rounded-xl border border-neutral-200 bg-white p-5">
         <h2 className="mb-4 font-semibold text-neutral-900">Entradas</h2>
-        {!ticketTypes || ticketTypes.length === 0 ? (
+        {eventTicketTypes.length === 0 ? (
           <p className="text-neutral-500">
             Este evento todavía no tiene entradas disponibles.
           </p>
         ) : (
           <BuyForm
             eventId={event.id}
-            ticketTypes={ticketTypes}
-            isLoggedIn={!!user}
+            ticketTypes={eventTicketTypes.map((ticketType) => ({ id: ticketType.id, name: ticketType.name, basePrice: Number(ticketType.basePrice), capacity: ticketType.capacity, soldCount: ticketType.soldCount, reservedCount: ticketType.reservedCount }))}
+            isLoggedIn={!!session}
           />
         )}
       </section>

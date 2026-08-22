@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { ambassadors, auditLog, discountCodes, events, eventStaff, organizationActivationRequests, organizationMemberships, organizations, ticketTypes, users } from "@/lib/db/schema";
-import { requireCurrentUser, requireOrganizationManager } from "@/lib/organizer";
+import { requireAncAdmin, requireCurrentUser, requireOrganizationManager } from "@/lib/organizer";
 
 const slugify = (value: string) => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 56);
 const text = (formData: FormData, name: string) => String(formData.get(name) ?? "").trim();
@@ -33,6 +33,34 @@ export async function requestOrganizationActivation(formData: FormData) {
   await db.update(organizations).set({ status: "review", updatedAt: new Date() }).where(eq(organizations.id, organization.id));
   await recordAudit(organization.id, user.id, "organization", organization.id, "activation_requested", { status: "review" });
   revalidatePath(`/dashboard/organizer/${slug}`);
+}
+
+export async function reviewOrganizationActivation(formData: FormData) {
+  const admin = await requireAncAdmin();
+  const organizationId = text(formData, "organizationId");
+  const decision = text(formData, "decision") === "approve" ? "approve" : "reject";
+  const note = text(formData, "note");
+  const [organization] = await db.select().from(organizations).where(eq(organizations.id, organizationId));
+  if (!organization) throw new Error("La organización no existe.");
+  const nextStatus = decision === "approve" ? "active" : "draft";
+  await db.update(organizationActivationRequests).set({ status: decision === "approve" ? "approved" : "rejected", note: note || null, reviewedBy: admin.id, reviewedAt: new Date(), updatedAt: new Date() }).where(eq(organizationActivationRequests.organizationId, organization.id));
+  await db.update(organizations).set({ status: nextStatus, updatedAt: new Date() }).where(eq(organizations.id, organization.id));
+  await recordAudit(organization.id, admin.id, "organization", organization.id, decision === "approve" ? "activation_approved" : "activation_rejected", { status: nextStatus, note });
+  revalidatePath("/dashboard/admin/organizations");
+  revalidatePath(`/dashboard/organizer/${organization.slug}`);
+}
+
+export async function setOrganizerEventStatus(formData: FormData) {
+  const slug = text(formData, "slug");
+  const eventId = text(formData, "eventId");
+  const nextStatus = text(formData, "nextStatus") === "published" ? "published" : "draft";
+  const { organization, user } = await requireOrganizationManager(slug);
+  const [event] = await db.select().from(events).where(and(eq(events.id, eventId), eq(events.organizationId, organization.id)));
+  if (!event) throw new Error("El evento no pertenece a esta organización.");
+  if (nextStatus === "published" && organization.status !== "active") throw new Error("ANC debe activar la organización antes de publicar el primer evento.");
+  await db.update(events).set({ status: nextStatus, updatedAt: new Date() }).where(eq(events.id, event.id));
+  await recordAudit(organization.id, user.id, "event", event.id, nextStatus === "published" ? "published" : "returned_to_draft", { status: nextStatus });
+  revalidatePath(`/dashboard/organizer/${slug}/events`);
 }
 
 export async function updateOrganizationProfile(formData: FormData) {

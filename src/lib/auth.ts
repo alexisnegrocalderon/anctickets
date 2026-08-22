@@ -4,7 +4,7 @@ import { magicLink } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { Resend } from "resend";
 import { db } from "@/lib/db";
-import { accounts, sessions, users, verifications } from "@/lib/db/schema";
+import { accounts, profiles, sessions, users, verifications } from "@/lib/db/schema";
 
 function requireEmailConfig() {
   const apiKey = process.env.RESEND_API_KEY;
@@ -22,6 +22,16 @@ export const auth = betterAuth({
     provider: "pg",
     schema: { user: users, session: sessions, account: accounts, verification: verifications },
   }),
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          const isInitialAdmin = Boolean(process.env.ANC_ADMIN_EMAIL && user.email.toLowerCase() === process.env.ANC_ADMIN_EMAIL.toLowerCase());
+          await db.insert(profiles).values({ userId: user.id, globalRole: isInitialAdmin ? "anc_admin" : "user" }).onConflictDoNothing();
+        },
+      },
+    },
+  },
   socialProviders: googleConfigured
     ? { google: { clientId: process.env.GOOGLE_CLIENT_ID!, clientSecret: process.env.GOOGLE_CLIENT_SECRET!, prompt: "select_account" } }
     : {},

@@ -1,61 +1,42 @@
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { exchangeMpOAuthCode } from "@/lib/mercadopago";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { auditLog, mpAccounts, organizationMemberships, organizations } from "@/lib/db/schema";
+import { exchangeMpOAuthCode, verifyMpOAuthState } from "@/lib/mercadopago";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? origin;
+  if (!code || !state) return NextResponse.redirect(`${siteUrl}/dashboard?mp_error=missing_code`);
 
-  if (!code || !state) {
-    return NextResponse.redirect(
-      `${siteUrl}/dashboard/events?mp_error=missing_code`
-    );
-  }
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return NextResponse.redirect(`${siteUrl}/login?next=/dashboard`);
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const stateValue = verifyMpOAuthState(state);
+  if (!stateValue || stateValue.userId !== session.user.id) return NextResponse.redirect(`${siteUrl}/dashboard?mp_error=state`);
 
-  if (!user || user.id !== state) {
-    return NextResponse.redirect(`${siteUrl}/dashboard/events?mp_error=state`);
+  const [access] = await db
+    .select({ organization: organizations, role: organizationMemberships.role })
+    .from(organizationMemberships)
+    .innerJoin(organizations, eq(organizations.id, organizationMemberships.organizationId))
+    .where(and(eq(organizations.id, stateValue.organizationId), eq(organizationMemberships.userId, session.user.id)));
+
+  if (!access || !["owner", "manager"].includes(access.role) || access.organization.status !== "active") {
+    return NextResponse.redirect(`${siteUrl}/dashboard?mp_error=unauthorized`);
   }
 
   try {
     const tokenResponse = await exchangeMpOAuthCode(code);
-    const admin = createAdminClient();
-
-    const expiresAt = new Date(
-      Date.now() + tokenResponse.expires_in * 1000
-    ).toISOString();
-
-    const { error: upsertError } = await admin.from("mp_accounts").upsert({
-      organizer_id: user.id,
-      mp_user_id: String(tokenResponse.user_id),
-      access_token: tokenResponse.access_token,
-      refresh_token: tokenResponse.refresh_token,
-      public_key: tokenResponse.public_key,
-      expires_at: expiresAt,
-      updated_at: new Date().toISOString(),
-    });
-
-    if (upsertError) throw new Error(upsertError.message);
-
-    const { error: profileError } = await admin
-      .from("profiles")
-      .update({ mp_connected: true })
-      .eq("id", user.id);
-
-    if (profileError) throw new Error(profileError.message);
-
-    return NextResponse.redirect(
-      `${siteUrl}/dashboard/events?mp_connected=1`
-    );
-  } catch (err) {
-    console.error("Mercado Pago OAuth callback error:", err);
-    return NextResponse.redirect(`${siteUrl}/dashboard/events?mp_error=1`);
+    const expiresAt = new Date(Date.now() + tokenResponse.expires_in * 1000);
+    await db.insert(mpAccounts).values({ organizationId: access.organization.id, mpUserId: String(tokenResponse.user_id), accessToken: tokenResponse.access_token, refreshToken: tokenResponse.refresh_token, publicKey: tokenResponse.public_key, expiresAt, updatedAt: new Date() }).onConflictDoUpdate({ target: mpAccounts.organizationId, set: { mpUserId: String(tokenResponse.user_id), accessToken: tokenResponse.access_token, refreshToken: tokenResponse.refresh_token, publicKey: tokenResponse.public_key, expiresAt, updatedAt: new Date() } });
+    await db.insert(auditLog).values({ organizationId: access.organization.id, actorUserId: session.user.id, entityType: "mp_account", entityId: access.organization.id, action: "mercadopago_connected", after: { mpUserId: String(tokenResponse.user_id), expiresAt: expiresAt.toISOString() } });
+    return NextResponse.redirect(`${siteUrl}/dashboard/organizer/${access.organization.slug}/profile?mp_connected=1`);
+  } catch (error) {
+    console.error("Mercado Pago OAuth callback error:", error);
+    return NextResponse.redirect(`${siteUrl}/dashboard/organizer/${access.organization.slug}/profile?mp_error=1`);
   }
 }

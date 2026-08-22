@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { TicketType } from "@/lib/database.types";
 import { calculateFees } from "@/lib/fees";
+
+type TicketTypeOption = { id: string; name: string; basePrice: number; capacity: number; soldCount: number; reservedCount: number };
 
 export default function BuyForm({
   eventId,
@@ -11,7 +12,7 @@ export default function BuyForm({
   isLoggedIn,
 }: {
   eventId: string;
-  ticketTypes: TicketType[];
+  ticketTypes: TicketTypeOption[];
   isLoggedIn: boolean;
 }) {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function BuyForm({
   const basePriceSum = useMemo(() => {
     return ticketTypes.reduce((sum, tt) => {
       const qty = quantities[tt.id] ?? 0;
-      return sum + qty * tt.base_price;
+      return sum + qty * tt.basePrice;
     }, 0);
   }, [quantities, ticketTypes]);
 
@@ -70,7 +71,7 @@ export default function BuyForm({
   return (
     <div className="flex flex-col gap-4">
       {ticketTypes.map((tt) => {
-        const remaining = tt.quantity - tt.sold_count;
+        const remaining = tt.capacity - tt.soldCount - tt.reservedCount;
         const qty = quantities[tt.id] ?? 0;
         return (
           <div
@@ -80,7 +81,7 @@ export default function BuyForm({
             <div>
               <p className="font-medium text-neutral-900">{tt.name}</p>
               <p className="text-sm text-neutral-500">
-                ${tt.base_price.toLocaleString("es-CL")}
+                ${tt.basePrice.toLocaleString("es-CL")}
                 {remaining <= 0 ? " · agotado" : ` · ${remaining} disponibles`}
               </p>
             </div>
@@ -114,7 +115,7 @@ export default function BuyForm({
             <span>${fees.basePrice.toLocaleString("es-CL")}</span>
           </div>
           <div className="flex justify-between">
-            <span>Cargo por servicio (10%)</span>
+            <span>Cargo por servicio</span>
             <span>${fees.serviceFeeAmount.toLocaleString("es-CL")}</span>
           </div>
           <div className="mt-2 flex justify-between border-t border-neutral-200 pt-2 font-semibold text-neutral-900">
@@ -130,7 +131,7 @@ export default function BuyForm({
         type="button"
         onClick={handleCheckout}
         disabled={totalQty === 0 || loading}
-        className="rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white hover:bg-orange-400 disabled:opacity-50"
+        className="rounded-full bg-[#a77fff] px-6 py-3 text-sm font-semibold text-black hover:bg-[#c3adff] disabled:opacity-50"
       >
         {loading
           ? "Redirigiendo a Mercado Pago..."

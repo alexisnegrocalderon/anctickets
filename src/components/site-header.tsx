@@ -29,8 +29,8 @@ export default async function SiteHeader({ overlay = false }: { overlay?: boolea
           </Link>
           {session ? (
             <>
-              <Link href="/dashboard/events" className="transition hover:text-[#c3adff]">
-                Mis eventos
+              <Link href="/dashboard" className="transition hover:text-[#c3adff]">
+                Mi panel
               </Link>
               <Link href="/dashboard/tickets" className="hidden transition hover:text-[#c3adff] lg:block">
                 Mis entradas
