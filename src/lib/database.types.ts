@@ -7,6 +7,7 @@ export type Profile = {
   full_name: string | null;
   email: string | null;
   avatar_url: string | null;
+  organizer_name: string | null;
   mp_connected: boolean;
   created_at: string;
 };
