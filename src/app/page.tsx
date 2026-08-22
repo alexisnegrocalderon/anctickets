@@ -6,10 +6,11 @@ import Link from "next/link";
 import AmbientSoundControl from "@/components/ambient-sound-control";
 import HeroSignup from "@/components/hero-signup";
 import HomeMotionEffects from "@/components/home-motion-effects";
+import MagneticLink from "@/components/magnetic-link";
+import PinnedEditorial from "@/components/pinned-editorial";
 import ProductInteractions from "@/components/product-interactions";
 import { createClient } from "@/lib/supabase/server";
 import type { Event } from "@/lib/database.types";
-import "./home-motion.css";
 
 const heroVideo = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/GbHXpGORdFcoZgeV.mp4";
 const heroPoster = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/tmjnuDhpwrWwdDyk.jpg";
@@ -72,19 +73,21 @@ export default async function Home() {
         </div>
       </div>
 
-      <section className="anc-editorial-strip" aria-labelledby="editorial-title">
-        <div className="anc-editorial-strip-inner">
-          <div data-anc-reveal className="anc-editorial-copy">
-            <p>LA NOCHE EN MOVIMIENTO</p>
-            <h2 id="editorial-title">TU EVENTO<br />NO ES UN FORMULARIO.</h2>
-            <p>Es una experiencia que empieza antes de la puerta: venta, pago, ticket y acceso con una misma dirección visual.</p>
+      <PinnedEditorial>
+        <section className="anc-editorial-strip" aria-labelledby="editorial-title">
+          <div className="anc-editorial-strip-inner">
+            <div data-anc-reveal className="anc-editorial-copy">
+              <p>LA NOCHE EN MOVIMIENTO</p>
+              <h2 id="editorial-title">TU EVENTO<br />NO ES UN FORMULARIO.</h2>
+              <p>Es una experiencia que empieza antes de la puerta: venta, pago, ticket y acceso con una misma dirección visual.</p>
+            </div>
+            <figure data-anc-grow className="anc-editorial-image">
+              <img src={crowdImage} alt="Multitud levantando las manos durante una noche de música" />
+              <figcaption>ANC / VENTA + ACCESO</figcaption>
+            </figure>
           </div>
-          <figure data-anc-grow className="anc-editorial-image">
-            <img src={crowdImage} alt="Multitud levantando las manos durante una noche de música" />
-            <figcaption>ANC / VENTA + ACCESO</figcaption>
-          </figure>
-        </div>
-      </section>
+        </section>
+      </PinnedEditorial>
 
       <section className="border-b border-white/10 bg-[#0d0d0d] px-5 py-6 sm:px-10">
         <div className="mx-auto grid max-w-7xl gap-5 text-xs font-bold tracking-[.14em] text-neutral-300 sm:grid-cols-3 sm:gap-8">
@@ -105,7 +108,7 @@ export default async function Home() {
         <div data-anc-reveal="right" className="border-l border-[#a77fff] pl-6 sm:pl-8">
           <p className="text-2xl font-black leading-[.95] tracking-[-.06em] sm:text-3xl">TU FECHA NO DEBERÍA ENTREGAR EL CONTROL DE SU CAJA.</p>
           <p className="mt-6 max-w-md text-base leading-7 text-neutral-400">ANC Tickets no cobra una comisión de plataforma por tus ventas. Conecta Mercado Pago, vende desde tu propia página y recibe el pago en la cuenta de tu organización.</p>
-          <a href="#registro" className="mt-8 inline-flex items-center text-sm font-black text-[#c3adff] transition hover:text-white">CONECTAR Y CREAR MI EVENTO <span className="ml-2 text-xl">↗</span></a>
+          <MagneticLink href="#registro" className="mt-8 inline-flex items-center text-sm font-black text-[#c3adff] transition hover:text-white">CONECTAR Y CREAR MI EVENTO <span className="ml-2 text-xl">↗</span></MagneticLink>
         </div>
       </section>
 
@@ -148,7 +151,7 @@ export default async function Home() {
               </li>
             ))}
           </ul>
-          <Link href="/login" className="mt-10 inline-flex w-fit rounded-xl bg-[#f5f4f1] px-5 py-3.5 text-sm font-black text-black transition duration-200 hover:bg-[#c6b0ff] active:scale-[.97]">VER MI PANEL DE PRODUCTOR →</Link>
+          <MagneticLink href="/login" className="mt-10 inline-flex w-fit rounded-xl bg-[#f5f4f1] px-5 py-3.5 text-sm font-black text-black transition duration-200 hover:bg-[#c6b0ff] active:scale-[.97]">VER MI PANEL DE PRODUCTOR →</MagneticLink>
         </div>
       </section>
 
@@ -185,7 +188,8 @@ export default async function Home() {
               {events.map((event) => (
                 <Link
                   key={event.id}
-                  href={`/events/${event.id}`}
+                  href={`/${event.slug}`}
+                  data-cursor-hover
                   className="group overflow-hidden border border-white/10 bg-[#101010] transition hover:border-[#a77fff]"
                 >
                   <div className="aspect-video w-full bg-neutral-800">
@@ -228,7 +232,7 @@ export default async function Home() {
           </div>
           <div>
             <p className="max-w-sm text-lg font-semibold leading-7">Crea tu evento, conecta Mercado Pago y mantén el control de cada venta desde el primer ticket.</p>
-            <a href="#registro" className="mt-8 inline-flex rounded-xl bg-black px-5 py-4 text-sm font-black text-white transition duration-200 hover:bg-white hover:text-black active:scale-[.97]">CREAR EVENTO CON COSTO $0 →</a>
+            <MagneticLink href="#registro" className="mt-8 inline-flex rounded-xl bg-black px-5 py-4 text-sm font-black text-white transition duration-200 hover:bg-white hover:text-black active:scale-[.97]">CREAR EVENTO CON COSTO $0 →</MagneticLink>
           </div>
         </div>
       </section>

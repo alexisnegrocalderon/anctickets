@@ -53,10 +53,10 @@ export default function HeroSignup() {
         </Link>
 
         <nav className="anc-desktop-nav" aria-label="Navegación principal">
-          <a href="#como-funciona">Cómo funciona</a>
-          <a href="#productores">Para productores</a>
-          <a href="#eventos">Experiencia de venta</a>
-          <a href="#registro" className="anc-nav-cta">Vender con ANC</a>
+          <a href="#como-funciona" data-cursor-hover>Cómo funciona</a>
+          <a href="#productores" data-cursor-hover>Para productores</a>
+          <a href="#eventos" data-cursor-hover>Experiencia de venta</a>
+          <a href="#registro" data-cursor-hover className="anc-nav-cta">Vender con ANC</a>
         </nav>
 
         <button

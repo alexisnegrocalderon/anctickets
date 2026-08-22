@@ -7,10 +7,12 @@ import { calculateFees } from "@/lib/fees";
 
 export default function BuyForm({
   eventId,
+  eventSlug,
   ticketTypes,
   isLoggedIn,
 }: {
   eventId: string;
+  eventSlug: string;
   ticketTypes: TicketType[];
   isLoggedIn: boolean;
 }) {
@@ -36,7 +38,7 @@ export default function BuyForm({
 
   async function handleCheckout() {
     if (!isLoggedIn) {
-      router.push(`/login?next=/events/${eventId}`);
+      router.push(`/login?next=/${eventSlug}`);
       return;
     }
 

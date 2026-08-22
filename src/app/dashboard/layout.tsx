@@ -2,11 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-
-const navLinks = [
-  ["Mis eventos", "/dashboard/events"],
-  ["Mis entradas", "/dashboard/tickets"],
-] as const;
+import DashboardNav from "@/components/dashboard/dashboard-nav";
 
 export default async function DashboardLayout({
   children,
@@ -24,7 +20,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-full flex-col bg-[#090909] text-[#f5f4f1]">
-      <header className="border-b border-white/10">
+      <header className="relative border-b border-white/10">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
           <Link
             href="/"
@@ -34,24 +30,10 @@ export default async function DashboardLayout({
             ANC<span className="text-[#a77fff]">TICKETS</span>
           </Link>
 
-          <nav className="flex items-center gap-5 text-sm font-medium text-neutral-400">
-            {navLinks.map(([label, href]) => (
-              <Link key={href} href={href} className="transition hover:text-[#c3adff]">
-                {label}
-              </Link>
-            ))}
-            <form action="/auth/signout" method="post">
-              <button
-                type="submit"
-                className="rounded-full border border-white/20 px-4 py-1.5 text-[#f5f4f1] transition hover:border-[#c3adff] hover:text-[#c3adff]"
-              >
-                Cerrar sesión
-              </button>
-            </form>
-          </nav>
+          <DashboardNav />
         </div>
       </header>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:py-10">
         {children}
       </main>
     </div>

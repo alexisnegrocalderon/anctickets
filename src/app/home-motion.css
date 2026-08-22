@@ -207,8 +207,7 @@
 
 .anc-motion-enabled [data-anc-grow] { clip-path: inset(8% 5% 8% 5%); opacity: .72; transform: scale(.9); transition: clip-path 1000ms var(--anc-ease), opacity 800ms ease, transform 1100ms var(--anc-ease); }
 .anc-motion-enabled [data-anc-grow].is-growing { clip-path: inset(0); opacity: 1; transform: scale(1); }
-.anc-motion-enabled [data-anc-grow] img { transform: scale(1.12); transition: transform 1400ms var(--anc-ease); }
-.anc-motion-enabled [data-anc-grow].is-growing img { transform: scale(1); }
+/* El escalado interno de <img> queda a cargo de GSAP ScrollTrigger (scrub), no de CSS. */
 
 .anc-editorial-strip { background: #0b0b0b; border-bottom: 1px solid var(--anc-line); overflow: hidden; padding: clamp(72px, 9vw, 128px) 0; }
 .anc-editorial-strip-inner { align-items: center; display: grid; gap: clamp(34px, 6vw, 90px); grid-template-columns: .72fr 1.28fr; margin: 0 auto; max-width: 1500px; padding: 0 clamp(20px, 5vw, 100px); }
@@ -278,3 +277,25 @@
   .anc-flow-screen h3 { font-size: 2rem; }
   .anc-flow-screen > p:not(.anc-system-label) { font-size: 12px; }
 }
+
+.anc-cursor-ring, .anc-cursor-dot { display: none; }
+.anc-cursor-enabled .anc-cursor-ring, .anc-cursor-enabled .anc-cursor-dot {
+  display: block;
+  left: 0;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+}
+.anc-cursor-enabled body { cursor: none; }
+.anc-cursor-ring {
+  border: 1px solid var(--anc-warm-white);
+  border-radius: 50%;
+  height: 34px;
+  transition: width 260ms var(--anc-ease), height 260ms var(--anc-ease), border-color 260ms ease;
+  width: 34px;
+}
+.anc-cursor-ring.is-active { background: var(--anc-warm-white); height: 58px; width: 58px; }
+.anc-cursor-dot { background: var(--anc-warm-white); border-radius: 50%; height: 6px; width: 6px; }

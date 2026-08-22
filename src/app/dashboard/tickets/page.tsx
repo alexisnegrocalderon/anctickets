@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import TicketQr from "./ticket-qr";
+import { PageHeader } from "@/components/dashboard/ui";
 
 interface TicketRow {
   id: string;
@@ -37,9 +38,7 @@ export default async function MyTicketsPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold tracking-tight text-[#f5f4f1]">
-        Mis entradas
-      </h1>
+      <PageHeader title="Mis entradas" />
 
       {approvedTickets.length === 0 ? (
         <p className="text-neutral-400">
