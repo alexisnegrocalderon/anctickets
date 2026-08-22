@@ -32,15 +32,6 @@ export default async function SiteHeader() {
               <Link href="/dashboard/tickets" data-cursor-hover className="transition hover:text-[#c3adff]">
                 Mis entradas
               </Link>
-              <form action="/auth/signout" method="post">
-                <button
-                  type="submit"
-                  data-cursor-hover
-                  className="rounded-full border border-white/25 px-4 py-1.5 text-neutral-200 transition hover:border-[#c3adff] hover:text-[#c3adff]"
-                >
-                  Cerrar sesión
-                </button>
-              </form>
             </>
           ) : (
             <Link
