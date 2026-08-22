@@ -27,10 +27,10 @@ export default async function ScanPage({
 
   return (
     <div className="mx-auto max-w-md">
-      <h1 className="mb-1 text-2xl font-bold text-neutral-900">
+      <h1 className="mb-1 text-2xl font-bold tracking-tight text-[#f5f4f1]">
         Validar entradas
       </h1>
-      <p className="mb-6 text-sm text-neutral-500">{event.title}</p>
+      <p className="mb-6 text-sm text-neutral-400">{event.title}</p>
       <ScannerClient />
     </div>
   );

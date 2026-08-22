@@ -37,12 +37,12 @@ export default async function MyTicketsPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-neutral-900">
+      <h1 className="mb-6 text-2xl font-bold tracking-tight text-[#f5f4f1]">
         Mis entradas
       </h1>
 
       {approvedTickets.length === 0 ? (
-        <p className="text-neutral-500">
+        <p className="text-neutral-400">
           Todavía no tienes entradas. Cuando compres, aparecerán aquí con su
           código QR.
         </p>
@@ -51,26 +51,28 @@ export default async function MyTicketsPage() {
           {approvedTickets.map((ticket) => (
             <div
               key={ticket.id}
-              className="rounded-xl border border-neutral-200 bg-white p-5 text-center"
+              className="rounded-xl border border-white/10 bg-[#101010] p-5 text-center"
             >
-              <p className="font-semibold text-neutral-900">
+              <p className="font-semibold text-[#f5f4f1]">
                 {ticket.orders?.events?.title}
               </p>
               {ticket.orders?.events?.event_date ? (
-                <p className="text-sm text-neutral-500">
+                <p className="text-sm text-neutral-400">
                   {new Date(ticket.orders.events.event_date).toLocaleString(
                     "es-CL",
                     { dateStyle: "medium", timeStyle: "short" }
                   )}
                 </p>
               ) : null}
-              <p className="mb-3 text-sm font-medium text-orange-600">
+              <p className="mb-3 text-sm font-medium text-[#c3adff]">
                 {ticket.ticket_types?.name}
               </p>
-              <TicketQr value={ticket.qr_code} />
+              <div className="mx-auto w-fit rounded-lg bg-white p-3">
+                <TicketQr value={ticket.qr_code} />
+              </div>
               <p
                 className={`mt-3 text-xs font-semibold uppercase ${
-                  ticket.status === "used" ? "text-neutral-400" : "text-green-600"
+                  ticket.status === "used" ? "text-neutral-500" : "text-emerald-400"
                 }`}
               >
                 {ticket.status === "used" ? "Ya utilizada" : "Válida"}
