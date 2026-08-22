@@ -1,12 +1,13 @@
 import { ImageResponse } from "next/og";
+import { getMarkDataUri } from "@/lib/brand-assets";
 
+export const runtime = "nodejs";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const heroImage =
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/tmjnuDhpwrWwdDyk.jpg";
-
 export default async function Image() {
+  const mark = await getMarkDataUri();
+
   return new ImageResponse(
     (
       <div
@@ -14,47 +15,38 @@ export default async function Image() {
           height: "100%",
           width: "100%",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
           position: "relative",
           backgroundColor: "#090909",
+          backgroundImage:
+            "radial-gradient(circle at 86% 8%, rgba(167,127,255,.55), transparent 42%), radial-gradient(circle at 68% 92%, rgba(167,127,255,.22), transparent 38%), linear-gradient(135deg, #0d0d0f 0%, #090909 55%, #120c1c 100%)",
         }}
       >
         <img
-          src={heroImage}
+          src={mark}
           alt=""
-          width={1200}
-          height={630}
+          width={560}
+          height={560}
           style={{
             position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            filter: "grayscale(30%)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(0deg, rgba(9,9,9,.97) 12%, rgba(9,9,9,.6) 55%, rgba(9,9,9,.4) 100%)",
-            display: "flex",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "radial-gradient(circle at 80% 20%, rgba(167,127,255,.5), transparent 45%)",
-            display: "flex",
+            right: "-90px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            opacity: 0.9,
           }}
         />
 
-        <div style={{ position: "relative", display: "flex", flexDirection: "column", padding: "64px" }}>
-          <div style={{ display: "flex", alignItems: "center", marginBottom: "24px" }}>
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "72px",
+            height: "100%",
+            maxWidth: "760px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "32px" }}>
             <span style={{ fontSize: 34, fontWeight: 900, letterSpacing: "-0.05em", color: "#f5f4f1" }}>
               ANC
             </span>
@@ -65,7 +57,7 @@ export default async function Image() {
 
           <span
             style={{
-              fontSize: 72,
+              fontSize: 76,
               fontWeight: 900,
               color: "#f5f4f1",
               letterSpacing: "-0.05em",
@@ -79,7 +71,7 @@ export default async function Image() {
               fontSize: 28,
               fontWeight: 600,
               color: "#c3adff",
-              marginTop: "20px",
+              marginTop: "22px",
             }}
           >
             Venta de entradas para productores en Chile — costo de plataforma $0.
