@@ -19,7 +19,35 @@ export default function HomeMotionEffects() {
 
       if (hero && heroVideo) {
         gsap.to(heroVideo, {
-          yPercent: -14,
+          yPercent: -20,
+          scale: 1.15,
+          ease: "none",
+          scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true },
+        });
+
+        const nav = hero.querySelector<HTMLElement>("[data-anc-hero-nav]");
+        const eyebrow = hero.querySelector<HTMLElement>("[data-anc-hero-eyebrow]");
+        const lines = gsap.utils.toArray<HTMLElement>("[data-anc-hero-line]");
+        const details = gsap.utils.toArray<HTMLElement>("[data-anc-hero-detail]");
+        const panel = hero.querySelector<HTMLElement>("[data-anc-hero-panel]");
+        const sidecode = hero.querySelector<HTMLElement>(".anc-hero-sidecode");
+
+        const intro = gsap.timeline({ defaults: { ease: "power4.out" } });
+        intro
+          .from(nav, { autoAlpha: 0, y: -18, duration: 0.62 })
+          .from(eyebrow, { autoAlpha: 0, y: 16, duration: 0.5 }, "-=0.26")
+          .from(lines, { yPercent: 118, duration: 0.9, stagger: 0.1 }, "-=0.28")
+          .from(details, { autoAlpha: 0, y: 18, duration: 0.56, stagger: 0.1 }, "-=0.42")
+          .from(panel, { autoAlpha: 0, x: 64, duration: 0.76 }, "-=0.7")
+          .from(sidecode, { autoAlpha: 0, x: 20, duration: 0.48 }, "-=0.48");
+
+        gsap.to("[data-anc-hero-copy]", {
+          yPercent: -15,
+          ease: "none",
+          scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true },
+        });
+        gsap.to(panel, {
+          yPercent: 18,
           ease: "none",
           scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true },
         });
