@@ -29,19 +29,19 @@ export default function PinnedEditorial({ children }: { children: React.ReactNod
         scrollTrigger: {
           trigger: stage,
           start: "top top",
-          end: "+=145%",
-          scrub: 0.8,
+          end: "+=235%",
+          scrub: 1.35,
           pin: true,
           anticipatePin: 1,
         },
       });
 
       scene
-        .fromTo(frame, { clipPath: "inset(13% 11% 13% 11%)", scale: 0.82 }, { clipPath: "inset(0% 0% 0% 0%)", scale: 1, duration: 0.62 }, 0)
-        .fromTo(image, { scale: 1.34 }, { scale: 1.05, duration: 0.9 }, 0)
-        .fromTo(copy, { xPercent: 0, autoAlpha: 1 }, { xPercent: -40, autoAlpha: 0, duration: 0.52 }, 0.3)
-        .fromTo(backdrop, { xPercent: 10, autoAlpha: 0.08 }, { xPercent: -17, autoAlpha: 0.24, duration: 1 }, 0)
-        .fromTo(stampElement ?? [], { autoAlpha: 0, y: 36 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 0.66);
+        .fromTo(frame, { clipPath: "inset(13% 11% 13% 11%)", scale: 0.82 }, { clipPath: "inset(0% 0% 0% 0%)", scale: 1, duration: 1.34 }, 0)
+        .fromTo(image, { scale: 1.04 }, { scale: 1.14, duration: 1.72 }, 0)
+        .fromTo(copy, { xPercent: 0, autoAlpha: 1 }, { xPercent: -40, autoAlpha: 0, duration: 0.6 }, 0.54)
+        .fromTo(backdrop, { xPercent: 10, autoAlpha: 0.08 }, { xPercent: -17, autoAlpha: 0.24, duration: 2.15 }, 0)
+        .fromTo(stampElement ?? [], { autoAlpha: 0, y: 36 }, { autoAlpha: 1, y: 0, duration: 0.44 }, 1.28);
     }, section);
 
     return () => ctx.revert();
