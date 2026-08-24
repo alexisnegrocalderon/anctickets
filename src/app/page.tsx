@@ -74,16 +74,19 @@ export default async function Home() {
       </div>
 
       <PinnedEditorial>
-        <section className="anc-editorial-strip" aria-labelledby="editorial-title">
+        <section className="anc-editorial-strip" data-anc-cinema aria-labelledby="editorial-title">
+          <div className="anc-cinema-backdrop" aria-hidden="true">CREA<br />VENDE<br />ENTRA</div>
+          <div className="anc-cinema-index" aria-hidden="true"><span>01</span><i /><span>03</span></div>
           <div className="anc-editorial-strip-inner">
             <div data-anc-reveal className="anc-editorial-copy">
               <p>LA NOCHE EN MOVIMIENTO</p>
               <h2 id="editorial-title">TU EVENTO<br />NO ES UN FORMULARIO.</h2>
               <p>Es una experiencia que empieza antes de la puerta: venta, pago, ticket y acceso con una misma dirección visual.</p>
             </div>
-            <figure data-anc-grow className="anc-editorial-image">
+            <figure className="anc-editorial-image" data-anc-cinema-frame>
               <img src={crowdImage} alt="Multitud levantando las manos durante una noche de música" />
               <figcaption>ANC / VENTA + ACCESO</figcaption>
+              <span className="anc-cinema-stamp" aria-hidden="true">LA FECHA<br />EN MARCHA</span>
             </figure>
           </div>
         </section>

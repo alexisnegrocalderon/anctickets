@@ -44,7 +44,7 @@ export default function HeroSignup() {
 
   return (
     <>
-      <header className="anc-hero-nav">
+      <header className="anc-hero-nav" data-anc-hero-nav>
         <Link href="/" className="anc-hero-wordmark-link" aria-label="ANC Tickets, inicio">
           <Image src="/anc-mark.png" alt="" width={32} height={32} priority />
           <span className="anc-hero-wordmark">
@@ -90,23 +90,23 @@ export default function HeroSignup() {
       </div>
 
       <div className="anc-hero-body">
-        <div className="anc-hero-copy">
-          <p className="anc-eyebrow">ANC TICKETS / PRODUCTORES EN CHILE</p>
-          <h1>
-            VENDE.<br />
-            <span>COBRA DIRECTO.</span>
+        <div className="anc-hero-copy" data-anc-hero-copy>
+          <p className="anc-eyebrow" data-anc-hero-eyebrow>ANC TICKETS / PRODUCTORES EN CHILE</p>
+          <h1 aria-label="Vende. Cobra directo.">
+            <span className="anc-hero-line-mask"><span className="anc-hero-line" data-anc-hero-line>VENDE.</span></span>
+            <span className="anc-hero-line-mask"><span className="anc-hero-line anc-hero-line-accent" data-anc-hero-line>COBRA DIRECTO.</span></span>
           </h1>
-          <p className="anc-hero-description">
+          <p className="anc-hero-description" data-anc-hero-detail>
             Crea tu fecha, conecta Mercado Pago y recibe cada venta directo en la cuenta de tu organización.
           </p>
-          <div className="anc-hero-metrics" aria-label="Ventajas de la plataforma">
+          <div className="anc-hero-metrics" data-anc-hero-detail aria-label="Ventajas de la plataforma">
             <span>01 / COSTO ANC $0</span>
             <span>02 / PAGO DIRECTO</span>
             <span>03 / QR EN PUERTA</span>
           </div>
         </div>
 
-        <section id="registro" className="anc-signup-panel" aria-labelledby="signup-title">
+        <section id="registro" className="anc-signup-panel" data-anc-hero-panel aria-labelledby="signup-title">
           <p className="anc-panel-chip">[ COMIENZA CON GOOGLE ]</p>
           <h2 id="signup-title">TU FECHA<br />EMPIEZA AQUÍ.</h2>
           <p className="anc-panel-subtitle">SIN CONTRASEÑA. SIN FORMULARIOS ETERNOS.</p>
@@ -137,6 +137,12 @@ export default function HeroSignup() {
             {loading ? "CONECTANDO..." : "CONTINUAR CON GOOGLE →"}
           </button>
         </section>
+
+        <div className="anc-hero-sidecode" aria-hidden="true">
+          <span>01</span>
+          <i />
+          <span>03</span>
+        </div>
       </div>
     </>
   );
