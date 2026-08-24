@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   title: "ANC Tickets",
   description:
     "Ticketera express de ANC — crea tu evento, vende entradas y recibe el pago directo en tu cuenta de Mercado Pago.",
+  verification: {
+    google: "un3v2lf6NcECvU-S5gzE-bwUPxMjzGIj5rgbljVU8iE",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
