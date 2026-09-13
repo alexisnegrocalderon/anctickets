@@ -12,7 +12,7 @@ export default function FloatingAccessButton() {
         type="button"
         onClick={scrollToTickets}
         data-cursor-hover
-        className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-sm font-black uppercase tracking-[.08em] text-white shadow-[0_8px_40px_-8px_rgba(200,255,61,.65)] backdrop-blur-xl transition hover:border-[#DFFF8F]/60 hover:bg-white/15 active:scale-[.97]"
+        className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-sm font-black uppercase tracking-[.08em] text-white shadow-[0_8px_40px_-8px_rgba(255,32,110,.65)] backdrop-blur-xl transition hover:border-[#FF6FA0]/60 hover:bg-white/15 active:scale-[.97]"
       >
         Quiero mi acceso
         <span className="transition group-hover:translate-x-0.5">→</span>

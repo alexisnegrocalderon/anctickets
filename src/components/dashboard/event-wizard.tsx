@@ -137,7 +137,7 @@ export default function EventWizard() {
           <div key={label} className="flex flex-1 flex-col gap-1.5">
             <div
               className={`h-1 rounded-full transition ${
-                index <= step ? "bg-[#C8FF3D]" : "bg-white/10"
+                index <= step ? "bg-[#FF206E]" : "bg-white/10"
               }`}
             />
             <span className="hidden text-[10px] font-semibold uppercase tracking-wide text-neutral-500 sm:block">
