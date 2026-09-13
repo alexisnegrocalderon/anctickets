@@ -18,8 +18,8 @@ export default function FeeCalculator() {
   const fees = useMemo(() => calculateFees(price), [price]);
 
   return (
-    <div className="rounded-3xl border border-[var(--anc-border)] bg-white p-6 shadow-[0_20px_50px_-30px_rgba(30,27,75,.35)] sm:p-9">
-      <label htmlFor="fee-calc-price" className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--anc-purple-deep)]">
+    <div className="rounded-3xl border border-[var(--anc-border)] bg-white p-6 shadow-[0_20px_50px_-30px_rgba(11,17,32,.35)] sm:p-9">
+      <label htmlFor="fee-calc-price" className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--anc-cerise-deep)]">
         Precio de tu entrada
       </label>
       <div className="mt-3 flex items-center gap-4">
@@ -32,7 +32,7 @@ export default function FeeCalculator() {
           step={500}
           value={price}
           onChange={(event) => setPrice(Math.max(0, Number(event.target.value) || 0))}
-          className="w-full border-b-2 border-[var(--anc-ink)]/15 bg-transparent py-2 text-3xl font-black tracking-tight text-[var(--anc-ink)] outline-none focus-visible:border-[var(--anc-lime-deep)] sm:text-4xl"
+          className="w-full border-b-2 border-[var(--anc-ink)]/15 bg-transparent py-2 text-3xl font-black tracking-tight text-[var(--anc-ink)] outline-none focus-visible:border-[var(--anc-yellow)] sm:text-4xl"
         />
       </div>
       <input
@@ -42,7 +42,7 @@ export default function FeeCalculator() {
         step={500}
         value={Math.min(price, 100000)}
         onChange={(event) => setPrice(Number(event.target.value))}
-        className="mt-5 w-full accent-[var(--anc-purple-deep)]"
+        className="mt-5 w-full accent-[var(--anc-cerise)]"
         aria-label="Ajustar precio de la entrada"
       />
 
@@ -57,8 +57,8 @@ export default function FeeCalculator() {
           </p>
           <p className="mt-1 text-2xl font-black text-[var(--anc-ink)]">{clp.format(fees.totalAmount)}</p>
         </div>
-        <div className="rounded-2xl border-2 border-[var(--anc-lime-deep)] bg-[var(--anc-card)] p-5">
-          <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[var(--anc-lime-deep)]">
+        <div className="rounded-2xl border-2 border-[var(--anc-yellow)] bg-[var(--anc-card)] p-5">
+          <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[#8a5a00]">
             A tu Mercado Pago
           </p>
           <p className="mt-1 text-2xl font-black text-[var(--anc-ink)]">{clp.format(fees.basePrice)}</p>

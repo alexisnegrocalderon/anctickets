@@ -43,7 +43,7 @@ export default function FaqAccordion() {
               <span className="text-lg font-bold text-[var(--anc-ink)] sm:text-xl">{item.q}</span>
               <span
                 aria-hidden="true"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--anc-ink)]/20 text-lg text-[var(--anc-purple-deep)] transition-transform duration-200"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--anc-ink)]/20 text-lg text-[var(--anc-violet-deep)] transition-transform duration-200"
                 style={{ transform: isOpen ? "rotate(45deg)" : "none" }}
               >
                 +

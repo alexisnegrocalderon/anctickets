@@ -2,10 +2,10 @@
  * ANC Tickets — home de conversión para productores.
  * Estructura de captación (hero + CTA, beneficios, cómo funciona, prueba de
  * reparto, funcionalidades, FAQ, CTA final) vestida con la identidad
- * "Indigo & Lima": fondo blanco, texto en índigo oscuro, lima como acento de
- * acción y violeta suave como acento de confianza. Sin prueba social
- * inventada: el producto está en pre-lanzamiento, así que en vez de logos o
- * testimonios falsos mostramos el reparto real de la plata.
+ * "Doughlicious": violeta pálido, amarillo mikado, cerise y negro perla.
+ * Cada sección lleva su propio color en vez de un fondo blanco continuo. Sin
+ * prueba social inventada: el producto está en pre-lanzamiento, así que en
+ * vez de logos o testimonios falsos mostramos el reparto real de la plata.
  */
 import Image from "next/image";
 import Link from "next/link";
@@ -34,7 +34,7 @@ const beneficios = [
     detalle:
       "No existe una cuenta intermedia de ANC donde tu dinero espere a que alguien lo libere. Conectas tu propia cuenta de Mercado Pago y cada venta llega ahí directo, apenas se confirma el pago.",
     placeholder: { label: "Captura: conexión con Mercado Pago", spec: "Pantalla del flujo OAuth de Mercado Pago dentro del panel, 1200×860px aprox." },
-    ink: "var(--anc-lime-deep)",
+    ink: "var(--anc-cerise-deep)",
   },
   {
     tag: "Arma tu evento en minutos",
@@ -42,7 +42,7 @@ const beneficios = [
     detalle:
       "Nombre, fecha, lugar, tipos de entrada y precio. Sin plantillas rígidas ni pasos de más: publicas y compartes el link en tu historia el mismo rato.",
     placeholder: { label: "Captura: formulario de creación de evento", spec: "Pantalla del wizard de creación con la vista previa en vivo, 1200×860px aprox." },
-    ink: "var(--anc-purple-deep)",
+    ink: "var(--anc-violet-deep)",
   },
   {
     tag: "La puerta también es tuya",
@@ -50,7 +50,7 @@ const beneficios = [
     detalle:
       "Tu staff escanea desde su propio teléfono con acceso a tu evento. Un código ya usado no vuelve a entrar, y ves el flujo de gente en tiempo real.",
     placeholder: { label: "Captura: escáner de acceso en el teléfono", spec: "Foto o mockup del celular escaneando un QR en la puerta, formato vertical 900×1200px." },
-    ink: "var(--anc-lime-deep)",
+    ink: "var(--anc-cerise-deep)",
   },
 ];
 
@@ -88,14 +88,14 @@ export default async function Home() {
       <ScrollReveal />
 
       {/* ---------------- NAV ---------------- */}
-      <header className="sticky top-0 z-50 border-b border-[var(--anc-border)] bg-[var(--anc-bg)]/90 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-[var(--anc-ink)]/10 bg-[var(--anc-violet)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-12">
           <Link href="/" className="flex items-center gap-2" aria-label="ANC Tickets, inicio">
             <Image src="/anc-mark.png" alt="" width={26} height={26} priority />
-            <span className="font-display text-xl font-black tracking-tight">ANC Tickets</span>
+            <span className="font-display text-xl font-black tracking-tight text-[var(--anc-ink)]">ANC Tickets</span>
           </Link>
 
-          <nav className="hidden items-center gap-8 font-mono text-xs font-bold uppercase tracking-[.14em] text-[var(--anc-ink-muted)] md:flex">
+          <nav className="hidden items-center gap-8 font-mono text-xs font-bold uppercase tracking-[.14em] text-[var(--anc-ink)]/70 md:flex">
             <a href="#beneficios" className="transition-colors hover:text-[var(--anc-ink)]">Beneficios</a>
             <a href="#como-funciona" className="transition-colors hover:text-[var(--anc-ink)]">Cómo funciona</a>
             <a href="#reparto" className="transition-colors hover:text-[var(--anc-ink)]">Precio</a>
@@ -105,13 +105,13 @@ export default async function Home() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="hidden text-sm font-bold text-[var(--anc-ink-muted)] transition-colors hover:text-[var(--anc-ink)] sm:block"
+              className="hidden text-sm font-bold text-[var(--anc-ink)]/70 transition-colors hover:text-[var(--anc-ink)] sm:block"
             >
               Ya tengo cuenta
             </Link>
             <a
               href="#hero-cta"
-              className="rounded-full bg-[var(--anc-lime)] px-5 py-2.5 text-sm font-black uppercase tracking-tight text-[var(--anc-ink)] transition-transform duration-150 hover:brightness-95 active:scale-95"
+              className="rounded-full bg-[var(--anc-yellow)] px-5 py-2.5 text-sm font-black uppercase tracking-tight text-[var(--anc-ink)] transition-transform duration-150 hover:brightness-95 active:scale-95"
             >
               Publica gratis
             </a>
@@ -120,21 +120,21 @@ export default async function Home() {
       </header>
 
       {/* ---------------- HERO ---------------- */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden bg-white">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_55%_50%_at_15%_0%,rgba(192,132,252,.16),transparent_65%),radial-gradient(ellipse_50%_45%_at_100%_20%,rgba(163,230,53,.16),transparent_60%)]"
+          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_55%_50%_at_15%_0%,rgba(223,163,255,.28),transparent_65%),radial-gradient(ellipse_50%_45%_at_100%_15%,rgba(244,0,161,.10),transparent_60%)]"
         />
 
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 pb-20 pt-16 sm:px-8 lg:grid-cols-[1.1fr_.9fr] lg:px-12 lg:pb-28 lg:pt-24">
           <div id="hero-cta" className="reveal scroll-mt-24">
-            <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-purple-deep)]">
+            <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-violet-deep)]">
               La ticketera de los productores chilenos
             </p>
             <h1 className="font-display mt-4 text-[clamp(2.6rem,6.4vw,5rem)] font-black leading-[.94] tracking-tight text-[var(--anc-ink)]">
               Vende tus entradas.
               <br />
-              <span className="text-[var(--anc-lime-deep)]">Cobra directo.</span>
+              <span className="text-[var(--anc-cerise-deep)]">Cobra directo.</span>
             </h1>
             <p className="mt-6 max-w-[46ch] text-lg leading-7 text-[var(--anc-ink-muted)]">
               Publica tu evento, comparte el link y recibe cada venta en la cuenta de Mercado
@@ -157,7 +157,7 @@ export default async function Home() {
           </div>
 
           <div className="reveal relative" data-reveal-delay="120">
-            <div className="relative overflow-hidden rounded-3xl border-2 border-[var(--anc-purple)]/40 shadow-[0_30px_60px_-30px_rgba(30,27,75,.4)]" style={{ aspectRatio: "4/5" }}>
+            <div className="relative overflow-hidden rounded-3xl border-4 border-[var(--anc-yellow)] shadow-[0_30px_60px_-30px_rgba(11,17,32,.4)]" style={{ aspectRatio: "4/5" }}>
               <video
                 className="h-full w-full object-cover"
                 autoPlay
@@ -169,11 +169,11 @@ export default async function Home() {
               >
                 <source src={heroVideo} type="video/mp4" />
               </video>
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(30,27,75,.55)_100%)]" />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(11,17,32,.55)_100%)]" />
             </div>
 
-            <div className="absolute -bottom-6 left-6 right-6 flex items-center gap-3 rounded-2xl border border-[var(--anc-border)] bg-white px-5 py-4 shadow-[0_20px_40px_-20px_rgba(30,27,75,.35)] sm:left-8 sm:right-auto sm:w-72">
-              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--anc-lime-deep)]" aria-hidden="true" />
+            <div className="absolute -bottom-6 left-6 right-6 flex items-center gap-3 rounded-2xl border border-[var(--anc-border)] bg-white px-5 py-4 shadow-[0_20px_40px_-20px_rgba(11,17,32,.35)] sm:left-8 sm:right-auto sm:w-72">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--anc-cerise)]" aria-hidden="true" />
               <p className="text-sm font-bold leading-5 text-[var(--anc-ink)]">
                 0% comisión de plataforma para el organizador
               </p>
@@ -183,9 +183,9 @@ export default async function Home() {
       </section>
 
       {/* ---------------- BENEFICIOS ---------------- */}
-      <section id="beneficios" className="px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+      <section id="beneficios" className="bg-[var(--anc-cream)] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-lime-deep)]">
+          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-cerise-deep)]">
             Por qué ANC
           </p>
           <h2 className="font-display mt-3 text-[clamp(2rem,4.6vw,3.4rem)] font-black leading-[.98] text-[var(--anc-ink)]">
@@ -221,9 +221,9 @@ export default async function Home() {
       </section>
 
       {/* ---------------- CÓMO FUNCIONA ---------------- */}
-      <section id="como-funciona" className="bg-[var(--anc-bg-soft)] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+      <section id="como-funciona" className="bg-[var(--anc-violet)] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-purple-deep)]">
+          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-ink)]/70">
             Cómo funciona
           </p>
           <h2 className="font-display mt-3 text-[clamp(2rem,4.6vw,3.4rem)] font-black leading-[.98] text-[var(--anc-ink)]">
@@ -235,10 +235,10 @@ export default async function Home() {
           {pasos.map((paso, index) => (
             <li
               key={paso.numero}
-              className="reveal relative rounded-3xl border border-[var(--anc-border)] bg-white p-8 shadow-[0_20px_40px_-30px_rgba(30,27,75,.3)]"
+              className="reveal relative rounded-3xl border border-[var(--anc-ink)]/10 bg-white p-8 shadow-[0_20px_40px_-30px_rgba(11,17,32,.3)]"
               data-reveal-delay={index * 100}
             >
-              <span className="font-display block text-5xl font-black text-[var(--anc-ink)]/10">{paso.numero}</span>
+              <span className="font-display block text-5xl font-black text-[var(--anc-violet)]">{paso.numero}</span>
               <p className="mt-4 text-xl font-black text-[var(--anc-ink)]">{paso.titulo}</p>
               <p className="mt-3 text-base leading-6 text-[var(--anc-ink-muted)]">{paso.detalle}</p>
             </li>
@@ -247,9 +247,9 @@ export default async function Home() {
       </section>
 
       {/* ---------------- REPARTO / PRECIO ---------------- */}
-      <section id="reparto" className="px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+      <section id="reparto" className="bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-purple-deep)]">
+          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-violet-deep)]">
             Precio, sin letra chica
           </p>
           <h2 className="font-display mt-3 text-[clamp(2rem,4.6vw,3.4rem)] font-black leading-[.98] text-[var(--anc-ink)]">
@@ -268,9 +268,9 @@ export default async function Home() {
 
       {/* ---------------- FECHAS PUBLICADAS ---------------- */}
       {proximasFechas.length > 0 ? (
-        <section className="bg-[var(--anc-bg-soft)] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+        <section className="bg-[var(--anc-ink)] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
           <div className="mx-auto max-w-6xl">
-            <h2 className="font-display text-[clamp(2rem,4.6vw,3.4rem)] font-black leading-[.98] text-[var(--anc-ink)]">
+            <h2 className="font-display text-[clamp(2rem,4.6vw,3.4rem)] font-black leading-[.98] text-white">
               Fechas publicadas con ANC.
             </h2>
             <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -278,16 +278,16 @@ export default async function Home() {
                 <li key={event.id} className="reveal" data-reveal-delay={index * 80}>
                   <Link
                     href={`/${event.slug}`}
-                    className="block rounded-2xl border border-[var(--anc-border)] bg-white p-6 shadow-[0_16px_36px_-28px_rgba(30,27,75,.35)] transition-transform duration-150 hover:border-[var(--anc-ink)]/25 active:scale-[.98]"
+                    className="block rounded-2xl border border-white/15 bg-white/[.06] p-6 transition-colors duration-150 hover:bg-white/[.1] active:scale-[.98]"
                   >
-                    <p className="font-mono text-xs font-bold uppercase tracking-[.14em] text-[var(--anc-purple-deep)]">
+                    <p className="font-mono text-xs font-bold uppercase tracking-[.14em] text-[var(--anc-yellow)]">
                       {new Date(event.event_date).toLocaleDateString("es-CL", {
                         day: "2-digit",
                         month: "short",
                       })}
                     </p>
-                    <p className="mt-2 text-xl font-black leading-tight text-[var(--anc-ink)]">{event.title}</p>
-                    {event.venue ? <p className="mt-2 text-sm text-[var(--anc-ink-muted)]">{event.venue}</p> : null}
+                    <p className="mt-2 text-xl font-black leading-tight text-white">{event.title}</p>
+                    {event.venue ? <p className="mt-2 text-sm text-white/60">{event.venue}</p> : null}
                   </Link>
                 </li>
               ))}
@@ -297,9 +297,9 @@ export default async function Home() {
       ) : null}
 
       {/* ---------------- FAQ ---------------- */}
-      <section id="preguntas" className="px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+      <section id="preguntas" className="bg-[var(--anc-cream)] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-3xl">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-lime-deep)]">
+          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-cerise-deep)]">
             Preguntas frecuentes
           </p>
           <h2 className="font-display mt-3 text-[clamp(2rem,4.6vw,3.4rem)] font-black leading-[.98] text-[var(--anc-ink)]">
@@ -312,27 +312,27 @@ export default async function Home() {
       </section>
 
       {/* ---------------- CIERRE ---------------- */}
-      <section className="px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
-        <div className="reveal mx-auto max-w-5xl rounded-[32px] bg-[var(--anc-ink)] px-8 py-16 text-center sm:px-16 sm:py-20">
+      <section className="bg-white px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+        <div className="reveal mx-auto max-w-5xl rounded-[32px] bg-[var(--anc-cerise)] px-8 py-16 text-center sm:px-16 sm:py-20">
           <h2 className="font-display text-[clamp(2.4rem,6vw,4.4rem)] font-black leading-[.96] text-white">
             Tu próxima fecha,
             <br />
             publicada hoy.
           </h2>
           <div className="mt-10 flex justify-center">
-            <HeroSignup compact />
+            <HeroSignup compact muted />
           </div>
         </div>
       </section>
 
-      <footer className="px-5 pb-14 sm:px-8 lg:px-12">
+      <footer className="bg-white px-5 pb-14 sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 border-t border-[var(--anc-border)] pt-8 text-sm text-[var(--anc-ink-muted)] sm:flex-row sm:items-center sm:justify-between">
           <p>ANC Tickets · Chile</p>
           <nav className="flex gap-5">
-            <Link href="/privacidad" className="underline decoration-[var(--anc-purple)] decoration-2 underline-offset-4 hover:text-[var(--anc-ink)]">
+            <Link href="/privacidad" className="underline decoration-[var(--anc-cerise)] decoration-2 underline-offset-4 hover:text-[var(--anc-ink)]">
               Privacidad
             </Link>
-            <Link href="/terminos" className="underline decoration-[var(--anc-purple)] decoration-2 underline-offset-4 hover:text-[var(--anc-ink)]">
+            <Link href="/terminos" className="underline decoration-[var(--anc-cerise)] decoration-2 underline-offset-4 hover:text-[var(--anc-ink)]">
               Términos
             </Link>
           </nav>

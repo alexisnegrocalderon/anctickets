@@ -4,29 +4,35 @@
   "title": "Design System: ANC Tickets",
   "extensions": {
     "colorMeta": {
-      "ink": {
+      "violet": {
         "role": "primary",
-        "displayName": "Índigo de Marca",
-        "canonical": "#1e1b4b",
-        "tonalRamp": ["#57567c", "#1e1b4b", "#100e2e"]
+        "displayName": "Violeta Pálido",
+        "canonical": "#dfa3ff",
+        "tonalRamp": ["#f1d9ff", "#dfa3ff", "#9333ea"]
       },
-      "lime": {
+      "yellow": {
         "role": "secondary",
-        "displayName": "Lima de Acción",
-        "canonical": "#a3e635",
-        "tonalRamp": ["#d4f5a3", "#a3e635", "#65a30d"]
+        "displayName": "Amarillo Mikado",
+        "canonical": "#ffc72c",
+        "tonalRamp": ["#ffe08a", "#ffc72c", "#a15c00"]
       },
-      "purple": {
+      "cerise": {
         "role": "tertiary",
-        "displayName": "Violeta de Confianza",
-        "canonical": "#c084fc",
-        "tonalRamp": ["#e9d5ff", "#c084fc", "#7c3aed"]
+        "displayName": "Cerise Hollywood",
+        "canonical": "#f400a1",
+        "tonalRamp": ["#ff8fd4", "#f400a1", "#b3007a"]
       },
-      "bg": {
+      "ink": {
         "role": "neutral",
-        "displayName": "Blanco",
-        "canonical": "#ffffff",
-        "tonalRamp": ["#ffffff", "#f7f5fc", "#f6f4fc"]
+        "displayName": "Negro Perla",
+        "canonical": "#0b1120",
+        "tonalRamp": ["#55536b", "#0b1120"]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Crema",
+        "canonical": "#fff3ea",
+        "tonalRamp": ["#fff3ea", "#ffffff"]
       }
     },
     "typographyMeta": {
@@ -34,36 +40,15 @@
       "headline": { "displayName": "Headline", "purpose": "Titular de cada sección." },
       "title": { "displayName": "Title", "purpose": "Titular de un beneficio o paso." },
       "body": { "displayName": "Body", "purpose": "Texto de apoyo, máximo 62ch." },
-      "label": { "displayName": "Label", "purpose": "Kickers y metadatos en mono, únicos elementos bajo 12px." }
+      "label": { "displayName": "Label", "purpose": "Kickers y metadatos en mono, cerise oscuro o violeta oscuro." }
     },
     "shadows": [
-      {
-        "name": "tarjeta-contenido",
-        "value": "0 20px 40px -30px rgba(30,27,75,.3)",
-        "purpose": "Pasos, FAQ, tarjetas de fecha — junto a un borde índigo al 12%."
-      },
-      {
-        "name": "tarjeta-flotante",
-        "value": "0 20px 40px -20px rgba(30,27,75,.35)",
-        "purpose": "La tarjeta de dato superpuesta sobre el video del hero."
-      },
-      {
-        "name": "marco-video",
-        "value": "0 30px 60px -30px rgba(30,27,75,.4)",
-        "purpose": "El contenedor del video del hero."
-      }
+      { "name": "tarjeta-contenido", "value": "0 20px 40px -30px rgba(11,17,32,.3)", "purpose": "Pasos, FAQ, tarjetas de fecha sobre fondo claro." },
+      { "name": "tarjeta-flotante", "value": "0 20px 40px -20px rgba(11,17,32,.35)", "purpose": "La tarjeta de dato superpuesta sobre el video del hero." }
     ],
     "motion": [
-      {
-        "name": "ease-out",
-        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Única curva del sistema. Deceleración exponencial; nada rebota."
-      },
-      {
-        "name": "reveal",
-        "value": "opacity 560ms, transform 760ms",
-        "purpose": "Cada .reveal aparece con un leve translateY al entrar en pantalla, con red de seguridad por si el observer no dispara."
-      }
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Única curva del sistema. Deceleración exponencial; nada rebota." },
+      { "name": "reveal", "value": "opacity 560ms, transform 760ms", "purpose": "Cada .reveal aparece con un leve translateY al entrar en pantalla." }
     ],
     "breakpoints": [
       { "name": "sm", "value": "640px" },
@@ -76,71 +61,50 @@
       "name": "Botón primario (publicar)",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "CTA principal en todo el sitio: entra con Google y publica un evento.",
+      "description": "CTA principal en todo el sitio, sobre cualquier color de sección: entra con Google y publica un evento.",
       "html": "<button class=\"ds-btn-primary\">Publicar mi evento gratis</button>",
-      "css": ".ds-btn-primary { background: #a3e635; color: #1e1b4b; font-weight: 900; text-transform: uppercase; padding: 16px 28px; border-radius: 9999px; transition: filter 150ms cubic-bezier(0.16,1,0.3,1), transform 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { filter: brightness(0.95); } .ds-btn-primary:active { transform: scale(.98); } .ds-btn-primary:focus-visible { outline: 3px solid #a3e635; outline-offset: 3px; }"
+      "css": ".ds-btn-primary { background: #ffc72c; color: #0b1120; font-weight: 900; text-transform: uppercase; padding: 16px 28px; border-radius: 9999px; transition: filter 150ms cubic-bezier(0.16,1,0.3,1), transform 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { filter: brightness(0.95); } .ds-btn-primary:active { transform: scale(.98); } .ds-btn-primary:focus-visible { outline: 3px solid #ffc72c; outline-offset: 3px; }"
     },
     {
-      "name": "Calculadora de reparto",
+      "name": "Sección de color pleno",
       "kind": "custom",
       "refersTo": "card",
-      "description": "Sustituye la prueba social inexistente: el productor escribe un precio y ve el reparto real en vivo.",
-      "html": "<div class=\"ds-fee-card\"><input type=\"number\" value=\"10000\"><div class=\"ds-fee-row\"><span>Tú publicas</span><strong>$10.000</strong></div></div>",
-      "css": ".ds-fee-card { background: #ffffff; border: 1px solid rgba(30,27,75,.12); box-shadow: 0 20px 50px -30px rgba(30,27,75,.35); border-radius: 24px; padding: 32px; } .ds-fee-row { background: #f6f4fc; border-radius: 16px; padding: 20px; }"
-    },
-    {
-      "name": "Marco de video del hero",
-      "kind": "custom",
-      "refersTo": "card",
-      "description": "El video no es fondo de página: vive en una tarjeta con borde violeta y una tarjeta blanca flotante con el dato de 0% comisión.",
-      "html": "<div class=\"ds-video-frame\"><video></video></div><div class=\"ds-float-card\">0% comisión de plataforma</div>",
-      "css": ".ds-video-frame { border: 2px solid rgba(192,132,252,.4); border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(30,27,75,.4); } .ds-float-card { background: #ffffff; border: 1px solid rgba(30,27,75,.12); border-radius: 16px; box-shadow: 0 20px 40px -20px rgba(30,27,75,.35); padding: 16px 20px; }"
+      "description": "Cada sección principal del home lleva un único color de fondo de la paleta (violeta, crema, blanco o negro perla) en vez de repetir blanco.",
+      "html": "<section class=\"ds-section-violet\">...</section>",
+      "css": ".ds-section-violet { background: #dfa3ff; } .ds-section-cream { background: #fff3ea; } .ds-section-ink { background: #0b1120; color: white; }"
     }
   ],
   "narrative": {
-    "northStar": "El Panel del Productor, en Blanco y Vivo",
-    "overview": "ANC Tickets vende sin intermediarios, y la página lo dice sobre un fondo blanco de estudio, no sobre una superficie oscura de rave. La estructura sigue siendo de conversión (hero, beneficios, cómo funciona, precio, FAQ, cierre); el vestuario ahora es índigo oscuro para todo el texto, lima como único color de acción, y violeta suave como acento de confianza. Un solo bloque índigo sólido —el cierre— invierte el contraste para que el CTA final se sienta como un evento.",
+    "northStar": "El Puesto de Feria, Vendiendo Directo",
+    "overview": "ANC Tickets vende sin intermediarios, y la página lo dice con la energía de un puesto de feria bien pintado. La estructura sigue siendo de conversión; cada sección lleva su propio color de la paleta (violeta pálido, crema, amarillo mikado, cerise, negro perla) en vez de repetir blanco. El amarillo es el único color de botón de acción sobre cualquier fondo; cerise oscuro y violeta oscuro son los dos acentos de texto.",
     "antiReferences": [
-      "El sistema oscuro anterior (charcoal/magenta/amarillo/turquesa): se reemplazó por completo por uno claro.",
+      "El sistema anterior de un solo color de fondo continuo (índigo/lima sobre blanco): se reemplazó por secciones con color propio.",
       "Prueba social fabricada (logos, testimonios, cifras de ventas): el producto está en pre-lanzamiento.",
-      "Más de un bloque de fondo sólido índigo en la misma página."
+      "Amarillo usado como texto: falla contraste sobre blanco."
     ],
     "keyCharacteristics": [
-      "Fondo blanco con paneles lavanda muy suaves para el ritmo de sección.",
-      "Un solo bloque índigo oscuro sólido, reservado para el cierre.",
-      "Lima es el único color de acción; violeta oscuro el único color de confianza en texto.",
-      "Elevación con sombra suave + borde índigo al 12%.",
+      "Cada sección principal tiene su propio color de fondo de la paleta.",
+      "Amarillo mikado es el único color de botón de acción, en cualquier sección.",
+      "Cerise oscuro y violeta oscuro son los dos acentos de texto/kicker.",
+      "Elevación con sombra suave + borde índigo al 12-15% sobre fondos claros.",
       "Cero prueba social fabricada; el reparto de la plata es la prueba."
     ],
     "rules": [
-      {
-        "name": "La Regla del Lima",
-        "body": "El lima solo aparece en botones que llevan a publicar un evento.",
-        "section": "colors"
-      },
-      {
-        "name": "La Regla del Bloque Único",
-        "body": "Solo una sección de la página puede tener fondo sólido índigo a la vez: el cierre.",
-        "section": "colors"
-      },
-      {
-        "name": "La Regla de la Prueba Real",
-        "body": "Ninguna cifra de ventas, logo de cliente o testimonial se muestra sin ser real.",
-        "section": "colors"
-      }
+      { "name": "La Regla del Amarillo", "body": "El amarillo solo aparece en botones que llevan a publicar un evento — nunca como texto, nunca decorativo.", "section": "colors" },
+      { "name": "La Regla de la Sección de Color", "body": "Cada sección principal tiene un único color de fondo de la paleta; no se mezclan dos colores de sección en el mismo bloque.", "section": "colors" },
+      { "name": "La Regla de la Prueba Real", "body": "Ninguna cifra de ventas, logo de cliente o testimonial se muestra sin ser real.", "section": "colors" }
     ],
     "dos": [
-      "Do usar píldora completa en todos los botones y CTAs.",
-      "Do reservar el fondo sólido índigo para un único bloque: el cierre.",
-      "Do limitar el lima a acciones que llevan a publicar un evento.",
-      "Do usar violeta oscuro (#7c3aed), nunca el claro (#c084fc), para texto.",
-      "Do dejar el contenido visible por defecto y esconderlo solo bajo .motion-on.",
+      "Do usar amarillo mikado únicamente en botones de acción.",
+      "Do dar a cada sección principal un único color de fondo de la paleta.",
+      "Do usar cerise oscuro o violeta oscuro para cualquier texto de acento.",
+      "Do mostrar el 100% del precio publicado cayendo en la cuenta del productor.",
       "Do respetar prefers-reduced-motion."
     ],
     "donts": [
       "Don't fabricar logos, testimonios o cifras de ventas.",
-      "Don't usar el violeta claro (#c084fc) como color de texto.",
-      "Don't poner más de un bloque de fondo índigo sólido en la misma página.",
+      "Don't usar amarillo como color de texto.",
+      "Don't mezclar dos colores de fondo de sección en el mismo bloque.",
       "Don't prometer $0 sin la letra chica del cargo por servicio del 10%.",
       "Don't usar curvas de rebote o elásticas.",
       "Don't usar fotografías de banco de imágenes; marcar el espacio como pendiente."
