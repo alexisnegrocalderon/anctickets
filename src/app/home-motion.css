@@ -5,6 +5,10 @@
 :root {
   --anc-accent: #C8FF3D;
   --anc-accent-light: #DFFF8F;
+  /* Sistema de acentos secundarios: cada uno tiene un rol funcional, no solo decorativo. */
+  --anc-accent-warm: #FF4D1C; /* urgencia: agotándose, cuenta regresiva */
+  --anc-accent-hot: #FF2D7A; /* energía nocturna: glows, ambiente */
+  --anc-accent-cool: #2FE6D0; /* utilidad: links, estados secundarios */
   --anc-ink: #090909;
   --anc-warm-white: #f5f4f1;
   --anc-line: rgba(255, 255, 255, 0.16);
@@ -140,7 +144,11 @@
 .anc-ticker { border-bottom: 1px solid var(--anc-line); border-top: 1px solid var(--anc-line); overflow: hidden; padding: 14px 0; white-space: nowrap; }
 .anc-ticker-track { animation: anc-marquee 21s linear infinite; display: inline-flex; gap: 28px; min-width: max-content; }
 .anc-ticker-track span { color: rgba(245,244,241,.8); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
-.anc-ticker-track b { color: var(--anc-accent); font-weight: 700; }
+.anc-ticker-track b { font-weight: 700; }
+.anc-ticker-track b:nth-of-type(4n+1) { color: var(--anc-accent); }
+.anc-ticker-track b:nth-of-type(4n+2) { color: var(--anc-accent-warm); }
+.anc-ticker-track b:nth-of-type(4n+3) { color: var(--anc-accent-hot); }
+.anc-ticker-track b:nth-of-type(4n+4) { color: var(--anc-accent-cool); }
 
 .anc-scroll-cue { align-items: center; bottom: 28px; color: rgba(245,244,241,.62); display: flex; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 9px; font-weight: 700; gap: 10px; letter-spacing: .16em; position: absolute; right: clamp(20px, 5vw, 100px); z-index: 11; }
 .anc-scroll-cue i { animation: anc-scroll-pulse 1.6s var(--anc-ease) infinite; background: var(--anc-accent); display: block; height: 1px; width: 36px; }

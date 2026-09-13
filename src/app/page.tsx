@@ -58,7 +58,7 @@ export default async function Home() {
         >
           <source src={heroVideo} type="video/mp4" />
         </video>
-        <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_78%_30%,rgba(200,255,61,.42),transparent_20%),radial-gradient(circle_at_65%_55%,rgba(200,255,61,.15),transparent_28%)] mix-blend-screen" />
+        <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_78%_30%,rgba(200,255,61,.38),transparent_20%),radial-gradient(circle_at_26%_74%,rgba(255,45,122,.22),transparent_26%),radial-gradient(circle_at_65%_55%,rgba(200,255,61,.12),transparent_28%)] mix-blend-screen" />
         <div className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(90deg,rgba(9,9,9,.97)_0%,rgba(9,9,9,.8)_36%,rgba(9,9,9,.22)_71%,rgba(9,9,9,.56)_100%)]" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-20 h-2/5 bg-gradient-to-t from-[#090909] via-[#090909]/55 to-transparent" />
 

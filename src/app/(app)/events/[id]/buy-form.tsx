@@ -1,9 +1,20 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import type { TicketType } from "@/lib/database.types";
 import { calculateFees } from "@/lib/fees";
+
+/** Cada tipo de entrada toma un acento distinto del sistema de marca, en orden de aparición. */
+const TIER_ACCENTS = [
+  { base: "#C8FF3D", light: "#DFFF8F", tint: "rgba(200,255,61,.08)" },
+  { base: "#FF2D7A", light: "#FF7AB5", tint: "rgba(255,45,122,.1)" },
+  { base: "#FF4D1C", light: "#FF8F5C", tint: "rgba(255,77,28,.1)" },
+  { base: "#2FE6D0", light: "#8FF5E8", tint: "rgba(47,230,208,.1)" },
+] as const;
+
+const LOW_STOCK_THRESHOLD = 5;
 
 export default function BuyForm({
   eventId,
@@ -71,23 +82,39 @@ export default function BuyForm({
 
   return (
     <div className="flex flex-col gap-3">
-      {ticketTypes.map((tt) => {
+      {ticketTypes.map((tt, index) => {
         const remaining = tt.quantity - tt.sold_count;
         const qty = quantities[tt.id] ?? 0;
         const soldOut = remaining <= 0;
+        const lowStock = !soldOut && remaining <= LOW_STOCK_THRESHOLD;
+        const accent = TIER_ACCENTS[index % TIER_ACCENTS.length];
+        const tierStyle = {
+          "--tier-accent": accent.base,
+          "--tier-accent-light": accent.light,
+          ...(qty > 0 ? { borderColor: `${accent.base}99`, backgroundColor: accent.tint } : {}),
+        } as CSSProperties;
         return (
           <div
             key={tt.id}
+            style={tierStyle}
             className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3.5 transition ${
-              qty > 0 ? "border-[#C8FF3D]/60 bg-[#C8FF3D]/[.06]" : "border-white/10 bg-[#101010]"
+              qty > 0 ? "" : "border-white/10 bg-[#101010]"
             }`}
           >
             <div className="min-w-0">
-              <p className="truncate font-semibold text-[#f5f4f1]">{tt.name}</p>
+              <p className="flex items-center gap-2 truncate font-semibold text-[#f5f4f1]">
+                <span aria-hidden className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: accent.base }} />
+                <span className="truncate">{tt.name}</span>
+              </p>
               <p className="text-sm text-neutral-400">
                 ${tt.base_price.toLocaleString("es-CL")}
                 {soldOut ? (
                   <span className="text-red-400"> · agotado</span>
+                ) : lowStock ? (
+                  <span style={{ color: "var(--anc-accent-warm)" }} className="font-bold">
+                    {" "}
+                    · ¡quedan {remaining}!
+                  </span>
                 ) : (
                   ` · ${remaining} disponibles`
                 )}
@@ -97,7 +124,7 @@ export default function BuyForm({
               <button
                 type="button"
                 onClick={() => setQty(tt.id, qty - 1, remaining)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition duration-100 hover:border-[#DFFF8F] hover:text-[#DFFF8F] active:scale-90 active:border-[#C8FF3D] active:text-[#C8FF3D] disabled:opacity-30 disabled:active:scale-100"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition duration-100 hover:border-[var(--tier-accent-light)] hover:text-[var(--tier-accent-light)] active:scale-90 active:border-[var(--tier-accent)] active:text-[var(--tier-accent)] disabled:opacity-30 disabled:active:scale-100"
                 disabled={soldOut || qty === 0}
               >
                 −
@@ -108,7 +135,7 @@ export default function BuyForm({
               <button
                 type="button"
                 onClick={() => setQty(tt.id, qty + 1, remaining)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition duration-100 hover:border-[#DFFF8F] hover:text-[#DFFF8F] active:scale-90 active:border-[#C8FF3D] active:text-[#C8FF3D] disabled:opacity-30 disabled:active:scale-100"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition duration-100 hover:border-[var(--tier-accent-light)] hover:text-[var(--tier-accent-light)] active:scale-90 active:border-[var(--tier-accent)] active:text-[var(--tier-accent)] disabled:opacity-30 disabled:active:scale-100"
                 disabled={soldOut}
               >
                 +
