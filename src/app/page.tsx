@@ -5,6 +5,7 @@
 import Link from "next/link";
 import AmbientSoundControl from "@/components/ambient-sound-control";
 import HeroSignup from "@/components/hero-signup";
+import HeroScene from "@/components/hero-scene/hero-scene";
 import HomeMotionEffects from "@/components/home-motion-effects";
 import MagneticLink from "@/components/magnetic-link";
 import ProductInteractions from "@/components/product-interactions";
@@ -54,6 +55,7 @@ export default async function Home() {
         <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_78%_30%,rgba(255,32,110,.4),transparent_20%),radial-gradient(circle_at_24%_76%,rgba(65,234,212,.22),transparent_26%),radial-gradient(circle_at_65%_55%,rgba(255,32,110,.12),transparent_28%)] mix-blend-screen" />
         <div className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(90deg,rgba(9,9,9,.97)_0%,rgba(9,9,9,.8)_36%,rgba(9,9,9,.22)_71%,rgba(9,9,9,.56)_100%)]" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-20 h-2/5 bg-gradient-to-t from-[#090909] via-[#090909]/55 to-transparent" />
+        <HeroScene />
 
         <HeroSignup />
         <div className="anc-scroll-cue"><i />SCROLL PARA DESCUBRIR</div>

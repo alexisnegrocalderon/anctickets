@@ -314,3 +314,6 @@
 }
 .anc-cursor-ring.is-active { background: var(--anc-warm-white); height: 58px; width: 58px; }
 .anc-cursor-dot { background: var(--anc-warm-white); border-radius: 50%; height: 6px; width: 6px; }
+
+.anc-hero-blob { animation: anc-hero-blob-float 6s var(--anc-ease) infinite alternate; }
+@keyframes anc-hero-blob-float { from { transform: translate(0, 0) scale(1); } to { transform: translate(-14px, 18px) scale(1.08); } }
