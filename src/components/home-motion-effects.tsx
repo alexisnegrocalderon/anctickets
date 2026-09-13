@@ -65,6 +65,26 @@ export default function HomeMotionEffects() {
           );
         }
       });
+
+      // Galería de "Próximos eventos": en pantallas md+ el scroll vertical mueve las
+      // tarjetas en horizontal (scroll-jack). En móvil se deja el scroll táctil nativo.
+      const horizontalWrap = document.querySelector<HTMLElement>("[data-anc-horizontal-wrap]");
+      const horizontalTrack = document.querySelector<HTMLElement>("[data-anc-horizontal-track]");
+      if (horizontalWrap && horizontalTrack && window.matchMedia("(min-width: 768px)").matches) {
+        const getScrollDistance = () => horizontalTrack.scrollWidth - horizontalWrap.clientWidth;
+        gsap.to(horizontalTrack, {
+          x: () => -getScrollDistance(),
+          ease: "none",
+          scrollTrigger: {
+            trigger: horizontalWrap,
+            start: "top top+=80",
+            end: () => "+=" + getScrollDistance(),
+            scrub: 1,
+            pin: true,
+            invalidateOnRefresh: true,
+          },
+        });
+      }
     });
 
     return () => {

@@ -9,6 +9,7 @@ import HomeMotionEffects from "@/components/home-motion-effects";
 import MagneticLink from "@/components/magnetic-link";
 import PinnedEditorial from "@/components/pinned-editorial";
 import ProductInteractions from "@/components/product-interactions";
+import ScrollColorGlow from "@/components/scroll-color-glow";
 import { createClient } from "@/lib/supabase/server";
 import type { Event } from "@/lib/database.types";
 
@@ -52,6 +53,7 @@ export default async function Home() {
     <main className="min-h-screen bg-[#090909] text-[#f5f4f1]">
       <div className="anc-scroll-progress" aria-hidden="true"><span /></div>
       <HomeMotionEffects />
+      <ScrollColorGlow />
 
       <section className="anc-hero-scene" style={{ backgroundImage: `url(${heroPoster})` }}>
         <video
@@ -105,33 +107,35 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="productores" className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-10 lg:grid-cols-[1.15fr_.85fr] lg:items-end lg:py-32">
-        <div data-anc-reveal>
-          <p className="text-xs font-black tracking-[.25em] text-[#FF206E]">LA DIFERENCIA ANC</p>
-          <h2 className="mt-5 text-[clamp(4.5rem,12vw,10rem)] font-black leading-[.72] tracking-[-.11em]">
-            $0
-            <span className="block text-[clamp(2.6rem,7vw,6.3rem)] text-[#f5f4f1]">PLATAFORMA.</span>
-          </h2>
-        </div>
-        <div data-anc-reveal="right" className="border-l border-[#FF206E] pl-6 sm:pl-8">
-          <p className="text-2xl font-black leading-[.95] tracking-[-.06em] sm:text-3xl">TU FECHA NO DEBERÍA ENTREGAR EL CONTROL DE SU CAJA.</p>
-          <p className="mt-6 max-w-md text-base leading-7 text-neutral-400">ANC Tickets no cobra una comisión de plataforma por tus ventas. Conecta Mercado Pago, vende desde tu propia página y recibe el pago en la cuenta de tu organización.</p>
-          <MagneticLink href="#registro" className="mt-8 inline-flex items-center text-sm font-black text-[#FF6FA0] transition hover:text-white">CONECTAR Y CREAR MI EVENTO <span className="ml-2 text-xl">↗</span></MagneticLink>
+      <section id="productores" className="bg-[#41EAD4] px-5 py-24 text-[#062622] sm:px-10 lg:py-32">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
+          <div data-anc-reveal>
+            <p className="text-xs font-black tracking-[.25em] text-[#FF206E]">LA DIFERENCIA ANC</p>
+            <h2 className="mt-5 text-[clamp(4.5rem,12vw,10rem)] font-black leading-[.72] tracking-[-.11em]">
+              $0
+              <span className="block text-[clamp(2.6rem,7vw,6.3rem)]">PLATAFORMA.</span>
+            </h2>
+          </div>
+          <div data-anc-reveal="right" className="border-l border-[#062622]/25 pl-6 sm:pl-8">
+            <p className="text-2xl font-black leading-[.95] tracking-[-.06em] sm:text-3xl">TU FECHA NO DEBERÍA ENTREGAR EL CONTROL DE SU CAJA.</p>
+            <p className="mt-6 max-w-md text-base leading-7 text-[#062622]/70">ANC Tickets no cobra una comisión de plataforma por tus ventas. Conecta Mercado Pago, vende desde tu propia página y recibe el pago en la cuenta de tu organización.</p>
+            <MagneticLink href="#registro" className="mt-8 inline-flex items-center text-sm font-black text-[#062622] transition hover:text-[#FF206E]">CONECTAR Y CREAR MI EVENTO <span className="ml-2 text-xl">↗</span></MagneticLink>
+          </div>
         </div>
       </section>
 
-      <section id="como-funciona" className="border-y border-white/10 bg-[#101010] px-5 py-24 sm:px-10 lg:py-28">
+      <section id="como-funciona" className="bg-[#FBFF12] px-5 py-24 text-[#160f00] sm:px-10 lg:py-28">
         <div className="mx-auto max-w-7xl">
           <div data-anc-reveal className="max-w-2xl">
             <p className="text-xs font-black tracking-[.25em] text-[#FF206E]">DE LA IDEA A LA PUERTA</p>
             <h2 className="mt-4 text-5xl font-black leading-[.82] tracking-[-.09em] sm:text-7xl">TRES MOVIMIENTOS.<br />UNA FECHA EN VENTA.</h2>
           </div>
-          <div data-anc-reveal className="mt-14 grid border-y border-white/10 md:grid-cols-3 md:border-l">
+          <div data-anc-reveal className="mt-14 grid border-y border-[#160f00]/15 md:grid-cols-3 md:border-l">
             {steps.map((step) => (
-              <article key={step.number} className="group border-b border-white/10 px-0 py-8 last:border-b-0 md:border-b-0 md:border-r md:px-8 md:py-3 lg:px-10">
+              <article key={step.number} className="group border-b border-[#160f00]/15 px-0 py-8 last:border-b-0 md:border-b-0 md:border-r md:px-8 md:py-3 lg:px-10">
                 <p className="text-xs font-black tracking-[.2em] text-[#FF206E]">{step.number}</p>
-                <h3 className="mt-12 text-3xl font-black leading-[.88] tracking-[-.06em] transition duration-200 group-hover:text-[#FF6FA0]">{step.title}</h3>
-                <p className="mt-5 max-w-xs text-sm leading-6 text-neutral-400">{step.description}</p>
+                <h3 className="mt-12 text-3xl font-black leading-[.88] tracking-[-.06em] transition duration-200 group-hover:text-[#FF206E]">{step.title}</h3>
+                <p className="mt-5 max-w-xs text-sm leading-6 text-[#160f00]/70">{step.description}</p>
               </article>
             ))}
           </div>
@@ -192,45 +196,50 @@ export default async function Home() {
           {!events || events.length === 0 ? (
             <p className="mt-10 text-sm text-neutral-500">Todavía no hay eventos publicados.</p>
           ) : (
-            <div data-anc-reveal className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {events.map((event, index) => {
-                const accent = CARD_ACCENTS[index % CARD_ACCENTS.length];
-                return (
-                  <Link
-                    key={event.id}
-                    href={`/${event.slug}`}
-                    data-cursor-hover
-                    className="group overflow-hidden border border-white/10 transition duration-150 active:scale-[.98]"
-                    style={{ borderColor: "rgba(255,255,255,.1)" }}
-                  >
-                    <div className="aspect-video w-full bg-neutral-800">
-                      {event.image_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={event.image_url}
-                          alt={event.title}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : null}
-                    </div>
-                    <div className="p-5" style={{ backgroundColor: accent.base }}>
-                      <p className="text-[10px] font-black tracking-[.18em]" style={{ color: accent.ink, opacity: 0.7 }}>
-                        {new Date(event.event_date).toLocaleDateString("es-CL", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </p>
-                      <h3 className="mt-2 font-black leading-tight tracking-tight" style={{ color: accent.ink }}>
-                        {event.title}
-                      </h3>
-                      {event.venue ? (
-                        <p className="mt-1 text-sm" style={{ color: accent.ink, opacity: 0.65 }}>{event.venue}</p>
-                      ) : null}
-                    </div>
-                  </Link>
-                );
-              })}
+            <div data-anc-horizontal-wrap className="relative mt-14 -mx-5 overflow-hidden sm:-mx-10 lg:mx-0">
+              <div
+                data-anc-horizontal-track
+                className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-2 sm:px-10 md:snap-none md:overflow-visible md:px-0 lg:px-0"
+              >
+                {events.map((event, index) => {
+                  const accent = CARD_ACCENTS[index % CARD_ACCENTS.length];
+                  return (
+                    <Link
+                      key={event.id}
+                      href={`/${event.slug}`}
+                      data-cursor-hover
+                      className="group w-[82vw] shrink-0 snap-start overflow-hidden border border-white/10 transition duration-150 active:scale-[.98] sm:w-[45vw] md:w-[380px]"
+                      style={{ borderColor: "rgba(255,255,255,.1)" }}
+                    >
+                      <div className="aspect-video w-full bg-neutral-800">
+                        {event.image_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={event.image_url}
+                            alt={event.title}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="p-5" style={{ backgroundColor: accent.base }}>
+                        <p className="text-[10px] font-black tracking-[.18em]" style={{ color: accent.ink, opacity: 0.7 }}>
+                          {new Date(event.event_date).toLocaleDateString("es-CL", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </p>
+                        <h3 className="mt-2 font-black leading-tight tracking-tight" style={{ color: accent.ink }}>
+                          {event.title}
+                        </h3>
+                        {event.venue ? (
+                          <p className="mt-1 text-sm" style={{ color: accent.ink, opacity: 0.65 }}>{event.venue}</p>
+                        ) : null}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

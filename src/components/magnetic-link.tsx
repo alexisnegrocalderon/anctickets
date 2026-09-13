@@ -1,9 +1,9 @@
 "use client";
 
-/** ANC Rave Editorial Noir: pull magnético sutil hacia el cursor sobre los CTA principales. */
+/** ANC: pull magnético hacia el cursor sobre los CTA principales, con springs interrumpibles (Motion). */
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
+import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 
 type MagneticLinkProps = {
   href: string;
@@ -11,28 +11,35 @@ type MagneticLinkProps = {
   children: React.ReactNode;
 };
 
+const MotionLink = motion.create(Link);
+
+/** damping 1.0 (crítico, sin rebote) — apropiado para un pull que sigue al cursor, no una arrojada. */
+const SPRING = { stiffness: 260, damping: 26, mass: 0.5 };
+
 export default function MagneticLink({ href, className, children }: MagneticLinkProps) {
   const ref = useRef<HTMLAnchorElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const x = useSpring(rawX, SPRING);
+  const y = useSpring(rawY, SPRING);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion) return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
-
-    const moveX = gsap.quickTo(el, "x", { duration: 0.4, ease: "power3" });
-    const moveY = gsap.quickTo(el, "y", { duration: 0.4, ease: "power3" });
 
     function onMove(event: PointerEvent) {
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      moveX((event.clientX - (rect.left + rect.width / 2)) * 0.28);
-      moveY((event.clientY - (rect.top + rect.height / 2)) * 0.28);
+      rawX.set((event.clientX - (rect.left + rect.width / 2)) * 0.28);
+      rawY.set((event.clientY - (rect.top + rect.height / 2)) * 0.28);
     }
 
     function onLeave() {
-      moveX(0);
-      moveY(0);
+      rawX.set(0);
+      rawY.set(0);
     }
 
     el.addEventListener("pointermove", onMove);
@@ -41,11 +48,17 @@ export default function MagneticLink({ href, className, children }: MagneticLink
       el.removeEventListener("pointermove", onMove);
       el.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [prefersReducedMotion, rawX, rawY]);
 
   return (
-    <Link href={href} ref={ref} className={className} data-cursor-hover>
+    <MotionLink
+      href={href}
+      ref={ref}
+      className={className}
+      data-cursor-hover
+      style={prefersReducedMotion ? undefined : { x, y }}
+    >
       {children}
-    </Link>
+    </MotionLink>
   );
 }
