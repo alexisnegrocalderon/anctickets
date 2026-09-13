@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-14 text-[#f5f4f1] sm:py-16">
-      <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[#a77fff]">
+      <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[#C8FF3D]">
         Legal
       </p>
       <h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">
@@ -100,7 +100,7 @@ export default function TermsPage() {
           <h2 className="text-lg font-bold text-[#f5f4f1]">9. Contacto</h2>
           <p className="mt-2">
             Dudas sobre estos términos, escríbenos a{" "}
-            <a href="mailto:tickets@ancdigital.cl" className="text-[#c3adff] underline underline-offset-2">
+            <a href="mailto:tickets@ancdigital.cl" className="text-[#DFFF8F] underline underline-offset-2">
               tickets@ancdigital.cl
             </a>
             .

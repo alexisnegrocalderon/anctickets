@@ -78,7 +78,7 @@ export default function ImageUpload({
         />
         <label
           htmlFor={inputId}
-          className="cursor-pointer rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-[#f5f4f1] transition hover:border-[#c3adff] hover:text-[#c3adff]"
+          className="cursor-pointer rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-[#f5f4f1] transition hover:border-[#DFFF8F] hover:text-[#DFFF8F]"
         >
           {uploading ? "Subiendo..." : imageUrl ? "Cambiar imagen" : "Subir imagen"}
         </label>
@@ -88,7 +88,7 @@ export default function ImageUpload({
           placeholder="o pega una URL externa"
           value={imageUrl}
           onChange={(event) => setImageUrl(event.target.value)}
-          className="min-w-0 flex-1 rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-[#f5f4f1] placeholder:text-neutral-500 transition focus:border-[#a77fff] focus:outline-none"
+          className="min-w-0 flex-1 rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-[#f5f4f1] placeholder:text-neutral-500 transition focus:border-[#C8FF3D] focus:outline-none"
         />
       </div>
 

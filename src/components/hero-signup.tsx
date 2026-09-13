@@ -2,7 +2,7 @@
 
 /**
  * Estilo ANC — Rave Editorial Noir: interfaz mono-lineal sobre video nocturno;
- * movimiento preciso, panel de registro con Google y lila reservado para conversión.
+ * movimiento preciso, panel de registro con Google y verde ácido reservado para conversión.
  */
 import Image from "next/image";
 import Link from "next/link";

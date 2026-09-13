@@ -1,6 +1,6 @@
 /**
- * Estilo ANC — Rave Editorial Noir: cine nocturno, tipografía monumental y lila
- * como impulso de conversión para productores. El movimiento acompaña, no distrae.
+ * Estilo ANC — Rave Editorial Noir: cine nocturno, tipografía monumental y verde
+ * ácido como impulso de conversión para productores. El movimiento acompaña, no distrae.
  */
 import Link from "next/link";
 import AmbientSoundControl from "@/components/ambient-sound-control";
@@ -58,7 +58,7 @@ export default async function Home() {
         >
           <source src={heroVideo} type="video/mp4" />
         </video>
-        <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_78%_30%,rgba(167,127,255,.42),transparent_20%),radial-gradient(circle_at_65%_55%,rgba(167,127,255,.15),transparent_28%)] mix-blend-screen" />
+        <div className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(circle_at_78%_30%,rgba(200,255,61,.42),transparent_20%),radial-gradient(circle_at_65%_55%,rgba(200,255,61,.15),transparent_28%)] mix-blend-screen" />
         <div className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(90deg,rgba(9,9,9,.97)_0%,rgba(9,9,9,.8)_36%,rgba(9,9,9,.22)_71%,rgba(9,9,9,.56)_100%)]" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-20 h-2/5 bg-gradient-to-t from-[#090909] via-[#090909]/55 to-transparent" />
 
@@ -91,38 +91,38 @@ export default async function Home() {
 
       <section className="border-b border-white/10 bg-[#0d0d0d] px-5 py-6 sm:px-10">
         <div className="mx-auto grid max-w-7xl gap-5 text-xs font-bold tracking-[.14em] text-neutral-300 sm:grid-cols-3 sm:gap-8">
-          <p><span className="mr-3 text-[#a77fff]">—</span>VENDE ENTRADAS DE PAGO</p>
-          <p><span className="mr-3 text-[#a77fff]">—</span>COBRO DIRECTO A TU CUENTA</p>
-          <p><span className="mr-3 text-[#a77fff]">—</span>OPERACIÓN HECHA PARA EVENTOS</p>
+          <p><span className="mr-3 text-[#C8FF3D]">—</span>VENDE ENTRADAS DE PAGO</p>
+          <p><span className="mr-3 text-[#C8FF3D]">—</span>COBRO DIRECTO A TU CUENTA</p>
+          <p><span className="mr-3 text-[#C8FF3D]">—</span>OPERACIÓN HECHA PARA EVENTOS</p>
         </div>
       </section>
 
       <section id="productores" className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-10 lg:grid-cols-[1.15fr_.85fr] lg:items-end lg:py-32">
         <div data-anc-reveal>
-          <p className="text-xs font-black tracking-[.25em] text-[#a77fff]">LA DIFERENCIA ANC</p>
+          <p className="text-xs font-black tracking-[.25em] text-[#C8FF3D]">LA DIFERENCIA ANC</p>
           <h2 className="mt-5 text-[clamp(4.5rem,12vw,10rem)] font-black leading-[.72] tracking-[-.11em]">
             $0
             <span className="block text-[clamp(2.6rem,7vw,6.3rem)] text-[#f5f4f1]">PLATAFORMA.</span>
           </h2>
         </div>
-        <div data-anc-reveal="right" className="border-l border-[#a77fff] pl-6 sm:pl-8">
+        <div data-anc-reveal="right" className="border-l border-[#C8FF3D] pl-6 sm:pl-8">
           <p className="text-2xl font-black leading-[.95] tracking-[-.06em] sm:text-3xl">TU FECHA NO DEBERÍA ENTREGAR EL CONTROL DE SU CAJA.</p>
           <p className="mt-6 max-w-md text-base leading-7 text-neutral-400">ANC Tickets no cobra una comisión de plataforma por tus ventas. Conecta Mercado Pago, vende desde tu propia página y recibe el pago en la cuenta de tu organización.</p>
-          <MagneticLink href="#registro" className="mt-8 inline-flex items-center text-sm font-black text-[#c3adff] transition hover:text-white">CONECTAR Y CREAR MI EVENTO <span className="ml-2 text-xl">↗</span></MagneticLink>
+          <MagneticLink href="#registro" className="mt-8 inline-flex items-center text-sm font-black text-[#DFFF8F] transition hover:text-white">CONECTAR Y CREAR MI EVENTO <span className="ml-2 text-xl">↗</span></MagneticLink>
         </div>
       </section>
 
       <section id="como-funciona" className="border-y border-white/10 bg-[#101010] px-5 py-24 sm:px-10 lg:py-28">
         <div className="mx-auto max-w-7xl">
           <div data-anc-reveal className="max-w-2xl">
-            <p className="text-xs font-black tracking-[.25em] text-[#a77fff]">DE LA IDEA A LA PUERTA</p>
+            <p className="text-xs font-black tracking-[.25em] text-[#C8FF3D]">DE LA IDEA A LA PUERTA</p>
             <h2 className="mt-4 text-5xl font-black leading-[.82] tracking-[-.09em] sm:text-7xl">TRES MOVIMIENTOS.<br />UNA FECHA EN VENTA.</h2>
           </div>
           <div data-anc-reveal className="mt-14 grid border-y border-white/10 md:grid-cols-3 md:border-l">
             {steps.map((step) => (
               <article key={step.number} className="group border-b border-white/10 px-0 py-8 last:border-b-0 md:border-b-0 md:border-r md:px-8 md:py-3 lg:px-10">
-                <p className="text-xs font-black tracking-[.2em] text-[#a77fff]">{step.number}</p>
-                <h3 className="mt-12 text-3xl font-black leading-[.88] tracking-[-.06em] transition duration-200 group-hover:text-[#c3adff]">{step.title}</h3>
+                <p className="text-xs font-black tracking-[.2em] text-[#C8FF3D]">{step.number}</p>
+                <h3 className="mt-12 text-3xl font-black leading-[.88] tracking-[-.06em] transition duration-200 group-hover:text-[#DFFF8F]">{step.title}</h3>
                 <p className="mt-5 max-w-xs text-sm leading-6 text-neutral-400">{step.description}</p>
               </article>
             ))}
@@ -140,24 +140,24 @@ export default async function Home() {
         </div>
         <div data-anc-reveal="right" className="flex flex-col justify-between p-8 sm:p-14 lg:p-16">
           <div>
-            <p className="text-xs font-black tracking-[.25em] text-[#a77fff]">MÁS QUE UN LINK DE VENTA</p>
+            <p className="text-xs font-black tracking-[.25em] text-[#C8FF3D]">MÁS QUE UN LINK DE VENTA</p>
             <h2 className="mt-5 text-5xl font-black leading-[.82] tracking-[-.09em] sm:text-7xl">LA PUERTA<br />TAMBIÉN ES TUYA.</h2>
           </div>
           <ul className="mt-14 space-y-0 border-t border-white/15">
             {operationalBenefits.map((benefit, index) => (
               <li key={benefit} className="grid grid-cols-[38px_1fr] gap-3 border-b border-white/15 py-4 text-sm leading-6 text-neutral-300">
-                <span className="font-black text-[#a77fff]">0{index + 1}</span>
+                <span className="font-black text-[#C8FF3D]">0{index + 1}</span>
                 <span>{benefit}</span>
               </li>
             ))}
           </ul>
-          <MagneticLink href="/login" className="mt-10 inline-flex w-fit rounded-xl bg-[#f5f4f1] px-5 py-3.5 text-sm font-black text-black transition duration-200 hover:bg-[#c6b0ff] active:scale-[.97]">VER MI PANEL DE PRODUCTOR →</MagneticLink>
+          <MagneticLink href="/login" className="mt-10 inline-flex w-fit rounded-xl bg-[#f5f4f1] px-5 py-3.5 text-sm font-black text-black transition duration-200 hover:bg-[#E7FFB0] active:scale-[.97]">VER MI PANEL DE PRODUCTOR →</MagneticLink>
         </div>
       </section>
 
       <section id="eventos" className="mx-auto grid max-w-7xl gap-10 px-5 py-24 sm:px-10 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:py-32">
         <div data-anc-reveal>
-          <p className="text-xs font-black tracking-[.25em] text-[#a77fff]">PENSADO PARA QUIEN COMPRA</p>
+          <p className="text-xs font-black tracking-[.25em] text-[#C8FF3D]">PENSADO PARA QUIEN COMPRA</p>
           <h2 className="mt-4 text-5xl font-black leading-[.83] tracking-[-.09em] sm:text-7xl">UNA VENTA<br />QUE SE SIENTE<br />COMO TU EVENTO.</h2>
           <p className="mt-7 max-w-sm text-base leading-7 text-neutral-400">Tu audiencia llega a una página clara, compra en pocos pasos y entra con un QR listo para la puerta.</p>
         </div>
@@ -166,7 +166,7 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
           <div className="relative flex h-full flex-col justify-end">
             <div className="max-w-sm border border-white/20 bg-[#090909]/75 p-5 backdrop-blur-md sm:p-6">
-              <p className="text-[10px] font-black tracking-[.22em] text-[#c3adff]">EL RESULTADO</p>
+              <p className="text-[10px] font-black tracking-[.22em] text-[#DFFF8F]">EL RESULTADO</p>
               <p className="mt-3 text-2xl font-black leading-[.9] tracking-[-.05em]">PÁGINA DE EVENTO. PAGO. QR. PUERTA.</p>
               <p className="mt-4 text-sm leading-6 text-neutral-300">Sin pasos que distraigan a tu público de llegar a tu evento.</p>
             </div>
@@ -177,7 +177,7 @@ export default async function Home() {
       <section id="eventos-publicados" className="border-t border-white/10 bg-[#0b0b0b] px-5 py-24 sm:px-10 lg:py-32">
         <div className="mx-auto max-w-7xl">
           <div data-anc-reveal className="max-w-2xl">
-            <p className="text-xs font-black tracking-[.25em] text-[#a77fff]">EN VENTA AHORA</p>
+            <p className="text-xs font-black tracking-[.25em] text-[#C8FF3D]">EN VENTA AHORA</p>
             <h2 className="mt-4 text-5xl font-black leading-[.82] tracking-[-.09em] sm:text-7xl">PRÓXIMOS<br />EVENTOS.</h2>
           </div>
 
@@ -190,7 +190,7 @@ export default async function Home() {
                   key={event.id}
                   href={`/${event.slug}`}
                   data-cursor-hover
-                  className="group overflow-hidden border border-white/10 bg-[#101010] transition duration-150 hover:border-[#a77fff] active:scale-[.98]"
+                  className="group overflow-hidden border border-white/10 bg-[#101010] transition duration-150 hover:border-[#C8FF3D] active:scale-[.98]"
                 >
                   <div className="aspect-video w-full bg-neutral-800">
                     {event.image_url ? (
@@ -203,14 +203,14 @@ export default async function Home() {
                     ) : null}
                   </div>
                   <div className="p-5">
-                    <p className="text-[10px] font-black tracking-[.18em] text-[#c3adff]">
+                    <p className="text-[10px] font-black tracking-[.18em] text-[#DFFF8F]">
                       {new Date(event.event_date).toLocaleDateString("es-CL", {
                         day: "2-digit",
                         month: "short",
                         year: "numeric",
                       })}
                     </p>
-                    <h3 className="mt-2 font-black leading-tight tracking-tight text-[#f5f4f1] group-hover:text-[#c3adff]">
+                    <h3 className="mt-2 font-black leading-tight tracking-tight text-[#f5f4f1] group-hover:text-[#DFFF8F]">
                       {event.title}
                     </h3>
                     {event.venue ? (
@@ -224,7 +224,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-[#a77fff] px-5 py-20 text-black sm:px-10 sm:py-24">
+      <section className="bg-[#C8FF3D] px-5 py-20 text-black sm:px-10 sm:py-24">
         <div data-anc-reveal className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.25fr_.75fr] lg:items-end">
           <div>
             <p className="text-xs font-black tracking-[.25em]">ANC TICKETS / CHILE</p>
@@ -242,8 +242,8 @@ export default async function Home() {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
             <span>ANC TICKETS / CHILE</span>
             <span className="flex gap-4">
-              <Link href="/privacidad" className="transition hover:text-[#c3adff]">PRIVACIDAD</Link>
-              <Link href="/terminos" className="transition hover:text-[#c3adff]">TÉRMINOS</Link>
+              <Link href="/privacidad" className="transition hover:text-[#DFFF8F]">PRIVACIDAD</Link>
+              <Link href="/terminos" className="transition hover:text-[#DFFF8F]">TÉRMINOS</Link>
             </span>
           </div>
           <span className="max-w-lg text-left leading-5 sm:text-right">COSTO DE PLATAFORMA ANC: $0. LAS TARIFAS Y CONDICIONES DEL PROCESAMIENTO DE PAGO CORRESPONDEN A MERCADO PAGO.</span>

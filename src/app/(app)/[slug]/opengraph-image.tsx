@@ -35,7 +35,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           backgroundColor: "#090909",
           backgroundImage: event?.image_url
             ? undefined
-            : "radial-gradient(circle at 86% 10%, rgba(167,127,255,.55), transparent 42%), radial-gradient(circle at 70% 90%, rgba(167,127,255,.22), transparent 38%), linear-gradient(135deg, #0d0d0f 0%, #090909 55%, #120c1c 100%)",
+            : "radial-gradient(circle at 86% 10%, rgba(200,255,61,.55), transparent 42%), radial-gradient(circle at 70% 90%, rgba(200,255,61,.22), transparent 38%), linear-gradient(135deg, #0d0d0f 0%, #090909 55%, #120c1c 100%)",
         }}
       >
         {event?.image_url ? (
@@ -83,7 +83,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             <span style={{ fontSize: 30, fontWeight: 900, letterSpacing: "-0.05em", color: "#f5f4f1" }}>
               ANC
             </span>
-            <span style={{ fontSize: 30, fontWeight: 900, letterSpacing: "-0.05em", color: "#a77fff" }}>
+            <span style={{ fontSize: 30, fontWeight: 900, letterSpacing: "-0.05em", color: "#C8FF3D" }}>
               TICKETS
             </span>
           </div>
@@ -92,7 +92,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             style={{
               fontSize: 26,
               fontWeight: 700,
-              color: "#c3adff",
+              color: "#DFFF8F",
               letterSpacing: "-0.01em",
               marginBottom: "14px",
             }}

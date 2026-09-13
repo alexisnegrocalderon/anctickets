@@ -32,9 +32,9 @@ export default function AmbientSoundControl() {
         aria-pressed={enabled}
         aria-label={enabled ? "Desactivar sonido ambiental" : "Activar sonido ambiental"}
         onClick={() => setEnabled((value) => !value)}
-        className="flex items-center gap-2 rounded-full border border-white/25 bg-black/35 px-3 py-2 text-[10px] font-black tracking-[.18em] text-white backdrop-blur-md transition hover:border-[#c3adff] hover:text-[#c3adff]"
+        className="flex items-center gap-2 rounded-full border border-white/25 bg-black/35 px-3 py-2 text-[10px] font-black tracking-[.18em] text-white backdrop-blur-md transition hover:border-[#DFFF8F] hover:text-[#DFFF8F]"
       >
-        <span className={`h-1.5 w-1.5 rounded-full ${enabled ? "bg-[#a77fff] shadow-[0_0_10px_#a77fff]" : "bg-white/45"}`} />
+        <span className={`h-1.5 w-1.5 rounded-full ${enabled ? "bg-[#C8FF3D] shadow-[0_0_10px_#C8FF3D]" : "bg-white/45"}`} />
         {enabled ? "SOUND ON" : "SOUND OFF"}
       </button>
     </div>

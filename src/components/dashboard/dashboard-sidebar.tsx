@@ -26,7 +26,7 @@ export default function DashboardSidebar({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const panelClass =
-    "flex h-full flex-col border border-white/10 bg-[#101010]/70 backdrop-blur-2xl shadow-[0_0_60px_-15px_rgba(167,127,255,.35)]";
+    "flex h-full flex-col border border-white/10 bg-[#101010]/70 backdrop-blur-2xl shadow-[0_0_60px_-15px_rgba(200,255,61,.35)]";
 
   return (
     <>
@@ -34,7 +34,7 @@ export default function DashboardSidebar({
       <div className="flex items-center justify-between border-b border-white/10 bg-[#090909] px-4 py-3 sm:hidden">
         <Link href="/" className="flex items-center gap-2 text-base font-black italic tracking-tight text-[#f5f4f1]">
           <Image src="/anc-mark.png" alt="" width={26} height={26} priority />
-          ANC<span className="text-[#a77fff]">TICKETS</span>
+          ANC<span className="text-[#C8FF3D]">TICKETS</span>
         </Link>
         <button
           type="button"
@@ -71,7 +71,7 @@ export default function DashboardSidebar({
               <Image src="/anc-mark.png" alt="" width={28} height={28} priority className="shrink-0" />
               {collapsed ? null : (
                 <span className="truncate">
-                  ANC<span className="text-[#a77fff]">TICKETS</span>
+                  ANC<span className="text-[#C8FF3D]">TICKETS</span>
                 </span>
               )}
             </Link>
@@ -98,7 +98,7 @@ export default function DashboardSidebar({
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
                     active
-                      ? "bg-[#a77fff]/15 text-[#c3adff]"
+                      ? "bg-[#C8FF3D]/15 text-[#DFFF8F]"
                       : "text-neutral-400 hover:bg-white/5 hover:text-[#f5f4f1]"
                   }`}
                 >
@@ -122,14 +122,14 @@ export default function DashboardSidebar({
             <div className="h-px bg-white/10" />
 
             <div className="flex items-center gap-3 rounded-xl px-2 py-1.5">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#a77fff] to-[#5d3fa8] text-xs font-black text-[#120d1b]">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#C8FF3D] to-[#4B6B12] text-xs font-black text-[#120d1b]">
                 {(userEmail ?? "?").slice(0, 1).toUpperCase()}
               </div>
               {collapsed ? null : (
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs font-semibold text-[#f5f4f1]">{userEmail ?? "Cuenta"}</p>
                   <form action="/auth/signout" method="post">
-                    <button type="submit" className="text-xs text-neutral-500 transition hover:text-[#c3adff]">
+                    <button type="submit" className="text-xs text-neutral-500 transition hover:text-[#DFFF8F]">
                       Cerrar sesión
                     </button>
                   </form>

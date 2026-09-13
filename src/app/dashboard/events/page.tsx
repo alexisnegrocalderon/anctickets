@@ -43,9 +43,9 @@ export default async function DashboardEventsPage() {
       />
 
       {!profile?.mp_connected ? (
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#a77fff]/30 bg-[#a77fff]/10 px-5 py-4">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#C8FF3D]/30 bg-[#C8FF3D]/10 px-5 py-4">
           <div>
-            <p className="font-semibold text-[#c3adff]">
+            <p className="font-semibold text-[#DFFF8F]">
               Conecta tu cuenta de Mercado Pago
             </p>
             <p className="text-sm text-neutral-300">

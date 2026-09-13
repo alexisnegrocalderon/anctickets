@@ -21,7 +21,7 @@ export default async function OnboardingPage() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center gap-8 px-4">
       <div>
-        <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[#a77fff]">
+        <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[#C8FF3D]">
           Último paso
         </p>
         <h1 className="mt-2 text-3xl font-black tracking-tight text-[#f5f4f1] sm:text-4xl">

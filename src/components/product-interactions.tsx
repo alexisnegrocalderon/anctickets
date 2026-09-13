@@ -22,7 +22,7 @@ export default function ProductInteractions() {
     <section className="anc-product-lab" aria-labelledby="lab-title">
       <div className="mx-auto max-w-7xl px-5 py-24 sm:px-10 lg:py-32">
         <div data-anc-reveal className="max-w-3xl">
-          <p className="text-xs font-black tracking-[.25em] text-[#a77fff]">PRUEBA EL FLUJO</p>
+          <p className="text-xs font-black tracking-[.25em] text-[#C8FF3D]">PRUEBA EL FLUJO</p>
           <h2 id="lab-title" className="mt-4 text-5xl font-black leading-[.8] tracking-[-.09em] sm:text-7xl">NO SOLO TE LO DECIMOS.<br />ASÍ SE MUEVE ANC.</h2>
         </div>
 

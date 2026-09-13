@@ -32,7 +32,7 @@ export default async function DashboardLayout({
       <DashboardSidebar userEmail={user.email ?? null} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:py-10">
         <div className="mb-8">
-          <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[#a77fff]">
+          <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[#C8FF3D]">
             Productora
           </p>
           <h1 className="mt-1 text-4xl font-black tracking-tight text-[#f5f4f1] sm:text-5xl">

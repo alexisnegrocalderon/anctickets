@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-14 text-[#f5f4f1] sm:py-16">
-      <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[#a77fff]">
+      <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[#C8FF3D]">
         Legal
       </p>
       <h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-bold text-[#f5f4f1]">6. Tus derechos</h2>
           <p className="mt-2">
             Puedes pedir acceso, corrección o eliminación de tus datos escribiendo a{" "}
-            <a href="mailto:tickets@ancdigital.cl" className="text-[#c3adff] underline underline-offset-2">
+            <a href="mailto:tickets@ancdigital.cl" className="text-[#DFFF8F] underline underline-offset-2">
               tickets@ancdigital.cl
             </a>
             . Ten en cuenta que algunos datos de compras aprobadas se conservan por
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-bold text-[#f5f4f1]">7. Contacto</h2>
           <p className="mt-2">
             Cualquier duda sobre esta política, escríbenos a{" "}
-            <a href="mailto:tickets@ancdigital.cl" className="text-[#c3adff] underline underline-offset-2">
+            <a href="mailto:tickets@ancdigital.cl" className="text-[#DFFF8F] underline underline-offset-2">
               tickets@ancdigital.cl
             </a>
             .

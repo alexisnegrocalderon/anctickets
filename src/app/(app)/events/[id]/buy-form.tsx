@@ -79,7 +79,7 @@ export default function BuyForm({
           <div
             key={tt.id}
             className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3.5 transition ${
-              qty > 0 ? "border-[#a77fff]/60 bg-[#a77fff]/[.06]" : "border-white/10 bg-[#101010]"
+              qty > 0 ? "border-[#C8FF3D]/60 bg-[#C8FF3D]/[.06]" : "border-white/10 bg-[#101010]"
             }`}
           >
             <div className="min-w-0">
@@ -97,7 +97,7 @@ export default function BuyForm({
               <button
                 type="button"
                 onClick={() => setQty(tt.id, qty - 1, remaining)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition duration-100 hover:border-[#c3adff] hover:text-[#c3adff] active:scale-90 active:border-[#a77fff] active:text-[#a77fff] disabled:opacity-30 disabled:active:scale-100"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition duration-100 hover:border-[#DFFF8F] hover:text-[#DFFF8F] active:scale-90 active:border-[#C8FF3D] active:text-[#C8FF3D] disabled:opacity-30 disabled:active:scale-100"
                 disabled={soldOut || qty === 0}
               >
                 −
@@ -108,7 +108,7 @@ export default function BuyForm({
               <button
                 type="button"
                 onClick={() => setQty(tt.id, qty + 1, remaining)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition duration-100 hover:border-[#c3adff] hover:text-[#c3adff] active:scale-90 active:border-[#a77fff] active:text-[#a77fff] disabled:opacity-30 disabled:active:scale-100"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition duration-100 hover:border-[#DFFF8F] hover:text-[#DFFF8F] active:scale-90 active:border-[#C8FF3D] active:text-[#C8FF3D] disabled:opacity-30 disabled:active:scale-100"
                 disabled={soldOut}
               >
                 +
@@ -129,7 +129,7 @@ export default function BuyForm({
             <span className="text-[#f5f4f1]">${fees.serviceFeeAmount.toLocaleString("es-CL")}</span>
           </div>
           <div className="mt-3 flex justify-between border-t border-white/10 pt-3 text-sm font-bold text-[#f5f4f1]">
-            <span className="uppercase tracking-wide text-[#c3adff]">Total a pagar</span>
+            <span className="uppercase tracking-wide text-[#DFFF8F]">Total a pagar</span>
             <span>${fees.totalAmount.toLocaleString("es-CL")}</span>
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function BuyForm({
         onClick={handleCheckout}
         disabled={totalQty === 0 || loading}
         data-cursor-hover
-        className="rounded-full bg-[#a77fff] px-6 py-3.5 text-sm font-black uppercase tracking-[.05em] text-[#120d1b] transition hover:bg-[#c3adff] active:scale-[.98] disabled:opacity-40"
+        className="rounded-full bg-[#C8FF3D] px-6 py-3.5 text-sm font-black uppercase tracking-[.05em] text-[#120d1b] transition hover:bg-[#DFFF8F] active:scale-[.98] disabled:opacity-40"
       >
         {loading
           ? "Redirigiendo a Mercado Pago..."

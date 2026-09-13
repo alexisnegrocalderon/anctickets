@@ -63,7 +63,7 @@ export default async function MyTicketsPage() {
                   )}
                 </p>
               ) : null}
-              <p className="mb-3 text-sm font-medium text-[#c3adff]">
+              <p className="mb-3 text-sm font-medium text-[#DFFF8F]">
                 {ticket.ticket_types?.name}
               </p>
               <div className="mx-auto w-fit rounded-lg bg-white p-3">
