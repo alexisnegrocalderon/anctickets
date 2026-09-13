@@ -7,7 +7,6 @@ import AmbientSoundControl from "@/components/ambient-sound-control";
 import HeroSignup from "@/components/hero-signup";
 import HomeMotionEffects from "@/components/home-motion-effects";
 import MagneticLink from "@/components/magnetic-link";
-import PinnedEditorial from "@/components/pinned-editorial";
 import ProductInteractions from "@/components/product-interactions";
 import ScrollColorGlow from "@/components/scroll-color-glow";
 import { createClient } from "@/lib/supabase/server";
@@ -15,22 +14,6 @@ import type { Event } from "@/lib/database.types";
 
 const heroVideo = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/GbHXpGORdFcoZgeV.mp4";
 const heroPoster = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/tmjnuDhpwrWwdDyk.jpg";
-const braceletImage = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/ucGRmmUxeMRLDHAq.jpeg";
-const ticketImage = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/sJWyjPBFsNofukrp.jpg";
-const crowdImage = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663820533004/odnSxdePQnJFmYhJ.jpg";
-
-const steps = [
-  { number: "01", title: "CREA TU FECHA.", description: "Arma el evento con una secuencia visual de seis decisiones. Sin formularios eternos." },
-  { number: "02", title: "CONECTA MERCADO PAGO.", description: "Vincula la cuenta de tu organización para recibir los pagos de tus entradas." },
-  { number: "03", title: "VENDE Y COBRA.", description: "Comparte tu página, abre ventas y recibe cada pago directo en tu cuenta conectada." },
-];
-
-const operationalBenefits = [
-  "Página de venta pensada para móvil.",
-  "Tickets QR claros para cada comprador.",
-  "Staff propio con permisos por evento.",
-  "Escáner de puerta que bloquea dobles ingresos.",
-];
 
 /** Cada tarjeta de evento toma un color del sistema "Retro Future", en orden de aparición. */
 const CARD_ACCENTS = [
@@ -83,22 +66,6 @@ export default async function Home() {
         </div>
       </div>
 
-      <PinnedEditorial>
-        <section className="anc-editorial-strip" aria-labelledby="editorial-title">
-          <div className="anc-editorial-strip-inner">
-            <div data-anc-reveal className="anc-editorial-copy">
-              <p>LA NOCHE EN MOVIMIENTO</p>
-              <h2 id="editorial-title">TU EVENTO<br />NO ES UN FORMULARIO.</h2>
-              <p>Es una experiencia que empieza antes de la puerta: venta, pago, ticket y acceso con una misma dirección visual.</p>
-            </div>
-            <figure data-anc-grow className="anc-editorial-image">
-              <img src={crowdImage} alt="Multitud levantando las manos durante una noche de música" />
-              <figcaption>ANC / VENTA + ACCESO</figcaption>
-            </figure>
-          </div>
-        </section>
-      </PinnedEditorial>
-
       <section className="border-b border-white/10 bg-[#0d0d0d] px-5 py-6 sm:px-10">
         <div className="mx-auto grid max-w-7xl gap-5 text-xs font-bold tracking-[.14em] text-neutral-300 sm:grid-cols-3 sm:gap-8">
           <p><span className="mr-3 text-[#FF206E]">—</span>VENDE ENTRADAS DE PAGO</p>
@@ -107,7 +74,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="productores" className="bg-[#41EAD4] px-5 py-24 text-[#062622] sm:px-10 lg:py-32">
+      <section id="productores" className="bg-[#41EAD4] px-5 py-20 text-[#062622] sm:px-10 lg:py-28">
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
           <div data-anc-reveal>
             <p className="text-xs font-black tracking-[.25em] text-[#FF206E]">LA DIFERENCIA ANC</p>
@@ -124,69 +91,9 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="como-funciona" className="bg-[#FBFF12] px-5 py-24 text-[#160f00] sm:px-10 lg:py-28">
-        <div className="mx-auto max-w-7xl">
-          <div data-anc-reveal className="max-w-2xl">
-            <p className="text-xs font-black tracking-[.25em] text-[#FF206E]">DE LA IDEA A LA PUERTA</p>
-            <h2 className="mt-4 text-5xl font-black leading-[.82] tracking-[-.09em] sm:text-7xl">TRES MOVIMIENTOS.<br />UNA FECHA EN VENTA.</h2>
-          </div>
-          <div data-anc-reveal className="mt-14 grid border-y border-[#160f00]/15 md:grid-cols-3 md:border-l">
-            {steps.map((step) => (
-              <article key={step.number} className="group border-b border-[#160f00]/15 px-0 py-8 last:border-b-0 md:border-b-0 md:border-r md:px-8 md:py-3 lg:px-10">
-                <p className="text-xs font-black tracking-[.2em] text-[#FF206E]">{step.number}</p>
-                <h3 className="mt-12 text-3xl font-black leading-[.88] tracking-[-.06em] transition duration-200 group-hover:text-[#FF206E]">{step.title}</h3>
-                <p className="mt-5 max-w-xs text-sm leading-6 text-[#160f00]/70">{step.description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <ProductInteractions />
 
-      <section className="grid border-b border-white/10 lg:grid-cols-2">
-        <div data-anc-grow className="relative min-h-[530px] overflow-hidden">
-          <img src={braceletImage} alt="Pulsera ANC Tickets de color lila" className="h-full w-full object-cover object-center contrast-125" />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/70" />
-          <div className="absolute bottom-7 left-7 border border-white/20 bg-black/50 px-4 py-3 text-[10px] font-black tracking-[.18em] text-white backdrop-blur-md sm:bottom-10 sm:left-10">CONTROL DE ACCESO / ANC</div>
-        </div>
-        <div data-anc-reveal="right" className="flex flex-col justify-between p-8 sm:p-14 lg:p-16">
-          <div>
-            <p className="text-xs font-black tracking-[.25em] text-[#FF206E]">MÁS QUE UN LINK DE VENTA</p>
-            <h2 className="mt-5 text-5xl font-black leading-[.82] tracking-[-.09em] sm:text-7xl">LA PUERTA<br />TAMBIÉN ES TUYA.</h2>
-          </div>
-          <ul className="mt-14 space-y-0 border-t border-white/15">
-            {operationalBenefits.map((benefit, index) => (
-              <li key={benefit} className="grid grid-cols-[38px_1fr] gap-3 border-b border-white/15 py-4 text-sm leading-6 text-neutral-300">
-                <span className="font-black text-[#FF206E]">0{index + 1}</span>
-                <span>{benefit}</span>
-              </li>
-            ))}
-          </ul>
-          <MagneticLink href="/login" className="mt-10 inline-flex w-fit rounded-xl bg-[#f5f4f1] px-5 py-3.5 text-sm font-black text-black transition duration-200 hover:bg-[#FFB3D1] active:scale-[.97]">VER MI PANEL DE PRODUCTOR →</MagneticLink>
-        </div>
-      </section>
-
-      <section id="eventos" className="mx-auto grid max-w-7xl gap-10 px-5 py-24 sm:px-10 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:py-32">
-        <div data-anc-reveal>
-          <p className="text-xs font-black tracking-[.25em] text-[#FF206E]">PENSADO PARA QUIEN COMPRA</p>
-          <h2 className="mt-4 text-5xl font-black leading-[.83] tracking-[-.09em] sm:text-7xl">UNA VENTA<br />QUE SE SIENTE<br />COMO TU EVENTO.</h2>
-          <p className="mt-7 max-w-sm text-base leading-7 text-neutral-400">Tu audiencia llega a una página clara, compra en pocos pasos y entra con un QR listo para la puerta.</p>
-        </div>
-        <div data-anc-grow className="relative min-h-[470px] overflow-hidden border border-white/10 bg-[#151515] p-7 sm:p-10">
-          <img src={ticketImage} alt="Ambiente nocturno de un evento" className="absolute inset-0 h-full w-full object-cover grayscale contrast-125" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
-          <div className="relative flex h-full flex-col justify-end">
-            <div className="max-w-sm border border-white/20 bg-[#090909]/75 p-5 backdrop-blur-md sm:p-6">
-              <p className="text-[10px] font-black tracking-[.22em] text-[#FF6FA0]">EL RESULTADO</p>
-              <p className="mt-3 text-2xl font-black leading-[.9] tracking-[-.05em]">PÁGINA DE EVENTO. PAGO. QR. PUERTA.</p>
-              <p className="mt-4 text-sm leading-6 text-neutral-300">Sin pasos que distraigan a tu público de llegar a tu evento.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="eventos-publicados" className="border-t border-white/10 bg-[#0b0b0b] px-5 py-24 sm:px-10 lg:py-32">
+      <section id="eventos-publicados" className="border-t border-white/10 bg-[#0b0b0b] px-5 py-20 sm:px-10 lg:py-28">
         <div className="mx-auto max-w-7xl">
           <div data-anc-reveal className="max-w-2xl">
             <p className="text-xs font-black tracking-[.25em] text-[#FF206E]">EN VENTA AHORA</p>

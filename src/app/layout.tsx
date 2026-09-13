@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fredoka, Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import CustomCursor from "@/components/custom-cursor";
 import SmoothScrollProvider from "@/components/smooth-scroll-provider";
@@ -13,6 +13,13 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+/** Display redondeada y gruesa para titulares — reemplaza el Arial por defecto que traía el sitio. */
+const fredoka = Fredoka({
+  variable: "--font-fredoka",
+  weight: ["500", "600", "700"],
   subsets: ["latin"],
 });
 
@@ -30,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fredoka.variable} h-full antialiased`}
     >
       <head>
         <Script
