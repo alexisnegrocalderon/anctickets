@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-13T00:00:00Z",
+  "title": "Design System: ANC Tickets",
+  "extensions": {
+    "colorMeta": {
+      "ink-magenta": {
+        "role": "primary",
+        "displayName": "Magenta de Afiche",
+        "canonical": "#ff206e",
+        "tonalRamp": ["#ffe3ee", "#ff6fa0", "#ff206e", "#7a1d3f", "#2a0010"]
+      },
+      "ink-yellow": {
+        "role": "secondary",
+        "displayName": "Amarillo de Corchete",
+        "canonical": "#fbff12",
+        "tonalRamp": ["#fdffb0", "#fbff12", "#33301f", "#2a2a08"]
+      },
+      "ink-turquoise": {
+        "role": "tertiary",
+        "displayName": "Turquesa de Caja",
+        "canonical": "#41ead4",
+        "tonalRamp": ["#c9f8f1", "#41ead4", "#134a43", "#062622"]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Papel Crudo",
+        "canonical": "#ece7dc",
+        "tonalRamp": ["#ece7dc", "#8f8877", "#4a4639", "#090909"]
+      },
+      "wall": {
+        "role": "neutral",
+        "displayName": "Muro",
+        "canonical": "#0c0b0a",
+        "tonalRamp": ["#222222", "#0c0b0a", "#090909"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "El titular del afiche del hero. Uno por página."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Titular de sección, pintado directo sobre el muro sin papel debajo."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Titular dentro de un afiche."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto de apoyo, máximo 62ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Fechas, códigos de entrada y metadatos, siempre en mono y mayúsculas."
+      }
+    },
+    "shadows": [
+      {
+        "name": "papel-sobre-muro",
+        "value": "drop-shadow(7px 11px 14px rgb(0 0 0 / 0.6))",
+        "purpose": "La sombra de una hoja pegada al muro. Va sobre la hoja, junto al filtro de rasgado, nunca sobre el contenido."
+      },
+      {
+        "name": "esquina-despegada",
+        "value": "linear-gradient(135deg, transparent 48%, rgb(0 0 0 / 0.45) 100%)",
+        "purpose": "Sombra que se abre desde una esquina suelta del afiche."
+      },
+      {
+        "name": "cinta",
+        "value": "0 2px 5px rgb(0 0 0 / 0.4)",
+        "purpose": "La cinta adhesiva que sostiene el papel."
+      },
+      {
+        "name": "corchete",
+        "value": "0 1px 2px rgb(0 0 0 / 0.6)",
+        "purpose": "El corchete clavado en el borde superior del afiche."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Única curva del sistema. Deceleración exponencial; nada rebota."
+      },
+      {
+        "name": "paste-in",
+        "value": "opacity 520ms, transform 760ms",
+        "purpose": "El afiche se pega al entrar en pantalla. Un solo momento autorado por sección."
+      },
+      {
+        "name": "state",
+        "value": "100ms",
+        "purpose": "Hover y active de botones y enlaces."
+      }
+    ],
+    "filters": [
+      {
+        "name": "torn-edge",
+        "value": "feTurbulence fractalNoise baseFrequency='0.014 0.07' numOctaves='4' seed='7' + feDisplacementMap scale='11'",
+        "purpose": "Borde rasgado del papel. Va sobre la hoja de fondo, nunca sobre texto."
+      },
+      {
+        "name": "torn-edge-soft",
+        "value": "feTurbulence fractalNoise baseFrequency='0.02 0.09' numOctaves='3' seed='19' + feDisplacementMap scale='7'",
+        "purpose": "Restos de afiches arrancados en el fondo del muro."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Afiche",
+      "kind": "card",
+      "refersTo": "poster-paper",
+      "description": "El contenedor único del sistema: una hoja de papel pegada al muro. La hoja va detrás y recibe el rasgado; el contenido va encima y queda nítido.",
+      "html": "<div class=\"ds-poster\" style=\"--rot:-1.4deg\"><span class=\"ds-sheet\" aria-hidden=\"true\"></span><p class=\"ds-poster-type\">Arma la fecha</p><p class=\"ds-poster-body\">Nombre, día, lugar, tipos de entrada.</p></div>",
+      "css": ".ds-poster { position: relative; isolation: isolate; transform: rotate(var(--rot, 0deg)); padding: 36px 24px; border-radius: 0; } .ds-sheet { position: absolute; inset: 0; z-index: -1; background-color: #ece7dc; filter: url('#torn-edge') drop-shadow(7px 11px 14px rgb(0 0 0 / 0.6)); } .ds-poster-type { font-family: Anton, 'Arial Narrow', sans-serif; font-size: 2.4rem; line-height: 0.84; letter-spacing: -0.005em; text-transform: uppercase; color: #090909; } .ds-poster-body { margin-top: 16px; font-size: 1rem; line-height: 1.5; color: #4a4639; }"
+    },
+    {
+      "name": "Botón primario",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "La acción del productor: publicar una fecha. Rectángulo exacto en tinta negra.",
+      "html": "<button class=\"ds-btn-primary\">Publicar mi fecha</button>",
+      "css": ".ds-btn-primary { background: #090909; color: #ece7dc; font-family: Anton, 'Arial Narrow', sans-serif; font-size: 1.5rem; letter-spacing: -0.005em; text-transform: uppercase; padding: 20px 32px; border: none; border-radius: 0; transition: background 100ms cubic-bezier(0.16,1,0.3,1), transform 100ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { background: #1d1d1d; } .ds-btn-primary:active { transform: scale(.98); } .ds-btn-primary:focus-visible { outline: 3px solid #fbff12; outline-offset: 3px; }"
+    },
+    {
+      "name": "Sello de goma",
+      "kind": "custom",
+      "refersTo": "poster-magenta",
+      "description": "El dato duro timbrado sobre el afiche. La tinta nunca sale pareja: la irregularidad viene de una máscara de turbulencia.",
+      "html": "<span class=\"ds-stamp\">Costo ANC $0</span>",
+      "css": ".ds-stamp { display: inline-block; border: 3px solid currentColor; color: #2a0010; font-family: Anton, sans-serif; font-size: 1.875rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.35em 0.7em; opacity: 0.82; transform: rotate(-3deg); }"
+    },
+    {
+      "name": "Registro corrido",
+      "kind": "custom",
+      "refersTo": "poster-magenta",
+      "description": "Una palabra por pantalla se imprime dos veces, apenas desalineada, en dos tintas que se multiplican al cruzarse.",
+      "html": "<span class=\"ds-misregister\" data-ink=\"Cobra\">Cobra</span>",
+      "css": ".ds-misregister { position: relative; display: inline-block; font-family: Anton, sans-serif; text-transform: uppercase; color: #ece7dc; } .ds-misregister::before { content: attr(data-ink); position: absolute; left: -0.035em; top: 0.02em; color: #41ead4; mix-blend-mode: multiply; pointer-events: none; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El Muro de Afiches",
+    "overview": "Una fecha en Chile no nace en un dashboard: nace en un afiche pegado en un muro, encima de otros diez, con la esquina despegada y el corchete todavía puesto. ANC Tickets es la herramienta de ese productor, así que el producto se ve como su oficio y no como el software que lo administra. La superficie es hormigón oscuro con restos de papel arrancado; encima se pegan hojas de papel real, impresas en tintas planas, apenas torcidas, apenas fuera de registro.\n\nLa densidad es alta y el tono es directo. Cada afiche dice una cosa y la dice en grande; el texto de apoyo va abajo, en cuerpo legible, sin adornos. El color no decora: identifica. Magenta es la voz de ANC, amarillo es la acción del productor, turquesa es la plata que llega. El material se genera en el navegador y nunca con una foto de stock.",
+    "antiReferences": [
+      "La estructura de landing de SaaS: diagramas explicativos, tarjetas de vidrio, tablas de features.",
+      "Piezas 3D abstractas flotando (aros y cubos sin forma reconocible).",
+      "Fotografías de banco de imágenes.",
+      "El lila genérico que usan el resto de las ticketeras chilenas."
+    ],
+    "keyCharacteristics": [
+      "Papel sobre muro: todo contenido vive dentro de una hoja pegada.",
+      "Cero radios: el papel se corta y se rasga, no se redondea.",
+      "Tintas planas rationadas: nunca más de dos tintas por afiche.",
+      "Material procedural, nunca fotográfico.",
+      "Un solo momento de movimiento por pantalla."
+    ],
+    "rules": [
+      {
+        "name": "La Regla de las Dos Tintas",
+        "body": "Un afiche se imprime en una tinta de fondo y una de texto. La tercera tinta solo entra como registro corrido o como sello, nunca como un tercer bloque de color.",
+        "section": "colors"
+      },
+      {
+        "name": "La Regla del Amarillo",
+        "body": "El amarillo es la acción del productor. Si un elemento amarillo no lleva a publicar una fecha, está mal pintado.",
+        "section": "colors"
+      },
+      {
+        "name": "La Regla del Registro Corrido",
+        "body": "Una palabra por pantalla puede imprimirse dos veces, desplazada -0.035em, en turquesa multiplicada sobre magenta. Dos ya es un efecto.",
+        "section": "typography"
+      },
+      {
+        "name": "La Regla del Nombre Ajeno",
+        "body": "El título de un evento es del productor: se compone en la tipografía del sistema pero nunca se fuerza a mayúsculas.",
+        "section": "typography"
+      },
+      {
+        "name": "La Regla de la Hoja",
+        "body": "El filtro de rasgado va sobre el span de la hoja que está detrás del contenido, nunca sobre el contenido. Un texto desplazado por turbulencia es un texto roto.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do envolver todo contenido en un afiche: una hoja detrás y el texto encima.",
+      "Do inclinar cada afiche con --rot entre -1.6deg y 1.4deg, y preservar esa rotación en la animación de entrada.",
+      "Do elegir el color del texto según la tinta del papel (#ece7dc sobre magenta, #062622 sobre turquesa, #090909 sobre amarillo).",
+      "Do generar el material con SVG y CSS: fibra, rasgado, sello, perforación.",
+      "Do dejar el contenido visible por defecto y esconderlo solo bajo .motion-on, para que un fallo de script nunca deje la página en blanco.",
+      "Do respetar prefers-reduced-motion en cada momento de movimiento."
+    ],
+    "donts": [
+      "Don't usar border-radius en ninguna parte del muro.",
+      "Don't aplicar el filtro de rasgado sobre texto o sobre un contenedor con texto.",
+      "Don't usar fotografías de banco de imágenes; el único material fotográfico aprobado es el video del hero y las imágenes que suba el productor.",
+      "Don't pintar una sección completa de magenta, amarillo o turquesa.",
+      "Don't inventar prueba social: el producto está en pre-lanzamiento.",
+      "Don't prometer $0 sin la letra chica del cargo por servicio del 10% que paga el comprador.",
+      "Don't usar curvas de rebote o elásticas; el movimiento decelera con cubic-bezier(0.16, 1, 0.3, 1)."
+    ]
+  }
+}
