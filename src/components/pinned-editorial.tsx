@@ -24,7 +24,8 @@ export default function PinnedEditorial({ children }: { children: React.ReactNod
         start: "top top+=80",
         end: "+=60%",
         pin: copy,
-        pinSpacing: false,
+        pinSpacing: true,
+        anticipatePin: 1,
       });
 
       gsap.fromTo(
