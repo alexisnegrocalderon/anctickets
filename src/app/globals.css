@@ -10,7 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-fredoka);
+  --font-display: var(--font-poster);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,11 +26,11 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Tipografía redondeada y fiestera para titulares en todo el sitio (home, evento, dashboard).
-   Fredoka es más ancha y redonda que Arial/Geist: el tracking negativo agresivo (-.06em a
-   -.11em) que se afinó para la fuente anterior hace que las letras se toquen y se vuelva
-   ilegible. Se fuerza un tracking seguro sin depender de editar cada clase de Tailwind. */
+/* Titulares de afiche en todo el producto (home, evento, panel). La condensada
+   ya trae su propio apretado óptico: el tracking negativo agresivo heredado
+   (-.06em a -.11em, afinado para Arial) hace que las letras se toquen, así que
+   se fuerza un valor seguro sin editar cada clase de Tailwind una por una. */
 h1, h2, h3, .font-display {
-  font-family: var(--font-fredoka), var(--font-geist-sans), Arial, sans-serif;
-  letter-spacing: -0.01em !important;
+  font-family: var(--font-poster), "Arial Narrow", var(--font-geist-sans), sans-serif;
+  letter-spacing: -0.005em !important;
 }
