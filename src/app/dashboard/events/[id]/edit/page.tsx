@@ -12,6 +12,7 @@ import {
 import { Button, Card, Field, Input, LinkButton, PageHeader, Textarea } from "@/components/dashboard/ui";
 import CopyEventLinkButton from "@/components/dashboard/copy-event-link-button";
 import ImageUpload from "@/components/dashboard/image-upload";
+import ThemePicker from "@/components/dashboard/theme-picker";
 
 interface SalesSummary {
   ticketsSold: number;
@@ -136,6 +137,12 @@ export default async function EditEventPage({
           </Field>
           <Field label="Imagen">
             <ImageUpload name="image_url" defaultValue={event.image_url} />
+          </Field>
+          <Field label="Mood / color de marca">
+            <ThemePicker defaultTheme={event.theme} defaultAccentColor={event.accent_color} />
+          </Field>
+          <Field label="Tu logo (opcional — reemplaza el logo de ANC en tu página)">
+            <ImageUpload variant="logo" name="organizer_logo_url" defaultValue={event.organizer_logo_url} />
           </Field>
           <Button type="submit" variant="primary" className="self-start">
             Guardar cambios

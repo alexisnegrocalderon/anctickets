@@ -4,13 +4,20 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/slug";
+import { isValidHex } from "@/lib/color";
 import type { EventTheme } from "@/lib/database.types";
 
-const EVENT_THEMES: EventTheme[] = ["magenta", "yellow", "turquoise", "charcoal"];
+const EVENT_THEMES: EventTheme[] = ["magenta", "yellow", "turquoise", "charcoal", "custom"];
 
 function readTheme(formData: FormData): EventTheme {
   const value = String(formData.get("theme") ?? "");
   return (EVENT_THEMES as string[]).includes(value) ? (value as EventTheme) : "magenta";
+}
+
+/** Un hex inválido nunca llega a la base: la página cae en el mood por defecto en vez de romperse. */
+function readAccentColor(formData: FormData): string | null {
+  const value = String(formData.get("accent_color") ?? "").trim();
+  return value && isValidHex(value) ? value : null;
 }
 
 async function requireUser() {
@@ -62,6 +69,8 @@ export async function createDraftEvent(formData: FormData): Promise<{ id: string
   const eventDate = String(formData.get("event_date") ?? "");
   const imageUrl = String(formData.get("image_url") ?? "").trim();
   const theme = readTheme(formData);
+  const accentColor = readAccentColor(formData);
+  const organizerLogoUrl = String(formData.get("organizer_logo_url") ?? "").trim();
 
   if (!title || !eventDate) {
     throw new Error("Título y fecha son obligatorios");
@@ -80,6 +89,8 @@ export async function createDraftEvent(formData: FormData): Promise<{ id: string
       event_date: new Date(eventDate).toISOString(),
       image_url: imageUrl || null,
       theme,
+      accent_color: accentColor,
+      organizer_logo_url: organizerLogoUrl || null,
       status: "draft",
     })
     .select("id")
@@ -102,6 +113,8 @@ export async function updateEvent(eventId: string, formData: FormData) {
   const eventDate = String(formData.get("event_date") ?? "");
   const imageUrl = String(formData.get("image_url") ?? "").trim();
   const theme = readTheme(formData);
+  const accentColor = readAccentColor(formData);
+  const organizerLogoUrl = String(formData.get("organizer_logo_url") ?? "").trim();
 
   const { error } = await supabase
     .from("events")
@@ -112,6 +125,8 @@ export async function updateEvent(eventId: string, formData: FormData) {
       event_date: new Date(eventDate).toISOString(),
       image_url: imageUrl || null,
       theme,
+      accent_color: accentColor,
+      organizer_logo_url: organizerLogoUrl || null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", eventId);

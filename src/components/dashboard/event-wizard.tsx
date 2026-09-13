@@ -13,13 +13,14 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { createDraftEvent, updateEvent, createTicketType, setEventStatus } from "@/app/dashboard/events/actions";
 import { Button, Field, Input, Textarea } from "@/components/dashboard/ui";
 import ImageUpload from "@/components/dashboard/image-upload";
-import { EVENT_THEME_OPTIONS, EVENT_THEME_STYLES } from "@/lib/event-themes";
+import { isValidHex } from "@/lib/color";
+import { EVENT_THEME_OPTIONS, EVENT_THEME_STYLES, resolveEventTheme } from "@/lib/event-themes";
 import type { EventTheme } from "@/lib/database.types";
 
 type DraftTicketType = { name: string; base_price: number; quantity: number };
 
 const STEP_LABELS = [
-  "Mood",
+  "Marca",
   "Título",
   "Fecha y lugar",
   "Descripción",
@@ -40,18 +41,22 @@ const slideVariants = {
 
 function LivePreview({
   theme,
+  accentColor,
+  organizerLogoUrl,
   title,
   eventDate,
   venue,
   imageUrl,
 }: {
   theme: EventTheme;
+  accentColor: string | null;
+  organizerLogoUrl: string;
   title: string;
   eventDate: string;
   venue: string;
   imageUrl: string;
 }) {
-  const style = EVENT_THEME_STYLES[theme];
+  const style = resolveEventTheme(theme, accentColor);
   const date = eventDate ? new Date(eventDate) : null;
 
   return (
@@ -77,9 +82,14 @@ function LivePreview({
           className="flex items-center justify-between px-4 py-2.5"
           style={{ backgroundImage: `linear-gradient(to right, ${style.from}, ${style.to})` }}
         >
-          <span className="text-xs font-black italic tracking-tight" style={{ color: style.ink }}>
-            ANC<span className="opacity-70">TICKETS</span>
-          </span>
+          {organizerLogoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={organizerLogoUrl} alt="" className="h-5 max-w-[40%] object-contain" />
+          ) : (
+            <span className="text-xs font-black italic tracking-tight" style={{ color: style.ink }}>
+              ANC<span className="opacity-70">TICKETS</span>
+            </span>
+          )}
         </div>
         <div className="p-5">
           <p className="font-mono text-[10px] font-bold uppercase tracking-[.18em]" style={{ color: style.text }}>
@@ -93,6 +103,11 @@ function LivePreview({
               ? date.toLocaleString("es-CL", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
               : "Fecha por definir"}
           </p>
+          {organizerLogoUrl ? (
+            <p className="mt-4 border-t border-white/10 pt-3 font-mono text-[9px] uppercase tracking-[.16em] text-neutral-600">
+              Powered by ANC Tickets
+            </p>
+          ) : null}
         </div>
       </div>
     </div>
@@ -109,6 +124,8 @@ export default function EventWizard() {
   const [error, setError] = useState<string | null>(null);
 
   const [theme, setTheme] = useState<EventTheme>("magenta");
+  const [accentColor, setAccentColor] = useState("#FF206E");
+  const [organizerLogoUrl, setOrganizerLogoUrl] = useState("");
   const [title, setTitle] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [venue, setVenue] = useState("");
@@ -128,6 +145,8 @@ export default function EventWizard() {
     data.set("description", description);
     data.set("image_url", imageUrl);
     data.set("theme", theme);
+    data.set("accent_color", theme === "custom" && isValidHex(accentColor) ? accentColor : "");
+    data.set("organizer_logo_url", organizerLogoUrl);
     return data;
   }
 
@@ -209,7 +228,7 @@ export default function EventWizard() {
 
   const canAdvanceStep1 = title.trim().length > 0;
   const canAdvanceStep2 = eventDate.length > 0;
-  const activeThemeStyle = EVENT_THEME_STYLES[theme];
+  const activeThemeStyle = resolveEventTheme(theme, accentColor);
   const stepTransition = prefersReducedMotion ? { duration: 0 } : SPRING;
 
   return (
@@ -249,39 +268,97 @@ export default function EventWizard() {
               transition={stepTransition}
             >
               {step === 0 ? (
-                <div className="flex flex-col gap-4">
-                  <h1 className="text-2xl font-bold tracking-tight text-[#f5f4f1]">¿Cuál es el mood de tu fiesta?</h1>
-                  <p className="text-sm text-neutral-400">Define el color de tu página pública. Puedes cambiarlo cuando quieras.</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {EVENT_THEME_OPTIONS.map((option) => {
-                      const style = EVENT_THEME_STYLES[option.value];
-                      const selected = theme === option.value;
-                      return (
-                        <motion.button
-                          key={option.value}
-                          type="button"
-                          onClick={() => setTheme(option.value)}
-                          whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
-                          animate={prefersReducedMotion ? undefined : { scale: selected ? 1.04 : 1 }}
-                          transition={{ type: "spring", stiffness: 320, damping: 20 }}
-                          className="relative flex h-28 flex-col justify-end overflow-hidden rounded-2xl p-4 text-left"
-                          style={{
-                            backgroundImage: `linear-gradient(135deg, ${style.from}, ${style.to})`,
-                            boxShadow: selected ? `0 0 0 3px ${style.from}, 0 0 26px ${style.from}66` : undefined,
-                          }}
-                        >
-                          <span
-                            className="font-mono text-[10px] font-bold uppercase tracking-[.16em]"
-                            style={{ color: style.ink, opacity: 0.75 }}
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-4">
+                    <h1 className="text-2xl font-bold tracking-tight text-[#f5f4f1]">¿Cuál es el mood de tu fiesta?</h1>
+                    <p className="text-sm text-neutral-400">
+                      Define el color de tu página pública, o usa el tuyo propio si ya tienes una marca.
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {EVENT_THEME_OPTIONS.map((option) => {
+                        const style = EVENT_THEME_STYLES[option.value];
+                        const selected = theme === option.value;
+                        return (
+                          <motion.button
+                            key={option.value}
+                            type="button"
+                            onClick={() => setTheme(option.value)}
+                            whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
+                            animate={prefersReducedMotion ? undefined : { scale: selected ? 1.04 : 1 }}
+                            transition={{ type: "spring", stiffness: 320, damping: 20 }}
+                            className="relative flex h-28 flex-col justify-end overflow-hidden rounded-2xl p-4 text-left"
+                            style={{
+                              backgroundImage: `linear-gradient(135deg, ${style.from}, ${style.to})`,
+                              boxShadow: selected ? `0 0 0 3px ${style.from}, 0 0 26px ${style.from}66` : undefined,
+                            }}
                           >
-                            {selected ? "Elegido ✓" : "Elegir"}
-                          </span>
-                          <span className="text-lg font-black leading-tight" style={{ color: style.ink }}>
-                            {option.label}
-                          </span>
-                        </motion.button>
-                      );
-                    })}
+                            <span
+                              className="font-mono text-[10px] font-bold uppercase tracking-[.16em]"
+                              style={{ color: style.ink, opacity: 0.75 }}
+                            >
+                              {selected ? "Elegido ✓" : "Elegir"}
+                            </span>
+                            <span className="text-lg font-black leading-tight" style={{ color: style.ink }}>
+                              {option.label}
+                            </span>
+                          </motion.button>
+                        );
+                      })}
+
+                      {/* Quinta opción: color de marca propio en vez de uno de los 4 moods curados. */}
+                      <motion.button
+                        type="button"
+                        onClick={() => setTheme("custom")}
+                        whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
+                        animate={prefersReducedMotion ? undefined : { scale: theme === "custom" ? 1.04 : 1 }}
+                        transition={{ type: "spring", stiffness: 320, damping: 20 }}
+                        className="relative col-span-2 flex h-20 items-center justify-between overflow-hidden rounded-2xl border border-dashed border-white/20 p-4 text-left"
+                        style={{
+                          backgroundColor: isValidHex(accentColor) ? `${accentColor}22` : "transparent",
+                          boxShadow: theme === "custom" ? `0 0 0 3px ${accentColor}, 0 0 26px ${accentColor}66` : undefined,
+                        }}
+                      >
+                        <span className="text-lg font-black leading-tight text-[#f5f4f1]">
+                          {theme === "custom" ? "Elegido ✓ Personalizado" : "Personalizado"}
+                        </span>
+                        <span
+                          className="h-9 w-9 shrink-0 rounded-full border-2 border-white/30"
+                          style={{ backgroundColor: isValidHex(accentColor) ? accentColor : "#FF206E" }}
+                          aria-hidden="true"
+                        />
+                      </motion.button>
+                    </div>
+
+                    {theme === "custom" ? (
+                      <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[.03] p-3">
+                        <input
+                          type="color"
+                          value={isValidHex(accentColor) ? accentColor : "#FF206E"}
+                          onChange={(e) => setAccentColor(e.target.value)}
+                          className="h-10 w-14 cursor-pointer rounded-lg border border-white/15 bg-transparent"
+                          aria-label="Elegir color de marca"
+                        />
+                        <Input
+                          value={accentColor}
+                          onChange={(e) => setAccentColor(e.target.value)}
+                          placeholder="#FF206E"
+                          className="max-w-[10rem] font-mono uppercase"
+                        />
+                        {!isValidHex(accentColor) ? (
+                          <p className="text-xs text-red-400">Escribe un hex válido (ej. #FF206E)</p>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <div className="flex flex-col gap-3 border-t border-white/10 pt-6">
+                    <div>
+                      <h2 className="text-lg font-bold tracking-tight text-[#f5f4f1]">Tu logo (opcional)</h2>
+                      <p className="text-sm text-neutral-400">
+                        Si lo subes, tu página lo muestra en vez del logo de ANC — es tu marca, tu evento.
+                      </p>
+                    </div>
+                    <ImageUpload variant="logo" defaultValue={organizerLogoUrl} onChange={setOrganizerLogoUrl} />
                   </div>
                 </div>
               ) : null}
@@ -474,7 +551,15 @@ export default function EventWizard() {
         </div>
 
         <div className="lg:sticky lg:top-6">
-          <LivePreview theme={theme} title={title} eventDate={eventDate} venue={venue} imageUrl={imageUrl} />
+          <LivePreview
+            theme={theme}
+            accentColor={accentColor}
+            organizerLogoUrl={organizerLogoUrl}
+            title={title}
+            eventDate={eventDate}
+            venue={venue}
+            imageUrl={imageUrl}
+          />
         </div>
       </div>
     </div>

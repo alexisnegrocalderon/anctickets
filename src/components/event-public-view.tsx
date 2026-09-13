@@ -3,7 +3,7 @@ import type { Event, TicketType } from "@/lib/database.types";
 import BuyForm from "@/app/(app)/events/[id]/buy-form";
 import FloatingAccessButton from "@/components/floating-access-button";
 import ScrollReveal from "@/components/scroll-reveal";
-import { EVENT_THEME_STYLES } from "@/lib/event-themes";
+import { resolveEventTheme } from "@/lib/event-themes";
 
 export default function EventPublicView({
   event,
@@ -21,7 +21,7 @@ export default function EventPublicView({
   const month = date.toLocaleDateString("es-CL", { month: "short" }).replace(".", "").toUpperCase();
   const time = date.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" });
   const hasTickets = !!ticketTypes && ticketTypes.length > 0;
-  const theme = EVENT_THEME_STYLES[event.theme] ?? EVENT_THEME_STYLES.magenta;
+  const theme = resolveEventTheme(event.theme, event.accent_color);
 
   return (
     <main className="min-h-screen bg-[#090909] pb-28 text-[#f5f4f1]">
@@ -55,10 +55,15 @@ export default function EventPublicView({
             className="flex items-center justify-between px-5 py-3"
             style={{ backgroundImage: `linear-gradient(to right, ${theme.from}, ${theme.to})` }}
           >
-            <span className="flex items-center gap-1.5 text-sm font-black italic tracking-tight" style={{ color: theme.ink }}>
-              <Image src="/anc-mark.png" alt="" width={18} height={18} />
-              ANC<span className="opacity-70">TICKETS</span>
-            </span>
+            {event.organizer_logo_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={event.organizer_logo_url} alt={organizerName ?? ""} className="h-6 max-w-[45%] object-contain" />
+            ) : (
+              <span className="flex items-center gap-1.5 text-sm font-black italic tracking-tight" style={{ color: theme.ink }}>
+                <Image src="/anc-mark.png" alt="" width={18} height={18} />
+                ANC<span className="opacity-70">TICKETS</span>
+              </span>
+            )}
             <span className="font-mono text-[10px] font-bold uppercase tracking-[.18em]" style={{ color: theme.ink, opacity: 0.7 }}>
               Acceso oficial
             </span>
@@ -96,6 +101,13 @@ export default function EventPublicView({
                 <p className="mt-1 text-2xl font-black tracking-tight text-[#f5f4f1]">{time}</p>
               </div>
             </div>
+
+            {event.organizer_logo_url ? (
+              <p className="mt-6 flex items-center gap-1.5 border-t border-white/10 pt-4 font-mono text-[9px] uppercase tracking-[.16em] text-neutral-600">
+                <Image src="/anc-mark.png" alt="" width={12} height={12} className="opacity-60" />
+                Powered by ANC Tickets
+              </p>
+            ) : null}
           </div>
         </div>
 
