@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored skill assets (scripts/data shipped by installed skills), not project code.
+    ".agents/**",
   ]),
 ]);
 

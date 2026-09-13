@@ -138,6 +138,12 @@
       "sourceType": "github",
       "skillPath": "skills/transitions-dev/SKILL.md",
       "computedHash": "6a8b9a1a49cd392994d8f07714b7fb5cbe138d615f48c2d9215c460619eba1cd"
+    },
+    "impeccable": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/impeccable/SKILL.md",
+      "computedHash": "3895765e9434400dfc1b30e364be002cf499c1718fb2431e65b907c14ae2cb27"
     }
   }
 }
