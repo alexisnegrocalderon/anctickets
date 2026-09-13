@@ -1,27 +1,36 @@
 /*
- * ANC Tickets — sistema de marca "Retro Future".
- * Magenta / amarillo / turquesa sobre charcoal casi negro. Tokens compartidos
- * por el home, la página pública de evento y el panel del organizador.
+ * ANC Tickets — sistema de marca "Indigo & Lima".
+ * Fondo blanco, texto en índigo oscuro, un acento lima para la acción
+ * principal y un violeta suave para los datos de confianza. Tokens
+ * compartidos por el home, la página pública de evento y el panel del
+ * organizador.
  */
 
 :root {
-  --ink-black: #090909;
-  --ink-magenta: #ff206e;
-  --ink-yellow: #fbff12;
-  --ink-turquoise: #41ead4;
-  --wall: #0c0b0a;
+  --anc-bg: #ffffff;
+  --anc-bg-soft: #f7f5fc;
+  --anc-ink: #1e1b4b;
+  --anc-ink-muted: #57567c;
+  --anc-lime: #a3e635;
+  --anc-lime-deep: #65a30d;
+  --anc-purple: #c084fc;
+  --anc-purple-deep: #7c3aed;
+  --anc-card: #f6f4fc;
+  --anc-border: rgba(30, 27, 75, 0.12);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --anc-accent: #ff206e;
-  --anc-accent-light: #ff6fa0;
-  --anc-yellow: #fbff12;
-  --anc-turquoise: #41ead4;
-  --anc-charcoal: #222222;
-  --anc-ink: #090909;
+  /* Alias heredados: mismos nombres que usan site-header.tsx, buy-form.tsx y
+     el resto del panel, reapuntados a la paleta nueva para que el acento de
+     marca sea consistente en todo el producto sin tocar esos archivos. */
+  --anc-accent: var(--anc-lime);
+  --anc-accent-light: #c4f072;
+  --anc-yellow: var(--anc-purple);
+  --anc-turquoise: var(--anc-purple);
+  --anc-charcoal: var(--anc-ink);
   --anc-warm-white: #f5f4f1;
 }
 
-/* Cabecera del producto (fuera del home): bloque sólido con remate de tinta. */
+/* Cabecera del producto (fuera del home): bloque sólido con remate de acento. */
 .anc-header-material {
   background: var(--anc-charcoal);
   border-bottom: 3px solid var(--anc-accent);
@@ -41,17 +50,17 @@
 /* ---------- Superficies del navegador ---------- */
 
 ::selection {
-  background: var(--ink-magenta);
-  color: var(--anc-warm-white);
+  background: var(--anc-purple);
+  color: var(--anc-ink);
 }
 
 html {
-  scrollbar-color: var(--ink-magenta) var(--wall);
+  scrollbar-color: var(--anc-ink) var(--anc-bg-soft);
   scrollbar-width: thin;
 }
 
 :focus-visible {
-  outline: 3px solid var(--ink-yellow);
+  outline: 3px solid var(--anc-lime);
   outline-offset: 3px;
 }
 

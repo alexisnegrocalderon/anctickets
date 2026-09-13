@@ -28,7 +28,7 @@ export default function HeroSignup({ compact = false }: { compact?: boolean }) {
         type="button"
         onClick={signInWithGoogle}
         disabled={loading}
-        className="flex w-full items-center justify-center gap-3 rounded-full bg-[var(--anc-yellow)] px-7 py-4 text-base font-black uppercase tracking-tight text-[#160f00] transition-transform duration-150 hover:brightness-95 active:scale-[.98] disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-3 rounded-full bg-[var(--anc-lime)] px-7 py-4 text-base font-black uppercase tracking-tight text-[var(--anc-ink)] transition-transform duration-150 hover:brightness-95 active:scale-[.98] disabled:opacity-60"
       >
         <svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true">
           <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z" />
@@ -39,12 +39,12 @@ export default function HeroSignup({ compact = false }: { compact?: boolean }) {
         {loading ? "Abriendo Google…" : "Publicar mi evento gratis"}
       </button>
       {!compact ? (
-        <p className="mt-3 text-center text-sm text-neutral-400">
+        <p className="mt-3 text-center text-sm text-[var(--anc-ink-muted)]">
           Entras con tu cuenta de Google. Sin contraseñas nuevas, sin tarjeta de crédito.
         </p>
       ) : null}
       {error ? (
-        <p role="alert" className="mt-3 text-center text-sm font-semibold text-[#ff6f9a]">
+        <p role="alert" className="mt-3 text-center text-sm font-semibold text-[#c0225a]">
           {error}
         </p>
       ) : null}

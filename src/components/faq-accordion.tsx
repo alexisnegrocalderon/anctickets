@@ -29,7 +29,7 @@ export default function FaqAccordion() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <div className="divide-y divide-white/10 border-y border-white/10">
+    <div className="divide-y divide-[var(--anc-border)] border-y border-[var(--anc-border)]">
       {FAQS.map((item, index) => {
         const isOpen = open === index;
         return (
@@ -40,10 +40,10 @@ export default function FaqAccordion() {
               aria-expanded={isOpen}
               className="flex w-full items-center justify-between gap-6 py-6 text-left"
             >
-              <span className="text-lg font-bold text-[#f5f4f1] sm:text-xl">{item.q}</span>
+              <span className="text-lg font-bold text-[var(--anc-ink)] sm:text-xl">{item.q}</span>
               <span
                 aria-hidden="true"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/20 text-lg text-[var(--anc-turquoise)] transition-transform duration-200"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--anc-ink)]/20 text-lg text-[var(--anc-purple-deep)] transition-transform duration-200"
                 style={{ transform: isOpen ? "rotate(45deg)" : "none" }}
               >
                 +
@@ -54,7 +54,7 @@ export default function FaqAccordion() {
               style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
             >
               <div className="min-h-0">
-                <p className="max-w-[62ch] pb-6 text-base leading-6 text-neutral-400">{item.a}</p>
+                <p className="max-w-[62ch] pb-6 text-base leading-6 text-[var(--anc-ink-muted)]">{item.a}</p>
               </div>
             </div>
           </div>

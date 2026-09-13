@@ -2,15 +2,15 @@
 name: ANC Tickets
 description: La ticketera chilena donde el productor cobra directo, sin comisión de plataforma.
 colors:
-  accent-magenta: "#ff206e"
-  accent-yellow: "#fbff12"
-  accent-turquoise: "#41ead4"
-  charcoal: "#222222"
-  ink: "#090909"
-  warm-white: "#f5f4f1"
-  bg-base: "#0c0b0a"
-  bg-raised: "#111010"
-  bg-card: "#161616"
+  bg: "#ffffff"
+  bg-soft: "#f7f5fc"
+  ink: "#1e1b4b"
+  ink-muted: "#57567c"
+  lime: "#a3e635"
+  lime-deep: "#65a30d"
+  purple: "#c084fc"
+  purple-deep: "#7c3aed"
+  card: "#f6f4fc"
 typography:
   display:
     fontFamily: "Anton, Arial Narrow, sans-serif"
@@ -44,24 +44,19 @@ rounded:
   lg: "32px"
   pill: "9999px"
 spacing:
-  section-y: "112px"
+  section-y: "128px"
   card-p: "32px"
 components:
   button-primary:
-    backgroundColor: "{colors.accent-yellow}"
+    backgroundColor: "{colors.lime}"
     textColor: "{colors.ink}"
     rounded: "{rounded.pill}"
     padding: "16px 28px"
   button-primary-hover:
-    backgroundColor: "#fdffb0"
-  button-secondary:
-    backgroundColor: "{colors.accent-magenta}"
-    textColor: "{colors.warm-white}"
-    rounded: "{rounded.pill}"
-    padding: "10px 20px"
+    backgroundColor: "#b8ee52"
   card:
-    backgroundColor: "{colors.bg-card}"
-    textColor: "{colors.warm-white}"
+    backgroundColor: "#ffffff"
+    textColor: "{colors.ink}"
     rounded: "{rounded.sm}"
     padding: "{spacing.card-p}"
 ---
@@ -70,22 +65,21 @@ components:
 
 ## Overview
 
-**Creative North Star: "El Panel del Productor Convertido en Vitrina"**
+**Creative North Star: "El Panel del Productor, en Blanco y Vivo"**
 
-ANC Tickets es la herramienta con la que un productor chileno vende sus propias
-entradas y cobra directo. El home ya no es un mundo de fantasía (afiches
-pegados en un muro): es una página de conversión clásica y probada —hero con
-promesa y CTA, beneficios, cómo funciona, prueba de reparto, preguntas
-frecuentes, cierre— que usa la estructura que mejor convierte en el mercado
-de ticketeras de LatAm, vestida enteramente con la identidad de marca de ANC.
+ANC Tickets vende sin intermediarios, y la página lo dice sobre un fondo
+blanco de estudio, no sobre una superficie oscura de rave. La estructura
+sigue siendo de conversión (hero, beneficios, cómo funciona, precio, FAQ,
+cierre); lo que cambió es el vestuario: índigo oscuro para todo el texto y
+los titulares, lima como el único color de acción (todo botón que publica un
+evento), y violeta suave como el acento de confianza y los datos de kicker.
 
-La superficie es charcoal casi negro (`#0c0b0a`) con tarjetas oscuras
-ligeramente más claras (`#161616`) para separar contenido sin usar bordes
-duros. El color vive en tres tintas planas —magenta, amarillo, turquesa— que
-identifican, no decoran: magenta es la voz de la marca y los CTAs primarios
-de navegación, amarillo es la acción de publicar un evento, turquesa marca
-datos de confianza y kickers. Todo texto de apoyo va en gris neutro sobre el
-fondo oscuro para mantener el contraste sin subir el volumen de color.
+El fondo blanco se rompe con paneles muy suaves (`#f7f5fc`) para separar
+secciones sin oscurecer nada, y con un solo bloque índigo oscuro sólido al
+cierre —el único lugar de la página que invierte el contraste— para que el
+CTA final se sienta como un evento, no como una fila más. Las tarjetas usan
+sombra suave y borde índigo al 12% en vez de bordes duros: es una superficie
+de estudio, con profundidad de papel, no de club nocturno.
 
 En pre-lanzamiento no existe prueba social real, así que la página nunca
 inventa logos, testimonios o cifras de ventas. En su lugar, la sección de
@@ -93,41 +87,45 @@ precio muestra una calculadora en vivo que reparte cualquier monto que el
 productor escriba: eso es la prueba, no una promesa.
 
 **Key Characteristics:**
-- Estructura de conversión: hero, beneficios, cómo funciona, precio, FAQ, cierre.
-- Tarjetas oscuras redondeadas en vez de bordes o superficies planas.
-- Tres tintas de acento rationadas por función, no decorativas.
+- Fondo blanco con paneles lavanda muy suaves para el ritmo de sección.
+- Un solo bloque índigo oscuro sólido, reservado para el cierre.
+- Lima es el único color de acción; violeta es el único color de confianza.
+- Elevación con sombra suave + borde índigo al 12%, no con capas tonales oscuras.
 - Cero prueba social fabricada; el reparto de la plata es la prueba.
-- Un solo momento de movimiento (`.reveal`) por elemento, con red de seguridad
-  si el observador de scroll no dispara.
 
 ## Colors
 
-Charcoal casi negro con tres tintas planas de acento.
+Blanco de estudio con dos acentos: uno de acción, uno de confianza.
 
 ### Primary
-- **Magenta ANC** (`#ff206e`): la voz de la marca. CTA secundario, subrayados,
-  kickers de la primera y tercera sección, el bloque de cierre.
+- **Índigo de Marca** (`#1e1b4b`): todo titular, todo texto principal, y el
+  único fondo sólido de la página (el bloque de cierre).
 
 ### Secondary
-- **Amarillo de Acción** (`#fbff12`): el botón de publicar un evento, en
-  cualquier parte de la página. Su escasez es lo que lo hace reconocible como
-  la acción principal.
+- **Lima de Acción** (`#a3e635` fondo / `#65a30d` texto): el único color de
+  botón que lleva a publicar un evento (Google OAuth). Si un elemento lima no
+  hace eso, está mal pintado.
 
 ### Tertiary
-- **Turquesa de Confianza** (`#41ead4`): kickers de secciones de confianza
-  (cómo funciona, la tarjeta "a tu Mercado Pago" en la calculadora).
+- **Violeta de Confianza** (`#c084fc` superficie / `#7c3aed` texto): kickers
+  de sección, badges y el borde del marco de video del hero. La versión clara
+  (`#c084fc`) es solo para fondos/bordes; el texto usa siempre la versión
+  oscura (`#7c3aed`) por contraste.
 
 ### Neutral
-- **Blanco Cálido** (`#f5f4f1`): texto principal sobre fondo oscuro.
-- **Gris de Apoyo** (`neutral-400/500`, Tailwind): texto secundario, cuerpo.
-- **Base** (`#0c0b0a`): fondo de página.
-- **Elevado** (`#111010`): fondo de secciones alternas (cómo funciona, fechas).
-- **Tarjeta** (`#161616` / `#1c1c1c`): fondo de tarjetas y bloques de datos.
+- **Blanco** (`#ffffff`): fondo base de toda la página.
+- **Lavanda Suave** (`#f7f5fc`): fondo de secciones alternas.
+- **Tarjeta** (`#f6f4fc`): fondo de bloques de datos dentro de una tarjeta blanca.
+- **Índigo Apagado** (`#57567c`): todo el texto de apoyo/cuerpo.
+- **Borde Índigo** (`rgba(30,27,75,.12)`): el único borde del sistema.
 
 ### Named Rules
-**La Regla del Amarillo.** El amarillo solo aparece en botones que llevan a
-publicar un evento (login/signup). Si un botón amarillo no hace eso, está mal
-pintado.
+**La Regla del Lima.** El lima solo aparece en botones que llevan a publicar
+un evento. Ningún otro elemento —ni siquiera decorativo— se pinta de lima.
+
+**La Regla del Bloque Único.** Solo una sección de la página puede tener
+fondo sólido índigo a la vez: el cierre. Usarlo en más de un lugar le quita
+el peso al CTA final.
 
 **La Regla de la Prueba Real.** Ninguna cifra de ventas, logo de cliente o
 testimonial se muestra sin ser real. Mientras no exista, la sección de precio
@@ -139,106 +137,108 @@ lo reemplaza con la calculadora de reparto.
 **Body Font:** Geist Sans
 **Label/Mono Font:** Geist Mono
 
-**Character:** Una condensada de alto impacto para headlines cortos y directos,
-contra una grotesca neutral para todo lo explicativo. El tracking de la
-condensada se mantiene casi en cero (global, vía `h1,h2,h3,.font-display`) para
-que las letras no se toquen.
+**Character:** Una condensada de alto impacto para headlines cortos, contra
+una grotesca neutral para todo lo explicativo. El tracking de la condensada
+se mantiene casi en cero (global, vía `h1,h2,h3,.font-display`).
 
 ### Hierarchy
-- **Display** (400, `clamp(2.6rem,6.4vw,5rem)`, 0.94): el titular del hero.
-- **Headline** (400, `clamp(2rem,4.6vw,3.4rem)`, 0.98): titular de cada sección.
-- **Title** (400, `clamp(1.7rem,3.4vw,2.6rem)`, 1.02): titular de un beneficio o paso.
-- **Body** (400, `1rem`, 1.6): texto de apoyo, máximo 62ch.
-- **Label** (700, `0.7rem`–`0.75rem`, `0.14em`–`0.2em`, mayúsculas mono): kickers,
-  metadatos, etiquetas de tarjeta. Este es el único lugar del sistema donde un
-  tamaño por debajo de 12px es intencional.
+- **Display** (400, `clamp(2.6rem,6.4vw,5rem)`, 0.94, índigo): el titular del hero.
+- **Headline** (400, `clamp(2rem,4.6vw,3.4rem)`, 0.98, índigo): titular de cada sección.
+- **Title** (400, `clamp(1.7rem,3.4vw,2.6rem)`, 1.02, índigo): titular de un beneficio o paso.
+- **Body** (400, `1rem`, 1.6, índigo apagado): texto de apoyo, máximo 62ch.
+- **Label** (700, `0.7rem`, `0.18em`, mayúsculas mono, violeta oscuro o lima
+  oscuro según la sección): kickers y metadatos, único lugar bajo 12px.
 
 ## Layout
 
 Contenedor `max-w-7xl` para hero y nav, `max-w-6xl` para grillas de beneficios
 y pasos, `max-w-3xl` para encabezados de sección centrados, `max-w-2xl` para la
-calculadora. Ritmo vertical `py-20` en móvil, `py-28` en escritorio (112px),
+calculadora. Ritmo vertical `py-24` en móvil, `py-32` en escritorio (128px),
 con `px-5 / sm:px-8 / lg:px-12` de gutter.
 
-El hero es `1.1fr / 0.9fr` en escritorio (texto y CTA a la izquierda, imagen a
-la derecha), una columna en móvil. Los beneficios alternan imagen
-izquierda/derecha por índice. Los pasos y las fechas publicadas son grillas de
-3 columnas que colapsan a 1.
+El hero es `1.1fr / 0.9fr` en escritorio: texto y CTA a la izquierda, a la
+derecha el video del hero enmarcado en una tarjeta con borde violeta y una
+tarjeta flotante blanca superpuesta con el dato de 0% comisión. Una columna en
+móvil. Los beneficios alternan imagen izquierda/derecha por índice.
 
 ## Elevation & Depth
 
-Capas tonales, no sombras duras. El fondo sube un tono por sección (`#0c0b0a`
-→ `#111010`) para separar bloques sin bordes, y las tarjetas suben otro tono
-más (`#161616` / `#1c1c1c`). El único borde vivo es blanco al 10% de opacidad,
-usado para separar el nav y las tarjetas de beneficios entre sí.
+Sombra suave y difusa (`0 20px 40-60px -20/30px rgba(30,27,75,.3-.4)`) más un
+borde índigo al 12%: así se separan las tarjetas del fondo blanco. No hay
+capas tonales oscuras —eso pertenecía al sistema anterior— porque sobre blanco
+la sombra sí lee como profundidad real.
+
+### Shadow Vocabulary
+- **Tarjeta de contenido** (`0 20px 40px -30px rgba(30,27,75,.3)`): pasos, FAQ, tarjetas de fecha.
+- **Tarjeta flotante** (`0 20px 40px -20px rgba(30,27,75,.35)`): la tarjeta de dato sobre el video del hero.
+- **Marco de video** (`0 30px 60px -30px rgba(30,27,75,.4)`): el contenedor del video del hero.
 
 ### Named Rules
-**La Regla de las Capas.** La profundidad se logra subiendo el tono de fondo,
-nunca con `box-shadow`. La excepción es el borde de foco amarillo
-(accesibilidad) y el aro de foco distintivo de la tarjeta "a tu Mercado Pago".
+**La Regla del Borde Índigo.** Toda tarjeta lleva `border-[var(--anc-border)]`
+además de su sombra: la sombra sola se pierde en pantallas muy brillantes.
 
 ## Shapes
 
-Radios generosos y consistentes: `16px` en tarjetas de beneficio y placeholders
-de imagen, `24px` en tarjetas de contenido (calculadora, pasos), `32px` en el
-bloque de cierre, píldora completa (`9999px`) en todos los botones y CTAs.
-Nada de esquinas vivas: es lo opuesto al mundo de "papel rasgado" que tuvo el
-sitio antes.
+Radios generosos: `16px` en tarjetas de beneficio y pasos, `24px` en la
+calculadora, `32px` en el bloque de cierre, píldora completa (`9999px`) en
+todos los botones y CTAs.
 
 ## Components
 
 ### Buttons
 - **Shape:** píldora completa.
-- **Primary (publicar):** fondo amarillo `#fbff12`, texto `#160f00`, mayúsculas,
-  `16px 28px`. Usado para toda acción que lleva a Google OAuth / publicar.
-- **Secondary (nav):** fondo magenta `#ff206e`, texto blanco cálido, más
-  compacto, para el CTA de la barra de navegación.
-- **Hover / Focus:** brillo +5-10% en hover, `scale(.95-.98)` en active. El
-  foco visible es un contorno amarillo de `3px` con `3px` de separación.
+- **Primary (publicar):** fondo lima `#a3e635`, texto índigo `#1e1b4b`,
+  mayúsculas, `16px 28px`. Es el único botón de acción del sistema, en nav,
+  hero y cierre.
+- **Hover / Focus:** brillo -5% en hover, `scale(.95-.98)` en active. El foco
+  visible es un contorno lima de `3px` con `3px` de separación.
 
 ### Cards / Containers
 - **Corner Style:** `16px`–`24px` según el contexto.
-- **Background:** `#161616` sobre el fondo base, `#1c1c1c` para el nivel
-  interior (dentro de la calculadora).
-- **Shadow Strategy:** ninguna; la separación es tonal.
-- **Border:** solo blanco 10% en tarjetas de beneficio; ninguno en tarjetas de
-  datos.
+- **Background:** blanco puro, con `#f6f4fc` para el nivel interior (dentro
+  de la calculadora).
+- **Shadow Strategy:** sombra suave + borde índigo al 12% (ver Elevation).
 
 ### Inputs / Fields
-- **Style:** subrayado de `2px` sobre fondo transparente (precio de la
-  calculadora), sin caja.
-- **Focus:** el subrayado cambia a amarillo.
+- **Style:** subrayado de `2px` índigo al 15% sobre fondo transparente.
+- **Focus:** el subrayado cambia a lima oscuro.
 
 ### Accordion (FAQ)
-- Filas separadas por un borde blanco al 10%, ícono `+` que rota 45° al abrir,
-  transición de `grid-template-rows` para el alto animado en vez de `height`
-  fijo o `max-height` adivinado.
+- Filas separadas por un borde índigo al 12%, ícono `+` violeta oscuro que
+  rota 45° al abrir, transición de `grid-template-rows` para el alto animado.
 
 ### Calculadora de reparto (componente firma)
 Sustituye a la prueba social que no existe. El productor escribe cualquier
 precio y ve, en tiempo real, cuánto paga el comprador, cuánto cae en su cuenta
-(el 100% de lo que publicó) y la diferencia explicada en una frase, sin
-esconder que Mercado Pago y ANC se quedan con parte del cargo de servicio.
+(el 100% de lo que publicó, resaltado con borde lima) y la diferencia
+explicada en una frase.
+
+### Marco de video del hero
+El video no es fondo de página: vive dentro de una tarjeta con borde violeta
+al 40% y esquinas de `24px`, con una tarjeta blanca flotante superpuesta que
+lleva el dato de 0% comisión. Es el único lugar donde el violeta claro se usa
+como borde en vez de superficie.
 
 ## Do's and Don'ts
 
 ### Do:
 - **Do** usar píldora completa en todos los botones y CTAs.
-- **Do** subir el tono de fondo para separar secciones, nunca `box-shadow`.
-- **Do** limitar el amarillo a acciones que llevan a publicar un evento.
+- **Do** reservar el fondo sólido índigo para un único bloque: el cierre.
+- **Do** limitar el lima a acciones que llevan a publicar un evento.
+- **Do** usar violeta oscuro (`#7c3aed`), nunca el claro (`#c084fc`), para
+  cualquier texto.
 - **Do** mostrar el 100% del precio publicado cayendo en la cuenta del
   productor en cualquier lugar donde se hable de plata.
 - **Do** dejar el contenido visible por defecto y esconderlo solo bajo
-  `.motion-on`, para que un fallo de script nunca deje la página en blanco.
+  `.motion-on`.
 - **Do** respetar `prefers-reduced-motion`.
 
 ### Don't:
-- **Don't** fabricar logos, testimonios o cifras de ventas: el producto está
-  en pre-lanzamiento.
-- **Don't** usar `border-radius: 0` ni bordes rasgados — ese mundo se
-  reemplazó por uno de conversión clásica con esquinas suaves.
-- **Don't** prometer $0 sin la letra chica: el organizador no paga comisión de
-  plataforma, el comprador paga un cargo por servicio del 10%.
+- **Don't** fabricar logos, testimonios o cifras de ventas.
+- **Don't** usar el violeta claro (`#c084fc`) como color de texto: falla
+  contraste sobre blanco.
+- **Don't** poner más de un bloque de fondo índigo sólido en la misma página.
+- **Don't** prometer $0 sin la letra chica del cargo por servicio del 10%.
 - **Don't** usar curvas de rebote o elásticas; el movimiento decelera con
   `cubic-bezier(0.16, 1, 0.3, 1)`.
 - **Don't** usar fotografías de banco de imágenes; los espacios de imagen se

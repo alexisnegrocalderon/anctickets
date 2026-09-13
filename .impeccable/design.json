@@ -4,35 +4,29 @@
   "title": "Design System: ANC Tickets",
   "extensions": {
     "colorMeta": {
-      "accent-magenta": {
+      "ink": {
         "role": "primary",
-        "displayName": "Magenta ANC",
-        "canonical": "#ff206e",
-        "tonalRamp": ["#ff6fa0", "#ff206e", "#b3134f"]
+        "displayName": "Índigo de Marca",
+        "canonical": "#1e1b4b",
+        "tonalRamp": ["#57567c", "#1e1b4b", "#100e2e"]
       },
-      "accent-yellow": {
+      "lime": {
         "role": "secondary",
-        "displayName": "Amarillo de Acción",
-        "canonical": "#fbff12",
-        "tonalRamp": ["#fdffb0", "#fbff12", "#8a8400"]
+        "displayName": "Lima de Acción",
+        "canonical": "#a3e635",
+        "tonalRamp": ["#d4f5a3", "#a3e635", "#65a30d"]
       },
-      "accent-turquoise": {
+      "purple": {
         "role": "tertiary",
-        "displayName": "Turquesa de Confianza",
-        "canonical": "#41ead4",
-        "tonalRamp": ["#c9f8f1", "#41ead4", "#0d6b60"]
+        "displayName": "Violeta de Confianza",
+        "canonical": "#c084fc",
+        "tonalRamp": ["#e9d5ff", "#c084fc", "#7c3aed"]
       },
-      "bg-base": {
+      "bg": {
         "role": "neutral",
-        "displayName": "Fondo Base",
-        "canonical": "#0c0b0a",
-        "tonalRamp": ["#0c0b0a", "#111010", "#161616", "#1c1c1c"]
-      },
-      "warm-white": {
-        "role": "neutral",
-        "displayName": "Blanco Cálido",
-        "canonical": "#f5f4f1",
-        "tonalRamp": ["#f5f4f1", "#a3a3a3", "#737373"]
+        "displayName": "Blanco",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#ffffff", "#f7f5fc", "#f6f4fc"]
       }
     },
     "typographyMeta": {
@@ -42,7 +36,23 @@
       "body": { "displayName": "Body", "purpose": "Texto de apoyo, máximo 62ch." },
       "label": { "displayName": "Label", "purpose": "Kickers y metadatos en mono, únicos elementos bajo 12px." }
     },
-    "shadows": [],
+    "shadows": [
+      {
+        "name": "tarjeta-contenido",
+        "value": "0 20px 40px -30px rgba(30,27,75,.3)",
+        "purpose": "Pasos, FAQ, tarjetas de fecha — junto a un borde índigo al 12%."
+      },
+      {
+        "name": "tarjeta-flotante",
+        "value": "0 20px 40px -20px rgba(30,27,75,.35)",
+        "purpose": "La tarjeta de dato superpuesta sobre el video del hero."
+      },
+      {
+        "name": "marco-video",
+        "value": "0 30px 60px -30px rgba(30,27,75,.4)",
+        "purpose": "El contenedor del video del hero."
+      }
+    ],
     "motion": [
       {
         "name": "ease-out",
@@ -53,11 +63,6 @@
         "name": "reveal",
         "value": "opacity 560ms, transform 760ms",
         "purpose": "Cada .reveal aparece con un leve translateY al entrar en pantalla, con red de seguridad por si el observer no dispara."
-      },
-      {
-        "name": "state",
-        "value": "150ms",
-        "purpose": "Hover/active de botones (brillo, scale)."
       }
     ],
     "breakpoints": [
@@ -73,7 +78,7 @@
       "refersTo": "button-primary",
       "description": "CTA principal en todo el sitio: entra con Google y publica un evento.",
       "html": "<button class=\"ds-btn-primary\">Publicar mi evento gratis</button>",
-      "css": ".ds-btn-primary { background: #fbff12; color: #160f00; font-weight: 900; text-transform: uppercase; padding: 16px 28px; border-radius: 9999px; transition: filter 150ms cubic-bezier(0.16,1,0.3,1), transform 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { filter: brightness(0.95); } .ds-btn-primary:active { transform: scale(.98); } .ds-btn-primary:focus-visible { outline: 3px solid #fbff12; outline-offset: 3px; }"
+      "css": ".ds-btn-primary { background: #a3e635; color: #1e1b4b; font-weight: 900; text-transform: uppercase; padding: 16px 28px; border-radius: 9999px; transition: filter 150ms cubic-bezier(0.16,1,0.3,1), transform 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { filter: brightness(0.95); } .ds-btn-primary:active { transform: scale(.98); } .ds-btn-primary:focus-visible { outline: 3px solid #a3e635; outline-offset: 3px; }"
     },
     {
       "name": "Calculadora de reparto",
@@ -81,60 +86,61 @@
       "refersTo": "card",
       "description": "Sustituye la prueba social inexistente: el productor escribe un precio y ve el reparto real en vivo.",
       "html": "<div class=\"ds-fee-card\"><input type=\"number\" value=\"10000\"><div class=\"ds-fee-row\"><span>Tú publicas</span><strong>$10.000</strong></div></div>",
-      "css": ".ds-fee-card { background: #141414; border-radius: 24px; padding: 32px; } .ds-fee-row { background: #1c1c1c; border-radius: 16px; padding: 20px; }"
+      "css": ".ds-fee-card { background: #ffffff; border: 1px solid rgba(30,27,75,.12); box-shadow: 0 20px 50px -30px rgba(30,27,75,.35); border-radius: 24px; padding: 32px; } .ds-fee-row { background: #f6f4fc; border-radius: 16px; padding: 20px; }"
     },
     {
-      "name": "Placeholder de imagen",
+      "name": "Marco de video del hero",
       "kind": "custom",
       "refersTo": "card",
-      "description": "Hueco de imagen intencional con etiqueta y especificación del asset pendiente, para que el productor sepa exactamente qué foto o captura enviar.",
-      "html": "<div class=\"ds-asset-placeholder\"><p>CAPTURA: PANEL DE VENTAS</p><p>Dashboard con el resumen de ventas, 1000×1300px aprox.</p></div>",
-      "css": ".ds-asset-placeholder { border: 2px dashed rgba(255,255,255,.15); background: #161616; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 24px; }"
+      "description": "El video no es fondo de página: vive en una tarjeta con borde violeta y una tarjeta blanca flotante con el dato de 0% comisión.",
+      "html": "<div class=\"ds-video-frame\"><video></video></div><div class=\"ds-float-card\">0% comisión de plataforma</div>",
+      "css": ".ds-video-frame { border: 2px solid rgba(192,132,252,.4); border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(30,27,75,.4); } .ds-float-card { background: #ffffff; border: 1px solid rgba(30,27,75,.12); border-radius: 16px; box-shadow: 0 20px 40px -20px rgba(30,27,75,.35); padding: 16px 20px; }"
     }
   ],
   "narrative": {
-    "northStar": "El Panel del Productor Convertido en Vitrina",
-    "overview": "ANC Tickets es la herramienta con la que un productor chileno vende sus propias entradas y cobra directo. El home usa la estructura de conversión que mejor funciona en el mercado de ticketeras de LatAm —hero con promesa y CTA, beneficios, cómo funciona, prueba de reparto, preguntas frecuentes, cierre— vestida con la identidad de marca de ANC: charcoal casi negro, tarjetas oscuras por capas tonales, y tres tintas de acento (magenta, amarillo, turquesa) que identifican función, no decoran.",
+    "northStar": "El Panel del Productor, en Blanco y Vivo",
+    "overview": "ANC Tickets vende sin intermediarios, y la página lo dice sobre un fondo blanco de estudio, no sobre una superficie oscura de rave. La estructura sigue siendo de conversión (hero, beneficios, cómo funciona, precio, FAQ, cierre); el vestuario ahora es índigo oscuro para todo el texto, lima como único color de acción, y violeta suave como acento de confianza. Un solo bloque índigo sólido —el cierre— invierte el contraste para que el CTA final se sienta como un evento.",
     "antiReferences": [
-      "El mundo anterior de 'muro de afiches' con papel rasgado y esquinas vivas: se reemplazó por completo.",
+      "El sistema oscuro anterior (charcoal/magenta/amarillo/turquesa): se reemplazó por completo por uno claro.",
       "Prueba social fabricada (logos, testimonios, cifras de ventas): el producto está en pre-lanzamiento.",
-      "Piezas 3D abstractas y fotografías de banco de imágenes."
+      "Más de un bloque de fondo sólido índigo en la misma página."
     ],
     "keyCharacteristics": [
-      "Estructura de conversión: hero, beneficios, cómo funciona, precio, FAQ, cierre.",
-      "Tarjetas oscuras redondeadas por capas tonales, sin sombras duras.",
-      "Tres tintas de acento rationadas por función.",
-      "Cero prueba social fabricada; la calculadora de reparto es la prueba.",
-      "Un solo tipo de movimiento (.reveal) con red de seguridad."
+      "Fondo blanco con paneles lavanda muy suaves para el ritmo de sección.",
+      "Un solo bloque índigo oscuro sólido, reservado para el cierre.",
+      "Lima es el único color de acción; violeta oscuro el único color de confianza en texto.",
+      "Elevación con sombra suave + borde índigo al 12%.",
+      "Cero prueba social fabricada; el reparto de la plata es la prueba."
     ],
     "rules": [
       {
-        "name": "La Regla del Amarillo",
-        "body": "El amarillo solo aparece en botones que llevan a publicar un evento. Si un botón amarillo no hace eso, está mal pintado.",
+        "name": "La Regla del Lima",
+        "body": "El lima solo aparece en botones que llevan a publicar un evento.",
+        "section": "colors"
+      },
+      {
+        "name": "La Regla del Bloque Único",
+        "body": "Solo una sección de la página puede tener fondo sólido índigo a la vez: el cierre.",
         "section": "colors"
       },
       {
         "name": "La Regla de la Prueba Real",
-        "body": "Ninguna cifra de ventas, logo de cliente o testimonial se muestra sin ser real. Mientras no exista, la sección de precio lo reemplaza con la calculadora de reparto.",
+        "body": "Ninguna cifra de ventas, logo de cliente o testimonial se muestra sin ser real.",
         "section": "colors"
-      },
-      {
-        "name": "La Regla de las Capas",
-        "body": "La profundidad se logra subiendo el tono de fondo, nunca con box-shadow.",
-        "section": "elevation"
       }
     ],
     "dos": [
       "Do usar píldora completa en todos los botones y CTAs.",
-      "Do subir el tono de fondo para separar secciones, nunca box-shadow.",
-      "Do limitar el amarillo a acciones que llevan a publicar un evento.",
-      "Do mostrar el 100% del precio publicado cayendo en la cuenta del productor en cualquier lugar donde se hable de plata.",
+      "Do reservar el fondo sólido índigo para un único bloque: el cierre.",
+      "Do limitar el lima a acciones que llevan a publicar un evento.",
+      "Do usar violeta oscuro (#7c3aed), nunca el claro (#c084fc), para texto.",
       "Do dejar el contenido visible por defecto y esconderlo solo bajo .motion-on.",
       "Do respetar prefers-reduced-motion."
     ],
     "donts": [
       "Don't fabricar logos, testimonios o cifras de ventas.",
-      "Don't usar border-radius: 0 ni bordes rasgados.",
+      "Don't usar el violeta claro (#c084fc) como color de texto.",
+      "Don't poner más de un bloque de fondo índigo sólido en la misma página.",
       "Don't prometer $0 sin la letra chica del cargo por servicio del 10%.",
       "Don't usar curvas de rebote o elásticas.",
       "Don't usar fotografías de banco de imágenes; marcar el espacio como pendiente."
