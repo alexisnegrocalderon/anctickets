@@ -17,14 +17,14 @@ export default async function SiteHeader() {
           className="flex items-center gap-2 text-lg font-black tracking-tight text-[#f5f4f1] transition duration-100 active:scale-95"
         >
           <Image src="/anc-mark.png" alt="" width={28} height={28} priority />
-          ANC<span className="text-[#FF206E]">TICKETS</span>
+          ANC<span className="text-[var(--anc-accent)]">TICKETS</span>
         </Link>
 
         <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs font-semibold uppercase tracking-[.1em] text-neutral-300">
           <Link
             href="/"
             data-cursor-hover
-            className="transition duration-100 hover:text-[#FF6FA0] active:text-[#FF206E]"
+            className="transition duration-100 hover:text-[var(--anc-accent-light)] active:text-[var(--anc-accent)]"
           >
             Eventos
           </Link>
@@ -33,14 +33,14 @@ export default async function SiteHeader() {
               <Link
                 href="/dashboard/events"
                 data-cursor-hover
-                className="transition duration-100 hover:text-[#FF6FA0] active:text-[#FF206E]"
+                className="transition duration-100 hover:text-[var(--anc-accent-light)] active:text-[var(--anc-accent)]"
               >
                 Mis eventos
               </Link>
               <Link
                 href="/dashboard/tickets"
                 data-cursor-hover
-                className="transition duration-100 hover:text-[#FF6FA0] active:text-[#FF206E]"
+                className="transition duration-100 hover:text-[var(--anc-accent-light)] active:text-[var(--anc-accent)]"
               >
                 Mis entradas
               </Link>

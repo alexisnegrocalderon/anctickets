@@ -20,7 +20,7 @@ export default function FloatingAccessButton() {
         animate={{ y: 0, opacity: 1, scale: 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 22, delay: 0.3 }}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
-        className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-sm font-black uppercase tracking-[.08em] text-white shadow-[0_8px_40px_-8px_rgba(255,32,110,.65)] backdrop-blur-xl transition hover:border-[#FF6FA0]/60 hover:bg-white/15"
+        className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-sm font-black uppercase tracking-[.08em] text-white shadow-[0_8px_40px_-8px_rgba(252,76,19,.65)] backdrop-blur-xl transition hover:border-[var(--anc-accent-light)]/60 hover:bg-white/15"
       >
         Quiero mi acceso
         <motion.span

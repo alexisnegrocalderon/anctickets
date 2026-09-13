@@ -173,7 +173,7 @@ export default function BuyForm({
         onClick={handleCheckout}
         disabled={totalQty === 0 || loading}
         data-cursor-hover
-        className="rounded-full bg-[#FF206E] px-6 py-3.5 text-sm font-black uppercase tracking-[.05em] text-[#f5f4f1] transition hover:bg-[#FF6FA0] active:scale-[.98] disabled:opacity-40"
+        className="rounded-full bg-[var(--anc-accent)] px-6 py-3.5 text-sm font-black uppercase tracking-[.05em] text-[var(--anc-ink)] transition hover:bg-[var(--anc-accent-light)] active:scale-[.98] disabled:opacity-40"
       >
         {loading
           ? "Redirigiendo a Mercado Pago..."

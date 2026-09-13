@@ -28,11 +28,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-full flex-col bg-[#090909] text-[#f5f4f1] sm:flex-row">
+    <div className="flex min-h-full flex-col bg-[var(--anc-ink)] text-[#f5f4f1] sm:flex-row">
       <DashboardSidebar userEmail={user.email ?? null} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:py-10">
         <div className="mb-8">
-          <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[#FF206E]">
+          <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[var(--anc-accent)]">
             Productora
           </p>
           <h1 className="mt-1 text-4xl font-black tracking-tight text-[#f5f4f1] sm:text-5xl">

@@ -98,7 +98,7 @@ export default async function EditEventPage({
             <p className="text-sm text-neutral-400">Entradas vendidas</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-[#FF206E]">
+            <p className="text-2xl font-bold text-[var(--anc-accent)]">
               ${summary.revenue.toLocaleString("es-CL")}
             </p>
             <p className="text-sm text-neutral-400">Ingresos totales (aprobados)</p>
@@ -106,7 +106,7 @@ export default async function EditEventPage({
           <div className="flex items-end">
             <a
               href={`/api/dashboard/events/${id}/export`}
-              className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-[#f5f4f1] transition hover:border-[#FF6FA0] hover:text-[#FF6FA0]"
+              className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-[#f5f4f1] transition hover:border-[var(--anc-accent-light)] hover:text-[var(--anc-accent-light)]"
             >
               Exportar compradores (CSV)
             </a>
