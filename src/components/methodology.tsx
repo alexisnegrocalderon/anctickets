@@ -19,7 +19,7 @@ export default function Methodology() {
         >
           <span className="font-display text-3xl font-black text-[var(--anc-ink)]/25 sm:text-4xl">{paso.n}</span>
           <p className="font-display text-2xl font-black leading-tight text-[var(--anc-ink)] sm:text-3xl">{paso.t}</p>
-          <p className="col-span-2 text-base leading-6 text-[var(--anc-ink-muted)] sm:col-span-1 sm:mt-1">{paso.d}</p>
+          <p className="col-span-2 text-base leading-6 text-[var(--anc-muted)] sm:col-span-1 sm:mt-1">{paso.d}</p>
         </li>
       ))}
     </ol>

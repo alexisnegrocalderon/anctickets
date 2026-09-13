@@ -65,11 +65,15 @@ export default function ImpactSection({
     <section id={id} ref={sectionRef} className="relative flex min-h-[80svh] items-center justify-center overflow-hidden" style={{ background: bg }}>
       <div ref={bgRef} className="pointer-events-none absolute inset-0" style={reduced ? undefined : { transform: "scale(1.12)" }} aria-hidden="true">
         {video ? (
-          <video className="h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" poster={poster}>
-            <source src={video} type="video/mp4" />
-          </video>
+          <>
+            <video className="h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" poster={poster}>
+              <source src={video} type="video/mp4" />
+            </video>
+            {/* El velo solo existe para que el texto se lea sobre video; un
+                fondo de color sólido ya controla su propio contraste. */}
+            <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(29,29,29,.35), rgba(29,29,29,.55))" }} />
+          </>
         ) : null}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(11,17,32,.35), rgba(11,17,32,.55))" }} />
       </div>
       <div className="reveal relative px-6 py-24 text-center sm:px-10">{children}</div>
     </section>

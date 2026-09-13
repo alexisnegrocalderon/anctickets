@@ -3,14 +3,9 @@ name: ANC Tickets
 description: La ticketera chilena donde el productor cobra directo, sin comisión de plataforma.
 colors:
   bg: "#ffffff"
-  cream: "#fff3ea"
-  violet: "#dfa3ff"
-  violet-deep: "#9333ea"
-  yellow: "#ffc72c"
-  cerise: "#f400a1"
-  cerise-deep: "#b3007a"
-  ink: "#0b1120"
-  ink-muted: "#55536b"
+  ink: "#1d1d1d"
+  muted: "#808080"
+  vermilion: "#fc4c13"
 typography:
   display:
     fontFamily: "Anton, Arial Narrow, sans-serif"
@@ -48,12 +43,12 @@ spacing:
   card-p: "32px"
 components:
   button-primary:
-    backgroundColor: "{colors.yellow}"
+    backgroundColor: "{colors.vermilion}"
     textColor: "{colors.ink}"
     rounded: "{rounded.pill}"
     padding: "16px 28px"
   button-primary-hover:
-    backgroundColor: "#f5b800"
+    backgroundColor: "#e0430e"
   card:
     backgroundColor: "#ffffff"
     textColor: "{colors.ink}"
@@ -63,33 +58,25 @@ components:
 
 # Design System: ANC Tickets
 
-> **Nota de estado:** la estructura de abajo (hero de impacto, quiebres de
-> pantalla completa, playbook en grilla, metodología 01-06, carrusel
-> horizontal) es la vigente. La sección Colors sigue describiendo la paleta
-> "Doughlicious" provisoria — el usuario va a mandar una referencia de color
-> nueva para esta misma estructura, así que solo esa sección quedará
-> desactualizada hasta la próxima ronda.
-
 ## Overview
 
-**Creative North Star: "El Puesto de Feria, Vendiendo Directo"**
+**Creative North Star: "El Set de Rodaje, Vendiendo Directo"**
 
 ANC Tickets vende sin intermediarios, y la página ahora lo dice con la
-energía de un puesto de feria bien pintado, no con una landing corporativa
-monocroma. La estructura sigue siendo de conversión (hero, beneficios, cómo
-funciona, precio, FAQ, cierre); lo que cambió es que cada sección lleva su
-propio color en vez de repetir blanco hasta el final. El nav es violeta
-pálido, "cómo funciona" es un bloque violeta completo, "beneficios" y "FAQ"
-son crema cálido, "fechas publicadas" es negro perla, y el cierre es cerise
-vibrante — cuatro colores de marca que se turnan en vez de vivir todos
-mezclados en cada pantalla.
+misma economía gráfica de un fotograma de rodaje: casi-negro cálido,
+un único acento de fuego, y blanco puro para respirar. La estructura es
+editorial (hero de impacto, quiebres de pantalla completa, playbook,
+metodología, carrusel), y el color se raciona igual de estricto que la
+estructura: solo cuatro tonos, cada uno con un trabajo fijo.
 
-El amarillo mikado es el único color de acción: aparece en cada botón que
-lleva a publicar un evento, sin importar sobre qué color de sección esté
-parado, porque su trabajo es ser reconocible siempre. El cerise y el violeta
-oscuro son los dos acentos de texto (kickers, subrayados, números
-fantasma); el violeta pálido y el negro perla son, además de acentos,
-colores de fondo de sección completos.
+Cod Gray es el lienzo — domina el hero, los dos quiebres de impacto que lo
+necesitan, el carrusel de fechas y el cierre. Vermilion es el único acento:
+aparece en cada botón que lleva a publicar un evento, en los kickers, y en
+uno de los dos quiebres de impacto como bloque de color completo — nunca
+decora dos veces en la misma pantalla. Blanco es el respiro entre esos
+momentos oscuros: el playbook, la metodología, el precio y el FAQ vuelven a
+él para que el ojo descanse antes del siguiente golpe de color. Gray es la
+única voz de apoyo, discreta a propósito.
 
 En pre-lanzamiento no existe prueba social real, así que la página nunca
 inventa logos, testimonios o cifras de ventas. En su lugar, la sección de
@@ -97,48 +84,48 @@ precio muestra una calculadora en vivo que reparte cualquier monto que el
 productor escriba: eso es la prueba, no una promesa.
 
 **Key Characteristics:**
-- Cada sección tiene su propio color de fondo (violeta, crema, blanco, negro
-  perla, cerise) en vez de un blanco continuo.
-- Amarillo mikado es el único color de botón de acción, en cualquier sección.
-- Cerise oscuro y violeta oscuro son los dos acentos de texto/kicker.
-- Elevación con sombra suave + borde índigo al 12-15% sobre fondos claros.
+- Cuatro colores, cada uno con un solo trabajo: Cod Gray = lienzo oscuro,
+  Vermilion = acento de acción, Blanco = respiro/sección clara, Gray = apoyo.
+- Los quiebres de impacto alternan Cod Gray (hero) → Vermilion → Blanco,
+  nunca repiten el mismo color dos veces seguidas.
+- El botón de acción es siempre Vermilion con texto Cod Gray, sobre
+  cualquier fondo — nunca vermilion sobre vermilion.
+- Elevación con sombra suave + borde Cod Gray al 14% sobre fondos claros;
+  opacidad de blanco sobre fondos oscuros.
 - Cero prueba social fabricada; el reparto de la plata es la prueba.
 
 ## Colors
 
-Violeta pálido, crema, amarillo mikado, cerise y negro perla — la paleta
-"Doughlicious" adaptada a una ticketera.
+Vermilion, Cod Gray, Gray y Blanco — cuatro colores, cero mezcla.
 
 ### Primary
-- **Violeta Pálido** (`#dfa3ff` superficie / `#9333ea` texto): el nav
-  completo y el bloque de "cómo funciona". Es el color que más aparece como
-  fondo de sección.
+- **Cod Gray** (`#1d1d1d`): el lienzo. Fondo del nav, el hero, el carrusel
+  de fechas y el cierre; texto principal sobre cualquier sección clara.
 
 ### Secondary
-- **Amarillo Mikado** (`#ffc72c`): el único color de botón de acción (Google
-  OAuth / publicar). Nunca se usa como texto por su bajo contraste sobre
-  blanco; solo como fondo de botón, borde de énfasis o remate de header.
-
-### Tertiary
-- **Cerise Hollywood** (`#f400a1` superficie / `#b3007a` texto): el bloque de
-  cierre, el punto flotante de la tarjeta del hero, y uno de los dos acentos
-  de texto/kicker.
+- **Vermilion** (`#fc4c13`): el único acento de acción. Todo botón que lleva
+  a publicar un evento, los kickers de sección, y un quiebre de impacto
+  completo. Nunca se usa como texto de cuerpo (contraste insuficiente sobre
+  blanco); como texto solo en kickers/mono en tamaño pequeño-bold sobre
+  blanco, o como fondo de botón/bloque con texto Cod Gray encima.
 
 ### Neutral
-- **Blanco** (`#ffffff`): hero, precio, cierre (contenedor de la sección).
-- **Crema** (`#fff3ea`): beneficios y FAQ — el "papel" cálido del sistema.
-- **Negro Perla** (`#0b1120`): fondo de "fechas publicadas" y todo texto
-  principal sobre fondo claro.
-- **Índigo Apagado** (`#55536b`): todo el texto de apoyo/cuerpo.
-- **Borde** (`rgba(11,17,32,.14)`): el único borde del sistema sobre fondos claros.
+- **Blanco** (`#ffffff`): el respiro. Playbook, metodología, precio, FAQ, y
+  uno de los dos quiebres de impacto.
+- **Gray** (`#808080`): texto de apoyo corto (captions, líneas secundarias).
+  Los párrafos largos (FAQ, subtítulos de hero) usan Cod Gray a menor
+  opacidad en vez de este gris, porque a mayor longitud de texto el
+  contraste 3.95:1 de este gris sobre blanco se vuelve difícil de leer.
+- **Borde** (`rgba(29,29,29,.14)` sobre fondos claros / `rgba(255,255,255,.15)`
+  sobre fondos oscuros): el único borde del sistema.
 
 ### Named Rules
-**La Regla del Amarillo.** El amarillo solo aparece en botones que llevan a
-publicar un evento — nunca como texto, nunca decorativo.
+**La Regla del Acento Único.** Vermilion es el único color con función de
+"acción". Si un botón, kicker o CTA no es vermilion, no es una acción.
 
-**La Regla de la Sección de Color.** Cada sección principal tiene un único
-color de fondo de la paleta; no se mezclan dos colores de sección en el mismo
-bloque.
+**La Regla de la No Colisión.** Un botón vermilion nunca vive sobre un fondo
+vermilion. El bloque de cierre y el carrusel usan Cod Gray precisamente para
+que el botón vermilion encima siga siendo visible.
 
 **La Regla de la Prueba Real.** Ninguna cifra de ventas, logo de cliente o
 testimonial se muestra sin ser real. Mientras no exista, la sección de precio
@@ -155,8 +142,8 @@ lo reemplaza con la calculadora de reparto.
 - **Headline** (400, `clamp(2rem,4.6vw,3.4rem)`, 0.98): titular de cada sección.
 - **Title** (400, `clamp(1.7rem,3.4vw,2.6rem)`, 1.02): titular de un beneficio o paso.
 - **Body** (400, `1rem`, 1.6): texto de apoyo, máximo 62ch.
-- **Label** (700, `0.7rem`, `0.18em`, mayúsculas mono, cerise oscuro o violeta
-  oscuro según la sección): kickers y metadatos.
+- **Label** (700, `0.7rem`, `0.18em`, mayúsculas mono, siempre Vermilion):
+  kickers y metadatos.
 
 ## Layout
 
@@ -189,9 +176,9 @@ móvil, `py-32` en escritorio, con `px-5 / sm:px-8 / lg:px-12` de gutter.
 
 ## Elevation & Depth
 
-Sombra suave y difusa más un borde índigo al 12-15% sobre fondos claros. Sobre
-el fondo negro perla ("fechas publicadas") la separación es por opacidad de
-blanco (`bg-white/[.06]`, borde `white/15`), no por sombra.
+Sombra suave y difusa más un borde Cod Gray al 14% sobre fondos claros. Sobre
+las secciones Cod Gray (carrusel de fechas, cierre) la separación es por
+opacidad de blanco (`bg-white/[.06]`, borde `white/15`), no por sombra.
 
 ## Shapes
 
@@ -202,35 +189,39 @@ todos los botones y CTAs.
 ## Components
 
 ### Buttons
-- **Primary (publicar):** fondo amarillo mikado `#ffc72c`, texto negro perla,
+- **Primary (publicar):** fondo Vermilion `#fc4c13`, texto Cod Gray,
   mayúsculas, píldora completa, `16px 28px`. Es el único botón de acción del
-  sistema, en nav, hero y cierre, sobre cualquier color de fondo.
+  sistema, en nav, hero y cierre, sobre cualquier color de fondo — nunca
+  sobre un fondo vermilion (ver La Regla de la No Colisión).
 
 ### Cards / Containers
-- **Background:** blanco sobre secciones claras; `white/[.06]` sobre la
-  sección negro perla.
+- **Background:** blanco sobre secciones claras; `white/[.06]` sobre las
+  secciones Cod Gray.
 - **Shadow Strategy:** sombra suave + borde (ver Elevation).
 
 ### Calculadora de reparto (componente firma)
 Sustituye a la prueba social que no existe. El productor escribe cualquier
 precio y ve, en tiempo real, cuánto paga el comprador, cuánto cae en su cuenta
-(resaltado con borde amarillo) y la diferencia explicada en una frase.
+(resaltado con borde vermilion) y la diferencia explicada en una frase.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** usar amarillo mikado únicamente en botones de acción.
-- **Do** dar a cada sección principal un único color de fondo de la paleta.
-- **Do** usar cerise oscuro (`#b3007a`) o violeta oscuro (`#9333ea`) para
-  cualquier texto de acento, nunca sus versiones claras.
+- **Do** usar Vermilion únicamente para acción (botones, kickers) o como
+  bloque de color completo en un quiebre de impacto — nunca ambos usos en la
+  misma pantalla.
+- **Do** poner el botón de acción sobre Cod Gray o Blanco, nunca sobre
+  Vermilion.
+- **Do** reservar Gray para texto de apoyo corto; usar Cod Gray a menor
+  opacidad para párrafos largos.
 - **Do** mostrar el 100% del precio publicado cayendo en la cuenta del
   productor en cualquier lugar donde se hable de plata.
 - **Do** respetar `prefers-reduced-motion`.
 
 ### Don't:
 - **Don't** fabricar logos, testimonios o cifras de ventas.
-- **Don't** usar amarillo como color de texto: falla contraste sobre blanco.
-- **Don't** mezclar dos colores de fondo de sección en el mismo bloque.
+- **Don't** poner un botón o texto vermilion sobre un fondo vermilion.
+- **Don't** introducir un quinto color: el sistema es exactamente estos cuatro.
 - **Don't** prometer $0 sin la letra chica del cargo por servicio del 10%.
 - **Don't** usar curvas de rebote o elásticas; el movimiento decelera con
   `cubic-bezier(0.16, 1, 0.3, 1)`.

@@ -30,7 +30,7 @@ export default function EventCarousel({ events }: { events: Event[] }) {
             href={`/${event.slug}`}
             className="block w-[260px] shrink-0 snap-start rounded-2xl border border-white/15 bg-white/[.06] p-6 transition-colors duration-150 hover:bg-white/[.1] active:scale-[.98] sm:w-[300px]"
           >
-            <p className="font-mono text-xs font-bold uppercase tracking-[.14em] text-[var(--anc-yellow)]">
+            <p className="font-mono text-xs font-bold uppercase tracking-[.14em] text-[var(--anc-vermilion)]">
               {new Date(event.event_date).toLocaleDateString("es-CL", { day: "2-digit", month: "short" })}
             </p>
             <p className="mt-3 text-xl font-black leading-tight text-white">{event.title}</p>

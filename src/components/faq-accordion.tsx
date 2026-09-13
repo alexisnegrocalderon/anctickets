@@ -43,7 +43,7 @@ export default function FaqAccordion() {
               <span className="text-lg font-bold text-[var(--anc-ink)] sm:text-xl">{item.q}</span>
               <span
                 aria-hidden="true"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--anc-ink)]/20 text-lg text-[var(--anc-violet-deep)] transition-transform duration-200"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--anc-ink)]/20 text-lg text-[var(--anc-vermilion)] transition-transform duration-200"
                 style={{ transform: isOpen ? "rotate(45deg)" : "none" }}
               >
                 +
@@ -54,7 +54,7 @@ export default function FaqAccordion() {
               style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
             >
               <div className="min-h-0">
-                <p className="max-w-[62ch] pb-6 text-base leading-6 text-[var(--anc-ink-muted)]">{item.a}</p>
+                <p className="max-w-[62ch] pb-6 text-base leading-6 text-[var(--anc-ink)]/80">{item.a}</p>
               </div>
             </div>
           </div>

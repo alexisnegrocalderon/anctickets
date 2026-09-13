@@ -57,30 +57,30 @@ export default async function Home() {
       <ScrollReveal />
 
       {/* ---------------- NAV ---------------- */}
-      <header className="sticky top-0 z-50 border-b border-[var(--anc-ink)]/10 bg-[var(--anc-violet)]">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[var(--anc-ink)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-12">
           <Link href="/" className="flex items-center gap-2" aria-label="ANC Tickets, inicio">
             <Image src="/anc-mark.png" alt="" width={26} height={26} priority />
-            <span className="font-display text-xl font-black tracking-tight text-[var(--anc-ink)]">ANC Tickets</span>
+            <span className="font-display text-xl font-black tracking-tight text-white">ANC Tickets</span>
           </Link>
 
-          <nav className="hidden items-center gap-8 font-mono text-xs font-bold uppercase tracking-[.14em] text-[var(--anc-ink)]/70 md:flex">
-            <a href="#playbook" className="transition-colors hover:text-[var(--anc-ink)]">Playbook</a>
-            <a href="#metodologia" className="transition-colors hover:text-[var(--anc-ink)]">Metodología</a>
-            <a href="#reparto" className="transition-colors hover:text-[var(--anc-ink)]">Precio</a>
-            <a href="#preguntas" className="transition-colors hover:text-[var(--anc-ink)]">Preguntas</a>
+          <nav className="hidden items-center gap-8 font-mono text-xs font-bold uppercase tracking-[.14em] text-white/60 md:flex">
+            <a href="#playbook" className="transition-colors hover:text-white">Playbook</a>
+            <a href="#metodologia" className="transition-colors hover:text-white">Metodología</a>
+            <a href="#reparto" className="transition-colors hover:text-white">Precio</a>
+            <a href="#preguntas" className="transition-colors hover:text-white">Preguntas</a>
           </nav>
 
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="hidden text-sm font-bold text-[var(--anc-ink)]/70 transition-colors hover:text-[var(--anc-ink)] sm:block"
+              className="hidden text-sm font-bold text-white/60 transition-colors hover:text-white sm:block"
             >
               Ya tengo cuenta
             </Link>
             <a
               href="#hero-cta"
-              className="rounded-full bg-[var(--anc-yellow)] px-5 py-2.5 text-sm font-black uppercase tracking-tight text-[var(--anc-ink)] transition-transform duration-150 hover:brightness-95 active:scale-95"
+              className="rounded-full bg-[var(--anc-vermilion)] px-5 py-2.5 text-sm font-black uppercase tracking-tight text-[var(--anc-ink)] transition-transform duration-150 hover:brightness-95 active:scale-95"
             >
               Publica gratis
             </a>
@@ -113,14 +113,14 @@ export default async function Home() {
           {trustPoints.map((point) => (
             <div key={point.titulo} className="reveal">
               <dt className="text-sm font-black leading-5 text-[var(--anc-ink)]">{point.titulo}</dt>
-              <dd className="mt-1 text-xs leading-4 text-[var(--anc-ink-muted)]">{point.detalle}</dd>
+              <dd className="mt-1 text-xs leading-4 text-[var(--anc-muted)]">{point.detalle}</dd>
             </div>
           ))}
         </dl>
       </div>
 
       {/* ---------------- QUIEBRE DE IMPACTO #1 ---------------- */}
-      <ImpactSection bg="var(--anc-cerise)">
+      <ImpactSection bg="var(--anc-vermilion)">
         <h2 className="font-display text-[clamp(2.8rem,10vw,8rem)] font-black leading-[.9] text-white">
           Cero comisión
           <br />
@@ -129,9 +129,9 @@ export default async function Home() {
       </ImpactSection>
 
       {/* ---------------- PLAYBOOK ---------------- */}
-      <section id="playbook" className="bg-[var(--anc-cream)] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+      <section id="playbook" className="bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-cerise-deep)]">
+          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
             Nuestro playbook
           </p>
           <h2 className="font-display mt-3 text-[clamp(2rem,4.6vw,3.4rem)] font-black leading-[.98] text-[var(--anc-ink)]">
@@ -146,7 +146,7 @@ export default async function Home() {
       {/* ---------------- METODOLOGÍA ---------------- */}
       <section id="metodologia" className="bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-violet-deep)]">
+          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
             Metodología
           </p>
           <h2 className="font-display mt-3 text-[clamp(2rem,4.6vw,3.4rem)] font-black leading-[.98] text-[var(--anc-ink)]">
@@ -159,7 +159,7 @@ export default async function Home() {
       </section>
 
       {/* ---------------- QUIEBRE DE IMPACTO #2 ---------------- */}
-      <ImpactSection bg="var(--anc-violet)">
+      <ImpactSection bg="#ffffff">
         <h2 className="font-display text-[clamp(2.8rem,10vw,8rem)] font-black leading-[.9] text-[var(--anc-ink)]">
           Tu plata,
           <br />
@@ -170,13 +170,13 @@ export default async function Home() {
       {/* ---------------- REPARTO / PRECIO ---------------- */}
       <section id="reparto" className="bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-violet-deep)]">
+          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
             Precio, sin letra chica
           </p>
           <h2 className="font-display mt-3 text-[clamp(2rem,4.6vw,3.4rem)] font-black leading-[.98] text-[var(--anc-ink)]">
             Así se reparte cada entrada que vendes.
           </h2>
-          <p className="mx-auto mt-5 max-w-[56ch] text-base leading-7 text-[var(--anc-ink-muted)]">
+          <p className="mx-auto mt-5 max-w-[56ch] text-base leading-7 text-[var(--anc-muted)]">
             Prueba con el precio real de tu entrada. El 100% de lo que publicas cae en tu cuenta;
             el cargo de servicio lo paga quien compra.
           </p>
@@ -201,9 +201,9 @@ export default async function Home() {
       ) : null}
 
       {/* ---------------- FAQ ---------------- */}
-      <section id="preguntas" className="bg-[var(--anc-cream)] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+      <section id="preguntas" className="bg-white px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-3xl">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-cerise-deep)]">
+          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
             Preguntas frecuentes
           </p>
           <h2 className="font-display mt-3 text-[clamp(2rem,4.6vw,3.4rem)] font-black leading-[.98] text-[var(--anc-ink)]">
@@ -217,7 +217,7 @@ export default async function Home() {
 
       {/* ---------------- CIERRE ---------------- */}
       <section className="bg-white px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
-        <div className="reveal mx-auto max-w-5xl rounded-[32px] bg-[var(--anc-cerise)] px-8 py-16 text-center sm:px-16 sm:py-20">
+        <div className="reveal mx-auto max-w-5xl rounded-[32px] bg-[var(--anc-ink)] px-8 py-16 text-center sm:px-16 sm:py-20">
           <h2 className="font-display text-[clamp(2.4rem,6vw,4.4rem)] font-black leading-[.96] text-white">
             Tu próxima fecha,
             <br />
@@ -230,13 +230,13 @@ export default async function Home() {
       </section>
 
       <footer className="bg-white px-5 pb-14 sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 border-t border-[var(--anc-border)] pt-8 text-sm text-[var(--anc-ink-muted)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 border-t border-[var(--anc-border)] pt-8 text-sm text-[var(--anc-muted)] sm:flex-row sm:items-center sm:justify-between">
           <p>ANC Tickets · Chile</p>
           <nav className="flex gap-5">
-            <Link href="/privacidad" className="underline decoration-[var(--anc-cerise)] decoration-2 underline-offset-4 hover:text-[var(--anc-ink)]">
+            <Link href="/privacidad" className="underline decoration-[var(--anc-vermilion)] decoration-2 underline-offset-4 hover:text-[var(--anc-ink)]">
               Privacidad
             </Link>
-            <Link href="/terminos" className="underline decoration-[var(--anc-cerise)] decoration-2 underline-offset-4 hover:text-[var(--anc-ink)]">
+            <Link href="/terminos" className="underline decoration-[var(--anc-vermilion)] decoration-2 underline-offset-4 hover:text-[var(--anc-ink)]">
               Términos
             </Link>
           </nav>

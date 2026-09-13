@@ -18,12 +18,12 @@ export default function FeeCalculator() {
   const fees = useMemo(() => calculateFees(price), [price]);
 
   return (
-    <div className="rounded-3xl border border-[var(--anc-border)] bg-white p-6 shadow-[0_20px_50px_-30px_rgba(11,17,32,.35)] sm:p-9">
-      <label htmlFor="fee-calc-price" className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--anc-cerise-deep)]">
+    <div className="rounded-3xl border border-[var(--anc-border)] bg-white p-6 shadow-[0_20px_50px_-30px_rgba(29,29,29,.35)] sm:p-9">
+      <label htmlFor="fee-calc-price" className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--anc-vermilion)]">
         Precio de tu entrada
       </label>
       <div className="mt-3 flex items-center gap-4">
-        <span className="text-2xl font-black text-[var(--anc-ink-muted)]">$</span>
+        <span className="text-2xl font-black text-[var(--anc-muted)]">$</span>
         <input
           id="fee-calc-price"
           type="number"
@@ -32,7 +32,7 @@ export default function FeeCalculator() {
           step={500}
           value={price}
           onChange={(event) => setPrice(Math.max(0, Number(event.target.value) || 0))}
-          className="w-full border-b-2 border-[var(--anc-ink)]/15 bg-transparent py-2 text-3xl font-black tracking-tight text-[var(--anc-ink)] outline-none focus-visible:border-[var(--anc-yellow)] sm:text-4xl"
+          className="w-full border-b-2 border-[var(--anc-ink)]/15 bg-transparent py-2 text-3xl font-black tracking-tight text-[var(--anc-ink)] outline-none focus-visible:border-[var(--anc-vermilion)] sm:text-4xl"
         />
       </div>
       <input
@@ -42,30 +42,30 @@ export default function FeeCalculator() {
         step={500}
         value={Math.min(price, 100000)}
         onChange={(event) => setPrice(Number(event.target.value))}
-        className="mt-5 w-full accent-[var(--anc-cerise)]"
+        className="mt-5 w-full accent-[var(--anc-vermilion)]"
         aria-label="Ajustar precio de la entrada"
       />
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl bg-[var(--anc-card)] p-5">
-          <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[var(--anc-ink-muted)]">Tú publicas</p>
+          <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[var(--anc-muted)]">Tú publicas</p>
           <p className="mt-1 text-2xl font-black text-[var(--anc-ink)]">{clp.format(fees.basePrice)}</p>
         </div>
         <div className="rounded-2xl bg-[var(--anc-card)] p-5">
-          <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[var(--anc-ink-muted)]">
+          <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[var(--anc-muted)]">
             El comprador paga
           </p>
           <p className="mt-1 text-2xl font-black text-[var(--anc-ink)]">{clp.format(fees.totalAmount)}</p>
         </div>
-        <div className="rounded-2xl border-2 border-[var(--anc-yellow)] bg-[var(--anc-card)] p-5">
-          <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[#8a5a00]">
+        <div className="rounded-2xl border-2 border-[var(--anc-vermilion)] bg-[var(--anc-card)] p-5">
+          <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[var(--anc-ink)]">
             A tu Mercado Pago
           </p>
           <p className="mt-1 text-2xl font-black text-[var(--anc-ink)]">{clp.format(fees.basePrice)}</p>
         </div>
       </div>
 
-      <p className="mt-6 max-w-[62ch] text-sm leading-6 text-[var(--anc-ink-muted)]">
+      <p className="mt-6 max-w-[62ch] text-sm leading-6 text-[var(--anc-muted)]">
         La diferencia ({clp.format(fees.serviceFeeAmount)}) es un cargo de servicio que paga quien
         compra, no tú. De ahí sale el procesamiento de Mercado Pago
         ({clp.format(fees.mpFeeAmount)}) y lo que gana ANC ({clp.format(fees.ancFeeAmount)}). No
