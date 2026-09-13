@@ -4,6 +4,14 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/slug";
+import type { EventTheme } from "@/lib/database.types";
+
+const EVENT_THEMES: EventTheme[] = ["magenta", "yellow", "turquoise", "charcoal"];
+
+function readTheme(formData: FormData): EventTheme {
+  const value = String(formData.get("theme") ?? "");
+  return (EVENT_THEMES as string[]).includes(value) ? (value as EventTheme) : "magenta";
+}
 
 async function requireUser() {
   const supabase = await createClient();
@@ -53,6 +61,7 @@ export async function createDraftEvent(formData: FormData): Promise<{ id: string
   const venue = String(formData.get("venue") ?? "").trim();
   const eventDate = String(formData.get("event_date") ?? "");
   const imageUrl = String(formData.get("image_url") ?? "").trim();
+  const theme = readTheme(formData);
 
   if (!title || !eventDate) {
     throw new Error("Título y fecha son obligatorios");
@@ -70,6 +79,7 @@ export async function createDraftEvent(formData: FormData): Promise<{ id: string
       venue: venue || null,
       event_date: new Date(eventDate).toISOString(),
       image_url: imageUrl || null,
+      theme,
       status: "draft",
     })
     .select("id")
@@ -91,6 +101,7 @@ export async function updateEvent(eventId: string, formData: FormData) {
   const venue = String(formData.get("venue") ?? "").trim();
   const eventDate = String(formData.get("event_date") ?? "");
   const imageUrl = String(formData.get("image_url") ?? "").trim();
+  const theme = readTheme(formData);
 
   const { error } = await supabase
     .from("events")
@@ -100,6 +111,7 @@ export async function updateEvent(eventId: string, formData: FormData) {
       venue: venue || null,
       event_date: new Date(eventDate).toISOString(),
       image_url: imageUrl || null,
+      theme,
       updated_at: new Date().toISOString(),
     })
     .eq("id", eventId);

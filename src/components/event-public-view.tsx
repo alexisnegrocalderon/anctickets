@@ -3,6 +3,8 @@ import type { Event, TicketType } from "@/lib/database.types";
 import BuyForm from "@/app/(app)/events/[id]/buy-form";
 import FloatingAccessButton from "@/components/floating-access-button";
 import HomeMotionEffects from "@/components/home-motion-effects";
+import ScrollColorGlow from "@/components/scroll-color-glow";
+import { EVENT_THEME_STYLES } from "@/lib/event-themes";
 
 export default function EventPublicView({
   event,
@@ -20,10 +22,12 @@ export default function EventPublicView({
   const month = date.toLocaleDateString("es-CL", { month: "short" }).replace(".", "").toUpperCase();
   const time = date.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" });
   const hasTickets = !!ticketTypes && ticketTypes.length > 0;
+  const theme = EVENT_THEME_STYLES[event.theme] ?? EVENT_THEME_STYLES.magenta;
 
   return (
     <main className="min-h-screen bg-[#090909] pb-28 text-[#f5f4f1]">
       <HomeMotionEffects />
+      <ScrollColorGlow />
 
       {/* Flyer */}
       <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[16/9] lg:aspect-[21/9]">
@@ -39,8 +43,7 @@ export default function EventPublicView({
             className="h-full w-full"
             style={{
               backgroundColor: "#090909",
-              backgroundImage:
-                "radial-gradient(circle at 82% 10%, rgba(255,32,110,.5), transparent 42%), radial-gradient(circle at 20% 90%, rgba(255,32,110,.2), transparent 40%), linear-gradient(135deg, #0d0d0f 0%, #090909 55%, #120c1c 100%)",
+              backgroundImage: `radial-gradient(circle at 82% 10%, ${theme.from}80, transparent 42%), radial-gradient(circle at 20% 90%, ${theme.from}33, transparent 40%), linear-gradient(135deg, #0d0d0f 0%, #090909 55%, #120c1c 100%)`,
             }}
           />
         )}
@@ -50,12 +53,15 @@ export default function EventPublicView({
       {/* Tarjeta stub */}
       <div className="relative z-10 mx-4 -mt-20 sm:mx-auto sm:-mt-24 sm:max-w-2xl">
         <div data-anc-reveal className="overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d0d] shadow-[0_30px_60px_-20px_rgba(0,0,0,.7)]">
-          <div className="flex items-center justify-between bg-gradient-to-r from-[#FF206E] to-[#B3134F] px-5 py-3">
-            <span className="flex items-center gap-1.5 text-sm font-black italic tracking-tight text-[#120d1b]">
+          <div
+            className="flex items-center justify-between px-5 py-3"
+            style={{ backgroundImage: `linear-gradient(to right, ${theme.from}, ${theme.to})` }}
+          >
+            <span className="flex items-center gap-1.5 text-sm font-black italic tracking-tight" style={{ color: theme.ink }}>
               <Image src="/anc-mark.png" alt="" width={18} height={18} />
               ANC<span className="opacity-70">TICKETS</span>
             </span>
-            <span className="font-mono text-[10px] font-bold uppercase tracking-[.18em] text-[#120d1b]/70">
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[.18em]" style={{ color: theme.ink, opacity: 0.7 }}>
               Acceso oficial
             </span>
           </div>
@@ -72,7 +78,7 @@ export default function EventPublicView({
               </p>
             ) : null}
             {event.venue ? (
-              <p className="font-mono text-xs font-bold uppercase tracking-[.18em] text-[#FF206E]">
+              <p className="font-mono text-xs font-bold uppercase tracking-[.18em]" style={{ color: theme.text }}>
                 {event.venue}
               </p>
             ) : null}
@@ -84,7 +90,7 @@ export default function EventPublicView({
               <div>
                 <p className="font-mono text-[10px] font-bold uppercase tracking-[.18em] text-neutral-500">Fecha</p>
                 <p className="mt-1 text-2xl font-black tracking-tight text-[#f5f4f1]">
-                  {day} <span className="text-[#FF6FA0]">{month}</span>
+                  {day} <span style={{ color: theme.text }}>{month}</span>
                 </p>
               </div>
               <div>
@@ -102,7 +108,7 @@ export default function EventPublicView({
         ) : null}
 
         <section id="entradas" data-anc-reveal className="mt-10 scroll-mt-8">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[#FF206E]">Tu acceso</p>
+          <p className="font-mono text-xs font-black uppercase tracking-[.2em]" style={{ color: theme.text }}>Tu acceso</p>
           <h2 className="mt-1 text-3xl font-black tracking-tight text-[#f5f4f1]">Entradas</h2>
 
           <div className="mt-5">

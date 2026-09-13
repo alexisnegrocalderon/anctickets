@@ -1,4 +1,5 @@
 export type EventStatus = "draft" | "published" | "cancelled";
+export type EventTheme = "magenta" | "yellow" | "turquoise" | "charcoal";
 export type OrderStatus = "pending" | "approved" | "rejected" | "cancelled";
 export type TicketStatus = "valid" | "used" | "cancelled";
 
@@ -33,6 +34,7 @@ export type Event = {
   event_date: string;
   image_url: string | null;
   status: EventStatus;
+  theme: EventTheme;
   created_at: string;
   updated_at: string;
 };
