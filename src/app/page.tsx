@@ -190,7 +190,7 @@ export default async function Home() {
                   key={event.id}
                   href={`/${event.slug}`}
                   data-cursor-hover
-                  className="group overflow-hidden border border-white/10 bg-[#101010] transition hover:border-[#a77fff]"
+                  className="group overflow-hidden border border-white/10 bg-[#101010] transition duration-150 hover:border-[#a77fff] active:scale-[.98]"
                 >
                   <div className="aspect-video w-full bg-neutral-800">
                     {event.image_url ? (

@@ -97,16 +97,18 @@ export default function BuyForm({
               <button
                 type="button"
                 onClick={() => setQty(tt.id, qty - 1, remaining)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition hover:border-[#c3adff] hover:text-[#c3adff] disabled:opacity-30"
-                disabled={soldOut}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition duration-100 hover:border-[#c3adff] hover:text-[#c3adff] active:scale-90 active:border-[#a77fff] active:text-[#a77fff] disabled:opacity-30 disabled:active:scale-100"
+                disabled={soldOut || qty === 0}
               >
                 −
               </button>
-              <span className="w-5 text-center font-black text-[#f5f4f1]">{qty}</span>
+              <span key={qty} className="anc-qty-pop w-5 text-center font-black text-[#f5f4f1]">
+                {qty}
+              </span>
               <button
                 type="button"
                 onClick={() => setQty(tt.id, qty + 1, remaining)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition hover:border-[#c3adff] hover:text-[#c3adff] disabled:opacity-30"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition duration-100 hover:border-[#c3adff] hover:text-[#c3adff] active:scale-90 active:border-[#a77fff] active:text-[#a77fff] disabled:opacity-30 disabled:active:scale-100"
                 disabled={soldOut}
               >
                 +

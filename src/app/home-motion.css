@@ -278,6 +278,25 @@
   .anc-flow-screen > p:not(.anc-system-label) { font-size: 12px; }
 }
 
+.anc-header-material {
+  background: rgba(9, 9, 9, .62);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+  transition: background 250ms ease, border-color 250ms ease;
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .anc-header-material { background: var(--anc-ink); }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .anc-header-material { background: var(--anc-ink); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+.anc-qty-pop { animation: anc-qty-pop 220ms cubic-bezier(0.34, 1.56, 0.64, 1) both; display: inline-block; }
+@keyframes anc-qty-pop { from { transform: scale(1.35); } to { transform: scale(1); } }
+
 .anc-cursor-ring, .anc-cursor-dot { display: none; }
 .anc-cursor-enabled .anc-cursor-ring, .anc-cursor-enabled .anc-cursor-dot {
   display: block;
