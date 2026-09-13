@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { Event, TicketType } from "@/lib/database.types";
 import BuyForm from "@/app/(app)/events/[id]/buy-form";
 import FloatingAccessButton from "@/components/floating-access-button";
-import PasteReveal from "@/components/paste-reveal";
+import ScrollReveal from "@/components/scroll-reveal";
 import { EVENT_THEME_STYLES } from "@/lib/event-themes";
 
 export default function EventPublicView({
@@ -25,7 +25,7 @@ export default function EventPublicView({
 
   return (
     <main className="min-h-screen bg-[#090909] pb-28 text-[#f5f4f1]">
-      <PasteReveal />
+      <ScrollReveal />
 
       {/* Flyer */}
       <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[16/9] lg:aspect-[21/9]">
@@ -50,7 +50,7 @@ export default function EventPublicView({
 
       {/* Tarjeta stub */}
       <div className="relative z-10 mx-4 -mt-20 sm:mx-auto sm:-mt-24 sm:max-w-2xl">
-        <div className="paste-in overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d0d] shadow-[0_30px_60px_-20px_rgba(0,0,0,.7)]">
+        <div className="reveal overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d0d] shadow-[0_30px_60px_-20px_rgba(0,0,0,.7)]">
           <div
             className="flex items-center justify-between px-5 py-3"
             style={{ backgroundImage: `linear-gradient(to right, ${theme.from}, ${theme.to})` }}
@@ -100,12 +100,12 @@ export default function EventPublicView({
         </div>
 
         {event.description ? (
-          <p className="paste-in mt-8 whitespace-pre-line text-[15px] leading-7 text-neutral-300">
+          <p className="reveal mt-8 whitespace-pre-line text-[15px] leading-7 text-neutral-300">
             {event.description}
           </p>
         ) : null}
 
-        <section id="entradas" className="paste-in mt-10 scroll-mt-8">
+        <section id="entradas" className="reveal mt-10 scroll-mt-8">
           <p className="font-mono text-xs font-black uppercase tracking-[.2em]" style={{ color: theme.text }}>Tu acceso</p>
           <h2 className="mt-1 text-3xl font-black tracking-tight text-[#f5f4f1]">Entradas</h2>
 

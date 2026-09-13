@@ -1,0 +1,88 @@
+/*
+ * ANC Tickets — sistema de marca "Retro Future".
+ * Magenta / amarillo / turquesa sobre charcoal casi negro. Tokens compartidos
+ * por el home, la página pública de evento y el panel del organizador.
+ */
+
+:root {
+  --ink-black: #090909;
+  --ink-magenta: #ff206e;
+  --ink-yellow: #fbff12;
+  --ink-turquoise: #41ead4;
+  --wall: #0c0b0a;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --anc-accent: #ff206e;
+  --anc-accent-light: #ff6fa0;
+  --anc-yellow: #fbff12;
+  --anc-turquoise: #41ead4;
+  --anc-charcoal: #222222;
+  --anc-ink: #090909;
+  --anc-warm-white: #f5f4f1;
+}
+
+/* Cabecera del producto (fuera del home): bloque sólido con remate de tinta. */
+.anc-header-material {
+  background: var(--anc-charcoal);
+  border-bottom: 3px solid var(--anc-accent);
+}
+
+/* Confirmación al sumar una entrada en el checkout. */
+.anc-qty-pop {
+  animation: anc-qty-pop 240ms var(--ease-out) both;
+  display: inline-block;
+}
+
+@keyframes anc-qty-pop {
+  from { transform: scale(1.35); }
+  to { transform: scale(1); }
+}
+
+/* ---------- Superficies del navegador ---------- */
+
+::selection {
+  background: var(--ink-magenta);
+  color: var(--anc-warm-white);
+}
+
+html {
+  scrollbar-color: var(--ink-magenta) var(--wall);
+  scrollbar-width: thin;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ink-yellow);
+  outline-offset: 3px;
+}
+
+/* ---------- Revelado al hacer scroll ---------- */
+
+/* Un elemento aparece al entrar en pantalla. Visible por defecto: solo se
+   esconde cuando el JS confirmó que va a animarlo (.motion-on), para que un
+   fallo de script nunca deje la página en blanco. */
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-on .reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 560ms var(--ease-out),
+    transform 760ms var(--ease-out);
+}
+
+.motion-on .reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .motion-on .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

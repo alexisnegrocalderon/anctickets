@@ -26,8 +26,8 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Titulares de afiche en todo el producto (home, evento, panel). La condensada
-   ya trae su propio apretado óptico: el tracking negativo agresivo heredado
+/* Titular condensado de marca en todo el producto (home, evento, panel). Ya
+   trae su propio apretado óptico: el tracking negativo agresivo heredado
    (-.06em a -.11em, afinado para Arial) hace que las letras se toquen, así que
    se fuerza un valor seguro sin editar cada clase de Tailwind una por una. */
 h1, h2, h3, .font-display {

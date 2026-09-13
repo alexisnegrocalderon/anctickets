@@ -3,7 +3,7 @@ import { Anton, Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import SmoothScrollProvider from "@/components/smooth-scroll-provider";
 import "./globals.css";
-import "./poster-wall.css";
+import "./brand.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-/** Condensada y pesada: la letra del afiche serigrafiado, a escala de muro. */
+/** Condensada y pesada: la letra de titular de la marca, para todo el sitio. */
 const poster = Anton({
   variable: "--font-poster",
   weight: "400",

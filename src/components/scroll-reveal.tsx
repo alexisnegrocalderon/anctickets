@@ -1,43 +1,43 @@
 "use client";
 
-/** ANC: cada afiche se pega al entrar en pantalla. Un solo momento, no efectos sueltos. */
+/** ANC: cada elemento .reveal aparece al entrar en pantalla. */
 import { useEffect } from "react";
 
-export default function PasteReveal() {
+export default function ScrollReveal() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     document.documentElement.classList.add("motion-on");
 
-    const posters = Array.from(document.querySelectorAll<HTMLElement>(".paste-in"));
+    const items = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
     const timers: number[] = [];
 
-    function paste(el: HTMLElement) {
-      if (el.classList.contains("is-pasted")) return;
-      const delay = Number(el.dataset.pasteDelay ?? 0);
-      timers.push(window.setTimeout(() => el.classList.add("is-pasted"), delay));
+    function show(el: HTMLElement) {
+      if (el.classList.contains("is-in")) return;
+      const delay = Number(el.dataset.revealDelay ?? 0);
+      timers.push(window.setTimeout(() => el.classList.add("is-in"), delay));
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
-          paste(entry.target as HTMLElement);
+          show(entry.target as HTMLElement);
           observer.unobserve(entry.target);
         }
       },
       { rootMargin: "0px 0px -12% 0px" },
     );
 
-    posters.forEach((poster) => observer.observe(poster));
+    items.forEach((item) => observer.observe(item));
 
     // Red de seguridad: si el observador no llega a disparar (scroll sintético,
-    // navegador que restaura una posición, contenedor transformado), el afiche
-    // se pega igual. Un texto invisible nunca es aceptable.
+    // navegador que restaura una posición, contenedor transformado), el
+    // elemento se muestra igual. Un texto invisible nunca es aceptable.
     const safety = window.setTimeout(() => {
-      posters.forEach((poster) => {
-        const rect = poster.getBoundingClientRect();
-        if (rect.top < window.innerHeight * 1.15) paste(poster);
+      items.forEach((item) => {
+        const rect = item.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 1.15) show(item);
       });
     }, 1600);
 
