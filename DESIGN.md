@@ -63,6 +63,13 @@ components:
 
 # Design System: ANC Tickets
 
+> **Nota de estado:** la estructura de abajo (hero de impacto, quiebres de
+> pantalla completa, playbook en grilla, metodología 01-06, carrusel
+> horizontal) es la vigente. La sección Colors sigue describiendo la paleta
+> "Doughlicious" provisoria — el usuario va a mandar una referencia de color
+> nueva para esta misma estructura, así que solo esa sección quedará
+> desactualizada hasta la próxima ronda.
+
 ## Overview
 
 **Creative North Star: "El Puesto de Feria, Vendiendo Directo"**
@@ -153,14 +160,32 @@ lo reemplaza con la calculadora de reparto.
 
 ## Layout
 
-Contenedor `max-w-7xl` para hero y nav, `max-w-6xl` para grillas de beneficios
-y pasos, `max-w-3xl` para encabezados de sección centrados, `max-w-2xl` para la
-calculadora. Ritmo vertical `py-24` en móvil, `py-32` en escritorio, con
-`px-5 / sm:px-8 / lg:px-12` de gutter.
+Estructura editorial de agencia (inspirada en loveandmoney.com), no landing
+de SaaS convencional: hero de impacto a pantalla completa → franja de
+confianza → quiebre de impacto → playbook en grilla → metodología numerada →
+quiebre de impacto → precio/calculadora → carrusel horizontal de fechas →
+FAQ → cierre.
 
-El hero es `1.1fr / 0.9fr` en escritorio: texto y CTA a la izquierda, a la
-derecha el video del hero enmarcado en un borde amarillo grueso con una
-tarjeta flotante blanca superpuesta. Una columna en móvil.
+Contenedor `max-w-7xl` para el nav, `max-w-6xl` para el playbook y el
+carrusel, `max-w-4xl` para la metodología, `max-w-3xl` para encabezados de
+sección centrados, `max-w-2xl` para la calculadora. Ritmo vertical `py-24` en
+móvil, `py-32` en escritorio, con `px-5 / sm:px-8 / lg:px-12` de gutter.
+
+### Componentes editoriales
+- **`ImpactSection`**: pantalla completa (`min-h-[80svh]`), texto centrado
+  grande sobre video o color sólido, con un parallax leve del fondo
+  (`translateY` + `scale(1.12)` vía rAF, nunca layout) que se desactiva por
+  completo con `prefers-reduced-motion`. Se usa tres veces: el hero y dos
+  quiebres de una sola frase entre secciones de contenido.
+- **`PlaybookGrid`**: grilla 2/3 columnas de capacidades del producto, cada
+  una con un placeholder de imagen y una etiqueta corta. Reemplaza las
+  tarjetas de "beneficios" de la ronda anterior.
+- **`Methodology`**: lista numerada 01-06 con la mecánica real del producto
+  (cuenta → Mercado Pago → publicar → compartir → vender → controlar la
+  puerta), en formato manifiesto editorial en vez de tres tarjetas cortas.
+- **`EventCarousel`**: scroll-snap horizontal nativo con swipe/drag (no
+  scroll-jack — más robusto en móvil y trackpad) para las fechas publicadas,
+  sobre la sección de fondo negro perla.
 
 ## Elevation & Depth
 
