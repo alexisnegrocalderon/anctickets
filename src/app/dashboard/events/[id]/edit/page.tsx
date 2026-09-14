@@ -12,6 +12,7 @@ import {
 import { Button, Card, Field, Input, LinkButton, PageHeader, Textarea } from "@/components/dashboard/ui";
 import CopyEventLinkButton from "@/components/dashboard/copy-event-link-button";
 import ImageUpload from "@/components/dashboard/image-upload";
+import SlugField from "@/components/dashboard/slug-field";
 import ThemePicker from "@/components/dashboard/theme-picker";
 
 interface SalesSummary {
@@ -63,6 +64,7 @@ export default async function EditEventPage({
   };
 
   const boundUpdateEvent = updateEvent.bind(null, id);
+  const siteHost = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "") || "tickets.ancdigital.cl";
   const boundCreateTicketType = createTicketType.bind(null, id);
 
   return (
@@ -120,6 +122,9 @@ export default async function EditEventPage({
         <form action={boundUpdateEvent} className="flex flex-col gap-4">
           <Field label="Título">
             <Input name="title" defaultValue={event.title} required />
+          </Field>
+          <Field label="Link de tu evento">
+            <SlugField defaultValue={event.slug} host={siteHost} />
           </Field>
           <Field label="Descripción">
             <Textarea name="description" defaultValue={event.description ?? ""} rows={4} />
