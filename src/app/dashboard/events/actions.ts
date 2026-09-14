@@ -56,11 +56,39 @@ async function generateUniqueSlug(
 }
 
 /**
+ * Valida y normaliza un slug elegido a mano por el productor (para que el
+ * link quede corto y fácil de recordar) al editar un evento ya creado.
+ * Si ya está en uso por OTRO evento, lanza un error legible en vez de
+ * pisarlo en silencio.
+ */
+async function resolveSlugForUpdate(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  eventId: string,
+  requestedSlug: string,
+  fallbackSlug: string
+): Promise<string> {
+  const candidate = slugify(requestedSlug) || fallbackSlug;
+
+  const { data } = await supabase
+    .from("events")
+    .select("id")
+    .eq("slug", candidate)
+    .neq("id", eventId)
+    .maybeSingle();
+
+  if (data) {
+    throw new Error(`El link "${candidate}" ya está en uso por otro evento. Prueba con otro.`);
+  }
+
+  return candidate;
+}
+
+/**
  * Crea el evento como borrador y devuelve su id, sin redirigir — la usa el wizard
  * (`event-wizard.tsx`) para guardar apenas se completan los pasos obligatorios y
  * seguir operando sobre ese mismo evento en los pasos siguientes.
  */
-export async function createDraftEvent(formData: FormData): Promise<{ id: string }> {
+export async function createDraftEvent(formData: FormData): Promise<{ id: string; slug: string }> {
   const { supabase, user } = await requireUser();
 
   const title = String(formData.get("title") ?? "").trim();
@@ -71,12 +99,15 @@ export async function createDraftEvent(formData: FormData): Promise<{ id: string
   const theme = readTheme(formData);
   const accentColor = readAccentColor(formData);
   const organizerLogoUrl = String(formData.get("organizer_logo_url") ?? "").trim();
+  const customSlug = String(formData.get("slug") ?? "").trim();
 
   if (!title || !eventDate) {
     throw new Error("Título y fecha son obligatorios");
   }
 
-  const slug = await generateUniqueSlug(supabase, title);
+  // Si el productor eligió su propio link, se parte de ese texto en vez del
+  // título; si ya está tomado, se le suma un sufijo en vez de fallar.
+  const slug = await generateUniqueSlug(supabase, customSlug || title);
 
   const { data, error } = await supabase
     .from("events")
@@ -93,7 +124,7 @@ export async function createDraftEvent(formData: FormData): Promise<{ id: string
       organizer_logo_url: organizerLogoUrl || null,
       status: "draft",
     })
-    .select("id")
+    .select("id, slug")
     .single();
 
   if (error || !data) {
@@ -101,7 +132,7 @@ export async function createDraftEvent(formData: FormData): Promise<{ id: string
   }
 
   revalidatePath("/dashboard/events");
-  return { id: data.id };
+  return { id: data.id, slug: data.slug };
 }
 
 export async function updateEvent(eventId: string, formData: FormData) {
@@ -115,6 +146,17 @@ export async function updateEvent(eventId: string, formData: FormData) {
   const theme = readTheme(formData);
   const accentColor = readAccentColor(formData);
   const organizerLogoUrl = String(formData.get("organizer_logo_url") ?? "").trim();
+  const requestedSlug = String(formData.get("slug") ?? "").trim();
+
+  const { data: current } = await supabase
+    .from("events")
+    .select("slug")
+    .eq("id", eventId)
+    .single();
+
+  const slug = requestedSlug
+    ? await resolveSlugForUpdate(supabase, eventId, requestedSlug, current?.slug ?? requestedSlug)
+    : current?.slug;
 
   const { error } = await supabase
     .from("events")
@@ -127,6 +169,7 @@ export async function updateEvent(eventId: string, formData: FormData) {
       theme,
       accent_color: accentColor,
       organizer_logo_url: organizerLogoUrl || null,
+      ...(slug ? { slug } : {}),
       updated_at: new Date().toISOString(),
     })
     .eq("id", eventId);
@@ -136,6 +179,8 @@ export async function updateEvent(eventId: string, formData: FormData) {
   revalidatePath(`/dashboard/events/${eventId}/edit`);
   revalidatePath("/dashboard/events");
   revalidatePath("/");
+  if (current?.slug) revalidatePath(`/${current.slug}`);
+  if (slug && slug !== current?.slug) revalidatePath(`/${slug}`);
 }
 
 export async function setEventStatus(

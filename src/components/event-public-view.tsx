@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Event, TicketType } from "@/lib/database.types";
 import BuyForm from "@/app/(app)/events/[id]/buy-form";
 import FloatingAccessButton from "@/components/floating-access-button";
@@ -59,9 +60,8 @@ export default function EventPublicView({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={event.organizer_logo_url} alt={organizerName ?? ""} className="h-6 max-w-[45%] object-contain" />
             ) : (
-              <span className="flex items-center gap-1.5 text-sm font-black italic tracking-tight" style={{ color: theme.ink }}>
-                <Image src="/anc-mark.png" alt="" width={18} height={18} />
-                ANC<span className="opacity-70">TICKETS</span>
+              <span className="truncate text-sm font-black italic tracking-tight" style={{ color: theme.ink }}>
+                {organizerName ?? "Acceso"}
               </span>
             )}
             <span className="font-mono text-[10px] font-bold uppercase tracking-[.18em]" style={{ color: theme.ink, opacity: 0.7 }}>
@@ -102,12 +102,13 @@ export default function EventPublicView({
               </div>
             </div>
 
-            {event.organizer_logo_url ? (
-              <p className="mt-6 flex items-center gap-1.5 border-t border-white/10 pt-4 font-mono text-[9px] uppercase tracking-[.16em] text-neutral-600">
-                <Image src="/anc-mark.png" alt="" width={12} height={12} className="opacity-60" />
-                Powered by ANC Tickets
-              </p>
-            ) : null}
+            <Link
+              href="/"
+              className="mt-6 flex items-center gap-1.5 border-t border-white/10 pt-4 font-mono text-[9px] uppercase tracking-[.16em] text-neutral-600 transition-colors hover:text-neutral-400"
+            >
+              <Image src="/anc-mark.png" alt="" width={12} height={12} className="opacity-60" />
+              Powered by ANC Tickets — crea tu propio evento gratis
+            </Link>
           </div>
         </div>
 

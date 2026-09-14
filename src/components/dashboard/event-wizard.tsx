@@ -15,7 +15,10 @@ import { Button, Field, Input, Textarea } from "@/components/dashboard/ui";
 import ImageUpload from "@/components/dashboard/image-upload";
 import { isValidHex } from "@/lib/color";
 import { EVENT_THEME_OPTIONS, EVENT_THEME_STYLES, resolveEventTheme } from "@/lib/event-themes";
+import { slugify } from "@/lib/slug";
 import type { EventTheme } from "@/lib/database.types";
+
+const SITE_HOST = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "") || "tickets.ancdigital.cl";
 
 type DraftTicketType = { name: string; base_price: number; quantity: number };
 
@@ -87,7 +90,7 @@ function LivePreview({
             <img src={organizerLogoUrl} alt="" className="h-5 max-w-[40%] object-contain" />
           ) : (
             <span className="text-xs font-black italic tracking-tight" style={{ color: style.ink }}>
-              ANC<span className="opacity-70">TICKETS</span>
+              Tu marca
             </span>
           )}
         </div>
@@ -103,11 +106,9 @@ function LivePreview({
               ? date.toLocaleString("es-CL", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
               : "Fecha por definir"}
           </p>
-          {organizerLogoUrl ? (
-            <p className="mt-4 border-t border-white/10 pt-3 font-mono text-[9px] uppercase tracking-[.16em] text-neutral-600">
-              Powered by ANC Tickets
-            </p>
-          ) : null}
+          <p className="mt-4 border-t border-white/10 pt-3 font-mono text-[9px] uppercase tracking-[.16em] text-neutral-600">
+            Powered by ANC Tickets
+          </p>
         </div>
       </div>
     </div>
@@ -127,6 +128,7 @@ export default function EventWizard() {
   const [accentColor, setAccentColor] = useState("#FF206E");
   const [organizerLogoUrl, setOrganizerLogoUrl] = useState("");
   const [title, setTitle] = useState("");
+  const [customSlug, setCustomSlug] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [venue, setVenue] = useState("");
   const [description, setDescription] = useState("");
@@ -147,6 +149,7 @@ export default function EventWizard() {
     data.set("theme", theme);
     data.set("accent_color", theme === "custom" && isValidHex(accentColor) ? accentColor : "");
     data.set("organizer_logo_url", organizerLogoUrl);
+    data.set("slug", customSlug);
     return data;
   }
 
@@ -158,6 +161,10 @@ export default function EventWizard() {
       if (!eventId) {
         const created = await createDraftEvent(buildFormData());
         setEventId(created.id);
+        // El slug real puede llevar un sufijo si hubo colisión (ej. "-2"); si
+        // se reenviara el texto original en el próximo guardado, chocaría con
+        // el evento ajeno que causó la colisión. Se sincroniza al resultado.
+        setCustomSlug(created.slug);
       } else {
         await updateEvent(eventId, buildFormData());
       }
@@ -375,6 +382,22 @@ export default function EventWizard() {
                       placeholder="Fiesta ANC Verano"
                       autoFocus
                     />
+                  </Field>
+                  <Field label="Link de tu evento (opcional)">
+                    <div className="flex items-center overflow-hidden rounded-lg border border-white/15 focus-within:border-[var(--anc-accent)]">
+                      <span className="whitespace-nowrap bg-white/5 px-3 py-2 text-sm text-neutral-500">
+                        {SITE_HOST}/
+                      </span>
+                      <input
+                        value={customSlug}
+                        onChange={(e) => setCustomSlug(slugify(e.target.value))}
+                        placeholder={slugify(title) || "mi-fiesta"}
+                        className="w-full bg-transparent px-2 py-2 text-sm text-[#f5f4f1] outline-none"
+                      />
+                    </div>
+                    <p className="mt-1.5 text-xs text-neutral-500">
+                      Déjalo vacío y usamos el título. Corto y fácil de decir en tu historia.
+                    </p>
                   </Field>
                 </div>
               ) : null}
