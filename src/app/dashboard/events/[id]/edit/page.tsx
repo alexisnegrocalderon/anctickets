@@ -178,9 +178,9 @@ export default async function EditEventPage({
                     </p>
                   </div>
                   <form action={deleteTicketType.bind(null, id, tt.id)}>
-                    <button className="shrink-0 text-sm font-medium text-red-400 hover:text-red-300">
+                    <Button type="submit" variant="danger" className="shrink-0 px-3 py-1.5 text-xs">
                       Eliminar
-                    </button>
+                    </Button>
                   </form>
                 </div>
               );

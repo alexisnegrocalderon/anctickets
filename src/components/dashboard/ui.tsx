@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useFormStatus } from "react-dom";
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 
 /** ANC dashboard: kit compartido de UI — mismos tokens de color del resto del sitio. */
@@ -51,10 +54,32 @@ const buttonBase =
 export function Button({
   variant = "outline",
   className = "",
+  children,
+  disabled,
+  type = "button",
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant }) {
+  // useFormStatus solo detecta el submit del <form> padre — si este botón no
+  // está dentro de uno, pending queda siempre en false y no cambia nada.
+  const { pending } = useFormStatus();
+  const isPending = pending && type === "submit";
+
   return (
-    <button className={`${buttonBase} ${buttonVariants[variant]} ${className}`} {...props} />
+    <button
+      type={type}
+      className={`${buttonBase} ${buttonVariants[variant]} ${className}`}
+      disabled={disabled || isPending}
+      {...props}
+    >
+      {isPending ? (
+        <>
+          <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" />
+          Guardando…
+        </>
+      ) : (
+        children
+      )}
+    </button>
   );
 }
 
