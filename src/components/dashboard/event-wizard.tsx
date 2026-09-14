@@ -450,7 +450,7 @@ export default function EventWizard() {
                           >
                             <span className="text-[#f5f4f1]">{tt.name}</span>
                             <span className="text-neutral-400">
-                              ${tt.base_price.toLocaleString("es-CL")} · cupo {tt.quantity}
+                              ${tt.base_price.toLocaleString("es-CL", { maximumFractionDigits: 0 })} · cupo {tt.quantity}
                             </span>
                           </motion.li>
                         ))}

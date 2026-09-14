@@ -111,7 +111,7 @@ export default function BuyForm({
                 <span className="truncate">{tt.name}</span>
               </p>
               <p className={qty > 0 ? "text-sm" : "text-sm text-neutral-400"} style={priceColor ? { color: priceColor } : undefined}>
-                ${tt.base_price.toLocaleString("es-CL")}
+                ${tt.base_price.toLocaleString("es-CL", { maximumFractionDigits: 0 })}
                 {soldOut ? (
                   <span className="text-red-400"> · agotado</span>
                 ) : lowStock ? (
@@ -153,15 +153,15 @@ export default function BuyForm({
         <div className="rounded-xl border border-white/10 bg-[#0d0d0d] p-4 font-mono text-xs text-neutral-400">
           <div className="flex justify-between">
             <span className="uppercase tracking-wide">Subtotal entradas</span>
-            <span className="text-[#f5f4f1]">${fees.basePrice.toLocaleString("es-CL")}</span>
+            <span className="text-[#f5f4f1]">${fees.basePrice.toLocaleString("es-CL", { maximumFractionDigits: 0 })}</span>
           </div>
           <div className="mt-1.5 flex justify-between">
             <span className="uppercase tracking-wide">Cargo por servicio (10%)</span>
-            <span className="text-[#f5f4f1]">${fees.serviceFeeAmount.toLocaleString("es-CL")}</span>
+            <span className="text-[#f5f4f1]">${fees.serviceFeeAmount.toLocaleString("es-CL", { maximumFractionDigits: 0 })}</span>
           </div>
           <div className="mt-3 flex justify-between border-t border-white/10 pt-3 text-sm font-bold text-[#f5f4f1]">
             <span className="uppercase tracking-wide" style={{ color: "var(--anc-yellow)" }}>Total a pagar</span>
-            <span>${fees.totalAmount.toLocaleString("es-CL")}</span>
+            <span>${fees.totalAmount.toLocaleString("es-CL", { maximumFractionDigits: 0 })}</span>
           </div>
         </div>
       ) : null}

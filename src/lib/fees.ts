@@ -30,6 +30,12 @@
  * SIEMPRE reciba el 100% del valor base, aunque eso signifique que el margen
  * de ANC sea un poco menor cuando Mercado Pago cobra menos (ej. liquidación
  * a 10 días en vez de instantánea).
+ *
+ * El peso chileno no tiene centavos: todo monto que se muestra o se cobra
+ * tiene que ser un entero. Se redondea siempre hacia ARRIBA (nunca al más
+ * cercano ni hacia abajo) para que un ajuste de redondeo nunca le quite un
+ * peso al organizador ni a ANC — el único que puede pagar la diferencia de
+ * redondeo es el comprador, en su cargo de servicio.
  */
 
 export const SERVICE_FEE_RATE = 0.10;
@@ -44,18 +50,18 @@ export interface FeeBreakdown {
   ancFeeAmount: number;
 }
 
-function round2(value: number): number {
-  return Math.round(value * 100) / 100;
+function roundUpToPeso(value: number): number {
+  return Math.ceil(value);
 }
 
 export function calculateFees(basePrice: number): FeeBreakdown {
-  const totalAmount = round2(basePrice / (1 - SERVICE_FEE_RATE));
-  const serviceFeeAmount = round2(totalAmount - basePrice);
-  const mpFeeAmount = round2(totalAmount * MP_FEE_RATE);
-  const ancFeeAmount = round2(serviceFeeAmount - mpFeeAmount);
+  const totalAmount = roundUpToPeso(basePrice / (1 - SERVICE_FEE_RATE));
+  const serviceFeeAmount = roundUpToPeso(totalAmount - basePrice);
+  const mpFeeAmount = roundUpToPeso(totalAmount * MP_FEE_RATE);
+  const ancFeeAmount = roundUpToPeso(serviceFeeAmount - mpFeeAmount);
 
   return {
-    basePrice: round2(basePrice),
+    basePrice: roundUpToPeso(basePrice),
     totalAmount,
     serviceFeeAmount,
     mpFeeAmount,

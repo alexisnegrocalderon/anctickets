@@ -100,7 +100,7 @@ export default async function EditEventPage({
           </div>
           <div>
             <p className="text-2xl font-bold text-[var(--anc-accent)]">
-              ${summary.revenue.toLocaleString("es-CL")}
+              ${summary.revenue.toLocaleString("es-CL", { maximumFractionDigits: 0 })}
             </p>
             <p className="text-sm text-neutral-400">Ingresos totales (aprobados)</p>
           </div>
@@ -167,8 +167,8 @@ export default async function EditEventPage({
                   <div className="min-w-0">
                     <p className="truncate font-medium text-[#f5f4f1]">{tt.name}</p>
                     <p className="text-sm text-neutral-400">
-                      ${tt.base_price.toLocaleString("es-CL")} base · total
-                      comprador ${fees.totalAmount.toLocaleString("es-CL")} ·
+                      ${tt.base_price.toLocaleString("es-CL", { maximumFractionDigits: 0 })} base · total
+                      comprador ${fees.totalAmount.toLocaleString("es-CL", { maximumFractionDigits: 0 })} ·
                       cupo {tt.sold_count}/{tt.quantity}
                     </p>
                   </div>
