@@ -17,6 +17,7 @@ import FeeCalculator from "@/components/fee-calculator";
 import HeroSignup from "@/components/hero-signup";
 import ImpactSection from "@/components/impact-section";
 import Methodology from "@/components/methodology";
+import NavSignupButton from "@/components/nav-signup-button";
 import PlaybookGrid from "@/components/playbook-grid";
 import ScrollReveal from "@/components/scroll-reveal";
 import { createClient } from "@/lib/supabase/server";
@@ -78,12 +79,7 @@ export default async function Home() {
             >
               Ya tengo cuenta
             </Link>
-            <a
-              href="#hero-cta"
-              className="rounded-full bg-[var(--anc-vermilion)] px-5 py-2.5 text-sm font-black uppercase tracking-tight text-[var(--anc-ink)] transition-transform duration-150 hover:brightness-95 active:scale-95"
-            >
-              Publica gratis
-            </a>
+            <NavSignupButton />
           </div>
         </div>
       </header>
