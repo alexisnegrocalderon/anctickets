@@ -12,6 +12,7 @@ import {
 import { Button, Card, Field, Input, LinkButton, PageHeader, Textarea } from "@/components/dashboard/ui";
 import CopyEventLinkButton from "@/components/dashboard/copy-event-link-button";
 import ImageUpload from "@/components/dashboard/image-upload";
+import ThemePicker from "@/components/dashboard/theme-picker";
 
 interface SalesSummary {
   ticketsSold: number;
@@ -98,7 +99,7 @@ export default async function EditEventPage({
             <p className="text-sm text-neutral-400">Entradas vendidas</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-[#a77fff]">
+            <p className="text-2xl font-bold text-[var(--anc-accent)]">
               ${summary.revenue.toLocaleString("es-CL")}
             </p>
             <p className="text-sm text-neutral-400">Ingresos totales (aprobados)</p>
@@ -106,7 +107,7 @@ export default async function EditEventPage({
           <div className="flex items-end">
             <a
               href={`/api/dashboard/events/${id}/export`}
-              className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-[#f5f4f1] transition hover:border-[#c3adff] hover:text-[#c3adff]"
+              className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-[#f5f4f1] transition hover:border-[var(--anc-accent-light)] hover:text-[var(--anc-accent-light)]"
             >
               Exportar compradores (CSV)
             </a>
@@ -136,6 +137,12 @@ export default async function EditEventPage({
           </Field>
           <Field label="Imagen">
             <ImageUpload name="image_url" defaultValue={event.image_url} />
+          </Field>
+          <Field label="Mood / color de marca">
+            <ThemePicker defaultTheme={event.theme} defaultAccentColor={event.accent_color} />
+          </Field>
+          <Field label="Tu logo (opcional — reemplaza el logo de ANC en tu página)">
+            <ImageUpload variant="logo" name="organizer_logo_url" defaultValue={event.organizer_logo_url} />
           </Field>
           <Button type="submit" variant="primary" className="self-start">
             Guardar cambios

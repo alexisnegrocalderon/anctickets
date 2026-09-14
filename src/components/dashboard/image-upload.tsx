@@ -8,10 +8,13 @@ export default function ImageUpload({
   name,
   defaultValue,
   onChange,
+  variant = "flyer",
 }: {
   name?: string;
   defaultValue?: string | null;
   onChange?: (url: string) => void;
+  /** "flyer" (por defecto, 16:9 recortado) o "logo" (cuadrado, sin recortar). */
+  variant?: "flyer" | "logo";
 }) {
   const inputId = useId();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -44,6 +47,8 @@ export default function ImageUpload({
 
       if (uploadError) throw uploadError;
 
+      // Mismo bucket que el flyer: la política de Storage ya permite subir bajo
+      // el propio uid, así que un logo no necesita bucket ni migración aparte.
       const { data } = supabase.storage.from("event-images").getPublicUrl(path);
       setImageUrl(data.publicUrl);
     } catch (err) {
@@ -58,10 +63,17 @@ export default function ImageUpload({
       <input type="hidden" name={name} value={imageUrl} />
 
       {imageUrl ? (
-        <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-white/15 bg-black/40">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imageUrl} alt="Vista previa del evento" className="h-full w-full object-cover" />
-        </div>
+        variant === "logo" ? (
+          <div className="relative h-24 w-24 overflow-hidden rounded-xl border border-white/15 bg-black/40 p-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={imageUrl} alt="Vista previa del logo" className="h-full w-full object-contain" />
+          </div>
+        ) : (
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-white/15 bg-black/40">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={imageUrl} alt="Vista previa del evento" className="h-full w-full object-cover" />
+          </div>
+        )
       ) : null}
 
       <div className="flex flex-wrap items-center gap-3">
@@ -78,7 +90,7 @@ export default function ImageUpload({
         />
         <label
           htmlFor={inputId}
-          className="cursor-pointer rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-[#f5f4f1] transition hover:border-[#c3adff] hover:text-[#c3adff]"
+          className="cursor-pointer rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-[#f5f4f1] transition hover:border-[var(--anc-accent-light)] hover:text-[var(--anc-accent-light)]"
         >
           {uploading ? "Subiendo..." : imageUrl ? "Cambiar imagen" : "Subir imagen"}
         </label>
@@ -88,7 +100,7 @@ export default function ImageUpload({
           placeholder="o pega una URL externa"
           value={imageUrl}
           onChange={(event) => setImageUrl(event.target.value)}
-          className="min-w-0 flex-1 rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-[#f5f4f1] placeholder:text-neutral-500 transition focus:border-[#a77fff] focus:outline-none"
+          className="min-w-0 flex-1 rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-[#f5f4f1] placeholder:text-neutral-500 transition focus:border-[var(--anc-accent)] focus:outline-none"
         />
       </div>
 

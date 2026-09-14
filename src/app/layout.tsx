@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Anton, Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
-import CustomCursor from "@/components/custom-cursor";
 import SmoothScrollProvider from "@/components/smooth-scroll-provider";
 import "./globals.css";
-import "./home-motion.css";
+import "./brand.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,6 +12,13 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+/** Condensada y pesada: la letra de titular de la marca, para todo el sitio. */
+const poster = Anton({
+  variable: "--font-poster",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -30,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${poster.variable} h-full antialiased`}
     >
       <head>
         <Script
@@ -45,10 +51,7 @@ gtag('config', 'G-04VXQLWMNS');`}
         </Script>
       </head>
       <body className="min-h-full">
-        <SmoothScrollProvider>
-          <CustomCursor />
-          {children}
-        </SmoothScrollProvider>
+        <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
     </html>
   );

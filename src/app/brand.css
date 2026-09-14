@@ -1,0 +1,104 @@
+/*
+ * ANC Tickets — sistema de marca "Vermilion & Cod Gray": casi-negro cálido de
+ * fondo, blanco para el texto y las secciones claras, gris para el apoyo, y
+ * un único acento vermilion racionado para toda acción. Tokens compartidos
+ * por el home, la página pública de evento y el panel del organizador.
+ */
+
+:root {
+  --anc-bg: #ffffff;
+  --anc-ink: #1d1d1d;
+  --anc-muted: #808080;
+  --anc-vermilion: #fc4c13;
+  --anc-card: #f4f4f4;
+  --anc-border: rgba(29, 29, 29, 0.14);
+  --anc-border-dark: rgba(255, 255, 255, 0.15);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Alias heredados: mismos nombres que usan site-header.tsx, buy-form.tsx y
+     el resto del panel, reapuntados a la paleta nueva para que el acento de
+     marca sea consistente en todo el producto sin tocar esos archivos. */
+  --anc-accent: var(--anc-vermilion);
+  --anc-accent-light: #ff8256;
+  --anc-yellow: var(--anc-vermilion);
+  --anc-turquoise: var(--anc-vermilion);
+  --anc-charcoal: var(--anc-ink);
+  --anc-warm-white: #ffffff;
+}
+
+/* Cabecera del producto (fuera del home): bloque sólido con remate de acento. */
+.anc-header-material {
+  background: var(--anc-charcoal);
+  border-bottom: 3px solid var(--anc-vermilion);
+}
+
+/* Confirmación al sumar una entrada en el checkout. */
+.anc-qty-pop {
+  animation: anc-qty-pop 240ms var(--ease-out) both;
+  display: inline-block;
+}
+
+@keyframes anc-qty-pop {
+  from { transform: scale(1.35); }
+  to { transform: scale(1); }
+}
+
+/* ---------- Superficies del navegador ---------- */
+
+::selection {
+  background: var(--anc-vermilion);
+  color: #ffffff;
+}
+
+html {
+  scrollbar-color: var(--anc-vermilion) var(--anc-ink);
+  scrollbar-width: thin;
+}
+
+:focus-visible {
+  outline: 3px solid var(--anc-vermilion);
+  outline-offset: 3px;
+}
+
+/* ---------- Revelado al hacer scroll ---------- */
+
+/* Un elemento aparece al entrar en pantalla. Visible por defecto: solo se
+   esconde cuando el JS confirmó que va a animarlo (.motion-on), para que un
+   fallo de script nunca deje la página en blanco. */
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-on .reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 560ms var(--ease-out),
+    transform 760ms var(--ease-out);
+}
+
+.motion-on .reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .motion-on .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- Carrusel horizontal ---------- */
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

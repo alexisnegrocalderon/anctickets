@@ -1,9 +1,20 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import type { TicketType } from "@/lib/database.types";
 import { calculateFees } from "@/lib/fees";
+
+/** Cada tipo de entrada toma un color del sistema "Retro Future", en orden de aparición. */
+const TIER_ACCENTS = [
+  { base: "#FF206E", light: "#FF6FA0", ink: "#f5f4f1" }, // magenta -> texto claro
+  { base: "#FBFF12", light: "#FFFF75", ink: "#160f00" }, // amarillo -> texto oscuro
+  { base: "#41EAD4", light: "#8FF6EA", ink: "#062622" }, // turquesa -> texto oscuro
+  { base: "#222222", light: "#4a4a4a", ink: "#f5f4f1" }, // charcoal -> texto claro
+] as const;
+
+const LOW_STOCK_THRESHOLD = 5;
 
 export default function BuyForm({
   eventId,
@@ -71,23 +82,43 @@ export default function BuyForm({
 
   return (
     <div className="flex flex-col gap-3">
-      {ticketTypes.map((tt) => {
+      {ticketTypes.map((tt, index) => {
         const remaining = tt.quantity - tt.sold_count;
         const qty = quantities[tt.id] ?? 0;
         const soldOut = remaining <= 0;
+        const lowStock = !soldOut && remaining <= LOW_STOCK_THRESHOLD;
+        const accent = TIER_ACCENTS[index % TIER_ACCENTS.length];
+        const ink = qty > 0 ? accent.ink : "#f5f4f1";
+        const tierStyle = {
+          "--tier-accent": accent.base,
+          "--tier-accent-light": accent.light,
+          "--tier-ink": ink,
+          borderLeftColor: accent.base,
+          ...(qty > 0 ? { backgroundColor: accent.base, borderColor: accent.base } : {}),
+        } as CSSProperties;
+        const nameColor = qty > 0 ? accent.ink : "#f5f4f1";
+        const priceColor = qty > 0 ? accent.ink : undefined;
         return (
           <div
             key={tt.id}
-            className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3.5 transition ${
-              qty > 0 ? "border-[#a77fff]/60 bg-[#a77fff]/[.06]" : "border-white/10 bg-[#101010]"
+            style={tierStyle}
+            className={`flex items-center justify-between gap-3 rounded-xl border border-l-4 px-4 py-3.5 transition ${
+              qty > 0 ? "" : "border-white/10 bg-[#101010]"
             }`}
           >
             <div className="min-w-0">
-              <p className="truncate font-semibold text-[#f5f4f1]">{tt.name}</p>
-              <p className="text-sm text-neutral-400">
+              <p className="flex items-center gap-2 truncate font-semibold" style={{ color: nameColor }}>
+                <span className="truncate">{tt.name}</span>
+              </p>
+              <p className={qty > 0 ? "text-sm" : "text-sm text-neutral-400"} style={priceColor ? { color: priceColor } : undefined}>
                 ${tt.base_price.toLocaleString("es-CL")}
                 {soldOut ? (
                   <span className="text-red-400"> · agotado</span>
+                ) : lowStock ? (
+                  <span style={{ color: qty > 0 ? accent.ink : "var(--anc-yellow)" }} className="font-bold">
+                    {" "}
+                    · ¡quedan {remaining}!
+                  </span>
                 ) : (
                   ` · ${remaining} disponibles`
                 )}
@@ -97,16 +128,18 @@ export default function BuyForm({
               <button
                 type="button"
                 onClick={() => setQty(tt.id, qty - 1, remaining)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition hover:border-[#c3adff] hover:text-[#c3adff] disabled:opacity-30"
-                disabled={soldOut}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--tier-ink)]/30 text-[var(--tier-ink)] transition duration-100 hover:border-[var(--tier-ink)] active:scale-90 disabled:opacity-30 disabled:active:scale-100"
+                disabled={soldOut || qty === 0}
               >
                 −
               </button>
-              <span className="w-5 text-center font-black text-[#f5f4f1]">{qty}</span>
+              <span key={qty} className="anc-qty-pop w-5 text-center font-black" style={{ color: ink }}>
+                {qty}
+              </span>
               <button
                 type="button"
                 onClick={() => setQty(tt.id, qty + 1, remaining)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-[#f5f4f1] transition hover:border-[#c3adff] hover:text-[#c3adff] disabled:opacity-30"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--tier-ink)]/30 text-[var(--tier-ink)] transition duration-100 hover:border-[var(--tier-ink)] active:scale-90 disabled:opacity-30 disabled:active:scale-100"
                 disabled={soldOut}
               >
                 +
@@ -127,7 +160,7 @@ export default function BuyForm({
             <span className="text-[#f5f4f1]">${fees.serviceFeeAmount.toLocaleString("es-CL")}</span>
           </div>
           <div className="mt-3 flex justify-between border-t border-white/10 pt-3 text-sm font-bold text-[#f5f4f1]">
-            <span className="uppercase tracking-wide text-[#c3adff]">Total a pagar</span>
+            <span className="uppercase tracking-wide" style={{ color: "var(--anc-yellow)" }}>Total a pagar</span>
             <span>${fees.totalAmount.toLocaleString("es-CL")}</span>
           </div>
         </div>
@@ -140,7 +173,7 @@ export default function BuyForm({
         onClick={handleCheckout}
         disabled={totalQty === 0 || loading}
         data-cursor-hover
-        className="rounded-full bg-[#a77fff] px-6 py-3.5 text-sm font-black uppercase tracking-[.05em] text-[#120d1b] transition hover:bg-[#c3adff] active:scale-[.98] disabled:opacity-40"
+        className="rounded-full bg-[var(--anc-accent)] px-6 py-3.5 text-sm font-black uppercase tracking-[.05em] text-[var(--anc-ink)] transition hover:bg-[var(--anc-accent-light)] active:scale-[.98] disabled:opacity-40"
       >
         {loading
           ? "Redirigiendo a Mercado Pago..."

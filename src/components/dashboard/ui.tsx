@@ -35,9 +35,9 @@ export function PageHeader({
 
 const buttonVariants = {
   primary:
-    "bg-[#a77fff] text-[#120d1b] hover:bg-[#c3adff]",
+    "bg-[var(--anc-accent)] text-[#120d1b] hover:bg-[var(--anc-accent-light)]",
   outline:
-    "border border-white/20 text-[#f5f4f1] hover:border-[#c3adff] hover:text-[#c3adff]",
+    "border border-white/20 text-[#f5f4f1] hover:border-[var(--anc-accent-light)] hover:text-[var(--anc-accent-light)]",
   danger:
     "border border-red-500/40 text-red-300 hover:bg-red-500/10",
   dangerSolid: "bg-emerald-500 text-[#0b0b0b] hover:bg-emerald-400",
@@ -77,7 +77,7 @@ export function LinkButton({
 }
 
 const fieldClass =
-  "w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-[#f5f4f1] placeholder:text-neutral-500 transition focus:border-[#a77fff] focus:outline-none";
+  "w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-[#f5f4f1] placeholder:text-neutral-500 transition focus:border-[var(--anc-accent)] focus:outline-none";
 
 export function Field({
   label,

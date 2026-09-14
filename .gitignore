@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+__pycache__/
+
+# Capturas de trabajo de la revisión de diseño (no son entregables)
+.impeccable/review/
+.impeccable/decision-payload.json

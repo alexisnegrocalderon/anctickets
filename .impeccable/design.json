@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-13T00:00:00Z",
+  "title": "Design System: ANC Tickets",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "primary",
+        "displayName": "Cod Gray",
+        "canonical": "#1d1d1d",
+        "tonalRamp": ["#808080", "#1d1d1d"]
+      },
+      "vermilion": {
+        "role": "secondary",
+        "displayName": "Vermilion",
+        "canonical": "#fc4c13",
+        "tonalRamp": ["#ff8256", "#fc4c13", "#e0430e"]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Blanco",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#ffffff", "#f4f4f4"]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Gray",
+        "canonical": "#808080",
+        "tonalRamp": ["#808080"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Titular del hero." },
+      "headline": { "displayName": "Headline", "purpose": "Titular de cada sección." },
+      "title": { "displayName": "Title", "purpose": "Titular de un beneficio o paso." },
+      "body": { "displayName": "Body", "purpose": "Texto de apoyo, máximo 62ch." },
+      "label": { "displayName": "Label", "purpose": "Kickers y metadatos en mono, siempre Vermilion." }
+    },
+    "shadows": [
+      { "name": "tarjeta-contenido", "value": "0 20px 40px -30px rgba(29,29,29,.3)", "purpose": "Playbook, metodología, FAQ, calculadora sobre fondo claro." },
+      { "name": "tarjeta-flotante", "value": "0 20px 40px -20px rgba(29,29,29,.35)", "purpose": "Placeholders de imagen." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Única curva del sistema. Deceleración exponencial; nada rebota." },
+      { "name": "reveal", "value": "opacity 560ms, transform 760ms", "purpose": "Cada .reveal aparece con un leve translateY al entrar en pantalla." },
+      { "name": "impact-parallax", "value": "translateY(±28px) scale(1.12), vía rAF", "purpose": "Parallax leve del fondo en ImpactSection; solo transform, apagado con prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón primario (publicar)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "CTA principal en todo el sitio, siempre sobre Cod Gray o Blanco, nunca sobre Vermilion.",
+      "html": "<button class=\"ds-btn-primary\">Publicar mi evento gratis</button>",
+      "css": ".ds-btn-primary { background: #fc4c13; color: #1d1d1d; font-weight: 900; text-transform: uppercase; padding: 16px 28px; border-radius: 9999px; transition: filter 150ms cubic-bezier(0.16,1,0.3,1), transform 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { filter: brightness(0.95); } .ds-btn-primary:active { transform: scale(.98); } .ds-btn-primary:focus-visible { outline: 3px solid #fc4c13; outline-offset: 3px; }"
+    },
+    {
+      "name": "Quiebre de impacto",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Pantalla completa con un color de fondo pleno (Cod Gray, Vermilion o Blanco, nunca dos veces seguidas) y una frase enorme, con parallax leve del fondo.",
+      "html": "<section class=\"ds-impact\" style=\"background:#fc4c13\"><h2>Cero comisión de plataforma.</h2></section>",
+      "css": ".ds-impact { min-height: 80svh; display: flex; align-items: center; justify-content: center; text-align: center; }"
+    },
+    {
+      "name": "Calculadora de reparto",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Sustituye la prueba social inexistente: el productor escribe un precio y ve el reparto real en vivo.",
+      "html": "<div class=\"ds-fee-card\"><input type=\"number\" value=\"10000\"><div class=\"ds-fee-row\"><span>Tú publicas</span><strong>$10.000</strong></div></div>",
+      "css": ".ds-fee-card { background: #ffffff; border: 1px solid rgba(29,29,29,.14); box-shadow: 0 20px 50px -30px rgba(29,29,29,.35); border-radius: 24px; padding: 32px; } .ds-fee-row { background: #f4f4f4; border-radius: 16px; padding: 20px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El Set de Rodaje, Vendiendo Directo",
+    "overview": "ANC Tickets vende sin intermediarios, y la página lo dice con la economía gráfica de un fotograma de rodaje: casi-negro cálido (Cod Gray), un único acento de fuego (Vermilion), y blanco puro para respirar. La estructura editorial (hero de impacto, quiebres, playbook, metodología, carrusel) se raciona en color igual de estricto: Cod Gray es el lienzo, Vermilion es el único acento de acción, Blanco es el respiro entre golpes de color, Gray es la única voz de apoyo.",
+    "antiReferences": [
+      "El sistema anterior de cinco colores 'Doughlicious' (violeta/crema/amarillo/cerise/negro perla): se reemplazó por exactamente cuatro.",
+      "Prueba social fabricada (logos, testimonios, cifras de ventas): el producto está en pre-lanzamiento.",
+      "Un botón o texto vermilion sobre un fondo vermilion."
+    ],
+    "keyCharacteristics": [
+      "Cuatro colores, cada uno con un solo trabajo.",
+      "Los quiebres de impacto alternan Cod Gray → Vermilion → Blanco, nunca repiten.",
+      "El botón de acción es siempre Vermilion con texto Cod Gray.",
+      "Elevación con sombra suave sobre claro, opacidad de blanco sobre Cod Gray.",
+      "Cero prueba social fabricada; el reparto de la plata es la prueba."
+    ],
+    "rules": [
+      { "name": "La Regla del Acento Único", "body": "Vermilion es el único color con función de acción. Si un botón, kicker o CTA no es vermilion, no es una acción.", "section": "colors" },
+      { "name": "La Regla de la No Colisión", "body": "Un botón vermilion nunca vive sobre un fondo vermilion.", "section": "colors" },
+      { "name": "La Regla de la Prueba Real", "body": "Ninguna cifra de ventas, logo de cliente o testimonial se muestra sin ser real.", "section": "colors" }
+    ],
+    "dos": [
+      "Do usar Vermilion únicamente para acción o como bloque de color completo, nunca ambos en la misma pantalla.",
+      "Do poner el botón de acción sobre Cod Gray o Blanco, nunca sobre Vermilion.",
+      "Do reservar Gray para texto de apoyo corto; Cod Gray a menor opacidad para párrafos largos.",
+      "Do mostrar el 100% del precio publicado cayendo en la cuenta del productor.",
+      "Do respetar prefers-reduced-motion."
+    ],
+    "donts": [
+      "Don't fabricar logos, testimonios o cifras de ventas.",
+      "Don't poner un botón o texto vermilion sobre un fondo vermilion.",
+      "Don't introducir un quinto color.",
+      "Don't prometer $0 sin la letra chica del cargo por servicio del 10%.",
+      "Don't usar curvas de rebote o elásticas.",
+      "Don't usar fotografías de banco de imágenes; marcar el espacio como pendiente."
+    ]
+  }
+}
