@@ -7,9 +7,10 @@
  *  - Escritorio (>=1024px): barra lateral abierta, colapsable.
  */
 import Image from "next/image";
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ComponentType } from "react";
+import "./nav-feedback.css";
 
 type IconProps = { className?: string };
 
@@ -60,12 +61,9 @@ export default function DashboardNav() {
                 <Link
                   href={href}
                   aria-current={active ? "page" : undefined}
-                  className={`flex min-h-[56px] flex-col items-center justify-center gap-1 text-[11px] font-semibold transition-colors duration-200 ${
-                    active ? "text-[var(--anc-vermilion)]" : "text-[var(--anc-muted-text)] active:text-white"
-                  }`}
+                  className="anc-nav-item group block"
                 >
-                  <Icon className="h-6 w-6" />
-                  {label}
+                  <NavItemBody label={label} icon={Icon} active={active} variant="bottom" />
                 </Link>
               </li>
             );
@@ -96,14 +94,9 @@ export default function DashboardNav() {
                 href={href}
                 title={label}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-11 items-center gap-3 rounded-xl px-3.5 text-sm font-semibold transition-colors duration-200 ${
-                  active
-                    ? "bg-[var(--anc-vermilion)]/15 text-[var(--anc-vermilion)]"
-                    : "text-[var(--anc-muted-text)] hover:bg-white/5 hover:text-white"
-                }`}
+                className="anc-nav-item group block"
               >
-                <Icon className="h-5 w-5 shrink-0" />
-                <span className="anc-side-label truncate">{label}</span>
+                <NavItemBody label={label} icon={Icon} active={active} variant="side" />
               </Link>
             );
           })}
@@ -122,6 +115,55 @@ export default function DashboardNav() {
         </div>
       </aside>
     </>
+  );
+}
+
+/**
+ * Contenido de un ítem del menú. Vive dentro del <Link> para leer su estado
+ * real de navegación (useLinkStatus): en cuanto se toca, el ítem se ve activo
+ * sin esperar al servidor. Si la navegación falla o se cancela, `pending`
+ * vuelve a false y el ítem regresa a su estado anterior; no hay temporizadores.
+ */
+function NavItemBody({
+  label,
+  icon: Icon,
+  active,
+  variant,
+}: {
+  label: string;
+  icon: ComponentType<IconProps>;
+  active: boolean;
+  variant: "bottom" | "side";
+}) {
+  const { pending } = useLinkStatus();
+  const on = active || pending;
+
+  if (variant === "bottom") {
+    return (
+      <span
+        data-pending={pending ? "true" : undefined}
+        className={`anc-nav-press flex min-h-[56px] flex-col items-center justify-center gap-1 text-[11px] font-semibold ${
+          on ? "text-[var(--anc-vermilion)]" : "text-[var(--anc-muted-text)]"
+        }`}
+      >
+        <Icon className="h-6 w-6" />
+        {label}
+        {pending ? <span hidden data-nav-pending="" /> : null}
+      </span>
+    );
+  }
+
+  return (
+    <span
+      data-pending={pending ? "true" : undefined}
+      className={`anc-nav-press flex min-h-11 items-center gap-3 rounded-xl px-3.5 text-sm font-semibold ${
+        on ? "bg-[var(--anc-vermilion)]/15 text-[var(--anc-vermilion)]" : "text-[var(--anc-muted-text)] group-hover:bg-white/5 group-hover:text-white"
+      }`}
+    >
+      <Icon className="h-5 w-5 shrink-0" />
+      <span className="anc-side-label truncate">{label}</span>
+      {pending ? <span hidden data-nav-pending="" /> : null}
+    </span>
   );
 }
 

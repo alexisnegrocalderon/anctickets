@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useFormStatus } from "react-dom";
+import PendingMark from "@/components/dashboard/pending-mark";
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 
 /** ANC dashboard: kit compartido de UI — mismos tokens de color del resto del sitio. */
@@ -97,6 +98,7 @@ export function LinkButton({
   return (
     <Link href={href} className={`${buttonBase} ${buttonVariants[variant]} ${className}`}>
       {children}
+      <PendingMark />
     </Link>
   );
 }
