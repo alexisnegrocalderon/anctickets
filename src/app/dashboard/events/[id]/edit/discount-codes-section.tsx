@@ -21,7 +21,7 @@ export default function DiscountCodesSection({
 
   return (
     <Card className="mb-6">
-      <h2 className="mb-1 font-semibold text-[#f5f4f1]">Códigos de descuento</h2>
+      <h2 className="mb-1 text-2xl uppercase text-white">Códigos de descuento</h2>
       <p className="mb-4 text-sm text-neutral-400">
         El comprador los escribe al elegir sus entradas. El cargo de servicio se calcula sobre el precio ya
         descontado.

@@ -15,7 +15,7 @@ export default function StaffSection({
 }) {
   return (
     <Card className="mb-6">
-      <h2 className="mb-1 font-semibold text-[#f5f4f1]">Staff de puerta</h2>
+      <h2 className="mb-1 text-2xl uppercase text-white">Staff de puerta</h2>
       <p className="mb-4 text-sm text-neutral-400">
         Las personas que agregues pueden validar entradas con su teléfono (solo eso: no ven tus ventas ni editan el
         evento). Tienen que iniciar sesión con Google usando el mismo correo.

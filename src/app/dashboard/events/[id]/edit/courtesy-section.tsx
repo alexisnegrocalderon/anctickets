@@ -12,7 +12,7 @@ export default function CourtesySection({
 }) {
   return (
     <Card className="mb-6">
-      <h2 className="mb-1 font-semibold text-[#f5f4f1]">Cortesías</h2>
+      <h2 className="mb-1 text-2xl uppercase text-white">Cortesías</h2>
       <p className="mb-4 text-sm text-neutral-400">
         Emite entradas gratis a nombre de una persona (invitados, prensa, artistas). Descuentan del cupo y le llegan
         por correo con su QR.

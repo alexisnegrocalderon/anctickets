@@ -19,6 +19,8 @@ import ImageUpload from "@/components/dashboard/image-upload";
 import SlugField from "@/components/dashboard/slug-field";
 import ThemePicker from "@/components/dashboard/theme-picker";
 import { siteUrl } from "@/lib/site";
+import EditTabs from "./edit-tabs";
+import EventActionsSheet from "./event-actions-sheet";
 import SalesSection, { type SalesData } from "./sales-section";
 import TicketTypesSection from "./ticket-types-section";
 import DiscountCodesSection from "./discount-codes-section";
@@ -41,10 +43,13 @@ const PAGE_SIZE = 1000;
 
 export default async function EditEventPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { id } = await params;
+  const { tab } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -179,48 +184,30 @@ export default async function EditEventPage({
   const siteHost = site.replace(/^https?:\/\//, "") || "tickets.ancdigital.cl";
   const hasPaidTypes = ticketTypes.some((tt) => Number(tt.base_price) > 0);
 
-  return (
-    <div className="mx-auto max-w-3xl">
-      <PageHeader
-        title={event.title}
-        subtitle={`Estado: ${event.status === "published" ? "Publicado" : event.status === "cancelled" ? "Cancelado" : "Borrador"}`}
-        actions={
-          <>
-            {event.status !== "published" ? (
-              <ActionForm
-                action={changeEventStatus.bind(null, id, "published")}
-                submitLabel="Publicar"
-                submitVariant="dangerSolid"
-              />
-            ) : (
-              <ActionForm
-                action={changeEventStatus.bind(null, id, "draft")}
-                submitLabel="Pasar a borrador"
-                submitVariant="outline"
-              />
-            )}
-            <CopyEventLinkButton slug={event.slug} />
-            <LinkButton href={`/${event.slug}`}>Ver página pública</LinkButton>
-            <LinkButton href={`/scan/${id}`}>Validar entradas</LinkButton>
-          </>
-        }
-      />
+  const statusText =
+    event.status === "published" ? "Publicado" : event.status === "cancelled" ? "Cancelado" : "Borrador";
+
+  const resumen = (
+    <>
+      <div className="mb-6 grid grid-cols-3 gap-3">
+        <StatTile label="Recaudado" value={`$${Math.round(sales.revenueBase).toLocaleString("es-CL")}`} accent />
+        <StatTile label="Vendidas" value={`${sales.ticketsSold}/${sales.ticketsTotal}`} />
+        <StatTile label="Ingresaron" value={`${sales.checkedIn}/${sales.issued}`} />
+      </div>
 
       {event.status !== "published" && hasPaidTypes && !mpConnected ? (
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--anc-accent)]/30 bg-[var(--anc-accent)]/10 px-5 py-4">
+        <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-[var(--anc-vermilion)]/40 bg-[var(--anc-vermilion)]/10 p-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-neutral-200">
             Para publicar un evento con entradas de pago necesitas conectar tu cuenta de Mercado Pago.
           </p>
-          <LinkButton variant="primary" href="/dashboard/mercadopago/connect">
+          <LinkButton variant="primary" href="/dashboard/mercadopago/connect" className="shrink-0">
             Conectar Mercado Pago
           </LinkButton>
         </div>
       ) : null}
 
-      <SalesSection eventId={id} data={sales} />
-
       <Card className="mb-6">
-        <h2 className="mb-4 font-semibold text-[#f5f4f1]">Datos del evento</h2>
+        <h2 className="mb-4 text-2xl uppercase text-white">Datos del evento</h2>
         <ActionForm
           action={saveEventForm.bind(null, id)}
           className="flex flex-col gap-4"
@@ -261,24 +248,8 @@ export default async function EditEventPage({
         </ActionForm>
       </Card>
 
-      <TicketTypesSection eventId={id} ticketTypes={ticketTypes} />
-
-      <DiscountCodesSection eventId={id} codes={codes} ticketTypes={ticketTypes} />
-
-      <AmbassadorsSection
-        eventId={id}
-        eventSlug={event.slug}
-        site={site}
-        ambassadors={ambassadors}
-        stats={Object.fromEntries(byAmbassador)}
-      />
-
-      <StaffSection eventId={id} staff={staff} scanUrl={`${site}/scan/${id}`} />
-
-      <CourtesySection eventId={id} ticketTypes={ticketTypes} />
-
       <Card className="border-red-500/30 bg-red-500/10">
-        <h2 className="mb-2 font-semibold text-red-300">Zona de peligro</h2>
+        <h2 className="mb-2 text-2xl uppercase text-red-300">Zona de peligro</h2>
         <div className="flex flex-col gap-5">
           {event.status !== "cancelled" ? (
             <div>
@@ -308,6 +279,87 @@ export default async function EditEventPage({
           </div>
         </div>
       </Card>
+    </>
+  );
+
+  return (
+    <div>
+      <PageHeader
+        title={event.title}
+        subtitle={`Estado: ${statusText}`}
+        actions={
+          <>
+            {event.status !== "published" ? (
+              <ActionForm
+                action={changeEventStatus.bind(null, id, "published")}
+                submitLabel="Publicar"
+                submitVariant="primary"
+              />
+            ) : (
+              <ActionForm
+                action={changeEventStatus.bind(null, id, "draft")}
+                submitLabel="Pasar a borrador"
+                submitVariant="outline"
+              />
+            )}
+            {/* Escritorio y tablet: acciones a la vista. Celular: en una hoja. */}
+            <div className="hidden flex-wrap gap-2 md:flex">
+              <CopyEventLinkButton slug={event.slug} />
+              <LinkButton href={`/${event.slug}`}>Ver página pública</LinkButton>
+              <LinkButton href={`/scan/${id}`}>Validar entradas</LinkButton>
+            </div>
+            <EventActionsSheet slug={event.slug} eventId={id} />
+          </>
+        }
+      />
+
+      <EditTabs
+        initialTab={tab}
+        tabs={[
+          { id: "resumen", label: "Resumen", content: resumen },
+          { id: "entradas", label: "Entradas", content: <TicketTypesSection eventId={id} ticketTypes={ticketTypes} /> },
+          {
+            id: "descuentos",
+            label: "Descuentos",
+            content: <DiscountCodesSection eventId={id} codes={codes} ticketTypes={ticketTypes} />,
+          },
+          {
+            id: "embajadores",
+            label: "Embajadores",
+            content: (
+              <AmbassadorsSection
+                eventId={id}
+                eventSlug={event.slug}
+                site={site}
+                ambassadors={ambassadors}
+                stats={Object.fromEntries(byAmbassador)}
+              />
+            ),
+          },
+          {
+            id: "staff",
+            label: "Staff",
+            content: <StaffSection eventId={id} staff={staff} scanUrl={`${site}/scan/${id}`} />,
+          },
+          { id: "cortesias", label: "Cortesías", content: <CourtesySection eventId={id} ticketTypes={ticketTypes} /> },
+          { id: "ventas", label: "Ventas", content: <SalesSection eventId={id} data={sales} /> },
+        ]}
+      />
+    </div>
+  );
+}
+
+function StatTile({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className="min-w-0 rounded-2xl border border-[var(--anc-border)] bg-[var(--anc-surface)] p-3 sm:p-4">
+      <p className="font-mono text-[10px] font-bold uppercase tracking-[.14em] text-[var(--anc-muted-text)]">{label}</p>
+      <p
+        className={`mt-1 truncate font-display text-2xl leading-none sm:text-3xl ${
+          accent ? "text-[var(--anc-vermilion)]" : "text-white"
+        }`}
+      >
+        {value}
+      </p>
     </div>
   );
 }

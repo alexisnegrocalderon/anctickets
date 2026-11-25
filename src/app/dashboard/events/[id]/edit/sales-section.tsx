@@ -22,7 +22,7 @@ const clp = (n: number) => `$${Math.round(n).toLocaleString("es-CL")}`;
 export default function SalesSection({ eventId, data }: { eventId: string; data: SalesData }) {
   return (
     <Card className="mb-6">
-      <h2 className="mb-4 font-semibold text-[#f5f4f1]">Ventas</h2>
+      <h2 className="mb-4 text-2xl uppercase text-white">Ventas</h2>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div>

@@ -16,7 +16,7 @@ export default function TicketTypesSection({
 }) {
   return (
     <Card className="mb-6">
-      <h2 className="mb-4 font-semibold text-[#f5f4f1]">Tipos de entrada</h2>
+      <h2 className="mb-4 text-2xl uppercase text-white">Tipos de entrada</h2>
 
       {ticketTypes.length > 0 ? (
         <div className="mb-5 divide-y divide-white/10 rounded-lg border border-white/10">
