@@ -1,8 +1,9 @@
 "use client";
 
 /**
- * Barra de cristal para instalar, fija abajo solo en celular. Aparece cuando el
- * hero ya quedó atrás, se oculta cerca de la tarjeta de cierre, se puede
+ * Barra de cristal para instalar, fija abajo solo en celular, de una sola línea
+ * (~56px). No aparece mientras se leen las funciones: se muestra al llegar a la
+ * sección de precio (#reparto), se oculta cerca de la tarjeta de cierre, se puede
  * descartar (se recuerda en localStorage) y no se muestra si la app ya está
  * instalada.
  */
@@ -25,19 +26,22 @@ const noopSubscribe = () => () => {};
 
 export default function InstallBar({ loggedIn }: { loggedIn: boolean }) {
   const standalone = useSyncExternalStore(subscribeInstall, getStandalone, () => true);
-  const [pastHero, setPastHero] = useState(false);
+  const [reachedPrice, setReachedPrice] = useState(false);
   const [nearEnd, setNearEnd] = useState(false);
   const storedDismissed = useSyncExternalStore(noopSubscribe, readDismissed, () => true); // en el servidor, oculta
   const [closed, setClosed] = useState(false);
   const dismissed = storedDismissed || closed;
 
   useEffect(() => {
-    const cta = document.getElementById("hero-cta");
+    const price = document.getElementById("reparto");
     const end = document.getElementById("cierre");
     const obs: IntersectionObserver[] = [];
-    if (cta) {
-      const o = new IntersectionObserver(([e]) => setPastHero(!e.isIntersecting && e.boundingClientRect.top < 0));
-      o.observe(cta);
+    if (price) {
+      // Llegó a precio: la sección ya entró en pantalla (o quedó arriba al volver a cargar).
+      const o = new IntersectionObserver(([e]) => setReachedPrice(e.isIntersecting || e.boundingClientRect.top < 0), {
+        rootMargin: "0px 0px -50% 0px",
+      });
+      o.observe(price);
       obs.push(o);
     }
     if (end) {
@@ -49,7 +53,7 @@ export default function InstallBar({ loggedIn }: { loggedIn: boolean }) {
   }, []);
 
   if (standalone || dismissed) return null;
-  const show = pastHero && !nearEnd;
+  const show = reachedPrice && !nearEnd;
 
   return (
     <div className="ibar glass md:hidden" data-show={show ? "" : undefined} aria-hidden={show ? undefined : true} inert={!show}>

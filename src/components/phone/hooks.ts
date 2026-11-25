@@ -19,17 +19,32 @@ export function useReducedMotion(): boolean {
   );
 }
 
-/** true mientras el elemento está (en parte) dentro de la pantalla. */
+/**
+ * true mientras el elemento está (en parte) dentro de la pantalla. Si vive en una
+ * tarjeta del carrusel de funciones (móvil), además exige que sea la tarjeta activa.
+ */
 export function useInView<T extends Element>(ref: RefObject<T | null>, margin = "0px"): boolean {
   const [inView, setInView] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
-      rootMargin: margin,
-    });
+    const card = el.closest<HTMLElement>("[data-fs-step]");
+    const root = el.closest<HTMLElement>(".fs");
+    let visible = false;
+    const apply = () => {
+      const gated = !!card && !!root && root.classList.contains("fs-car-on");
+      setInView(visible && (!gated || card!.classList.contains("is-active")));
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      apply();
+    }, { rootMargin: margin });
     observer.observe(el);
-    return () => observer.disconnect();
+    card?.addEventListener("fs-active-change", apply);
+    return () => {
+      observer.disconnect();
+      card?.removeEventListener("fs-active-change", apply);
+    };
   }, [ref, margin]);
   return inView;
 }

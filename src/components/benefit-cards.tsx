@@ -60,7 +60,7 @@ const BENEFITS: { dato: string; titulo: string; detalle: string; icon: ReactNode
 
 export default function BenefitCards() {
   return (
-    <div className="relative z-[1] px-4 py-10 sm:px-8 lg:px-12 lg:py-14">
+    <div className="relative z-[1] px-4 py-6 sm:px-8 sm:py-10 lg:px-12 lg:py-14">
       <ul className="mx-auto grid max-w-6xl grid-cols-1 gap-3 min-[560px]:grid-cols-2 lg:grid-cols-4 lg:gap-4 list-none p-0">
         {BENEFITS.map((b, i) => (
           <li key={b.titulo} className="reveal glass benefit" data-glow data-tilt data-reveal-delay={i * 90}>

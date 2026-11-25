@@ -1,20 +1,24 @@
 /**
- * ANC — las 4 funciones en UNA escena sticky: el celular queda fijo y su pantalla
- * cambia mientras el texto de cada función pasa al lado (escritorio) o debajo
- * (celular). Todo el texto está siempre en el DOM. Con reduced motion o sin JS
- * se muestran las 4 pantallas apiladas, cada una junto a su texto (.fs-inline).
+ * ANC — las 4 funciones. Cada texto se renderiza UNA sola vez y el CSS elige:
+ *  - escritorio (>=1024px): escena sticky, el celular queda fijo (.fs-phone) y su
+ *    pantalla cambia mientras pasa el texto de cada función;
+ *  - celular y tablet (<1024px): carrusel con scroll-snap, una tarjeta por función
+ *    con su propio celular (.fs-inline), kicker, título y párrafo;
+ *  - reduced motion: las 4 funciones apiladas y estáticas, cada una con su celular.
+ * Todo el texto está siempre en el DOM.
  */
 import Phone from "@/components/phone/phone";
 import AmbassadorsScreen from "@/components/phone/ambassadors-screen";
 import LiveSalesScreen from "@/components/phone/live-sales";
 import ScannerScreen from "@/components/phone/scanner-screen";
 import WizardScreen from "@/components/phone/wizard-screen";
+import FeatureCarousel from "@/components/feature-carousel";
 import FeatureStageFx from "@/components/feature-stage-fx";
 import { MotionPermissionButton } from "@/components/immersive-fx";
 import RevealHeading, { type HeadingPart } from "@/components/reveal-heading";
 
 type Feature = {
-  id?: string;
+  id: string;
   eyebrow: string;
   title: HeadingPart[];
   body: string;
@@ -32,6 +36,7 @@ const FEATURES: Feature[] = [
     screen: () => <WizardScreen />,
   },
   {
+    id: "vender",
     eyebrow: "02 · Vender",
     title: [{ t: "Ventas " }, { t: "en vivo.", accent: true }],
     body: "Cada entrada vendida te llega como notificación. Mira subir los ingresos y la barra de entradas vendidas sin recargar nada.",
@@ -39,6 +44,7 @@ const FEATURES: Feature[] = [
     screen: () => <LiveSalesScreen variant="full" />,
   },
   {
+    id: "controlar",
     eyebrow: "03 · Controlar",
     title: [{ t: "Escáner QR " }, { t: "en la puerta.", accent: true }],
     body: "Tu staff valida desde su propio teléfono: la entrada aparece VÁLIDA en verde y el contador de ingresados sube. Un código ya usado no vuelve a entrar.",
@@ -46,6 +52,7 @@ const FEATURES: Feature[] = [
     screen: () => <ScannerScreen />,
   },
   {
+    id: "crecer",
     eyebrow: "04 · Crecer",
     title: [{ t: "Embajadores " }, { t: "y descuentos.", accent: true }],
     body: "Dale un código a tus embajadores y mira quién vende más. El dinero va directo a tu Mercado Pago, sin cuenta intermedia. Los nombres de la lista son de ejemplo.",
@@ -79,6 +86,7 @@ export default function FeatureStage() {
               key={i}
               id={f.id}
               data-fs-step
+              aria-label={`Función ${i + 1} de ${FEATURES.length}`}
               className={`fs-step scroll-mt-24${i === 0 ? " is-active" : ""}`}
               data-rev={i % 2 ? "" : undefined}
             >
@@ -92,13 +100,16 @@ export default function FeatureStage() {
                 />
                 <p className="mt-4 max-w-[46ch] text-base leading-7 text-white/75 sm:text-lg">{f.body}</p>
               </div>
-              {/* Solo se ve con reduced motion o sin JS. */}
+              {/* Celular de la tarjeta: carrusel (<1024px) o pila estática con reduced motion. */}
               <div className="fs-inline">
-                <Phone label={f.label}>{f.screen()}</Phone>
+                <div className="fs-phone-tilt" data-tilt-global>
+                  <Phone label={f.label}>{f.screen()}</Phone>
+                </div>
               </div>
             </article>
           ))}
         </div>
+        <FeatureCarousel rootId="funciones" ids={FEATURES.map((f) => f.id)} />
       </div>
       <FeatureStageFx rootId="funciones" />
       <noscript>

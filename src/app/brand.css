@@ -987,3 +987,105 @@ html {
 .am-total { margin-top: 4cqw; display: flex; align-items: baseline; justify-content: space-between; padding: 3cqw 4cqw; border-radius: 4cqw; background: linear-gradient(150deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)); border: 1px solid rgba(255, 255, 255, 0.14); }
 .am-total strong { font-family: var(--font-poster), sans-serif; font-size: 8cqw; font-weight: 400; line-height: 1; }
 .am-total small { font-size: 3.8cqw; color: #b4b4b4; }
+
+
+/* CARRUSEL FUNCIONES */
+/* Celular y tablet (<1024px) sin reduced motion: las 4 funciones son tarjetas de un
+   carrusel con scroll-snap (CSS puro). Escritorio conserva la escena sticky; con
+   reduced motion se queda la pila estática de arriba. */
+.fs-ctl { display: none; }
+@media (max-width: 1023.98px) and (prefers-reduced-motion: no-preference) {
+  .fs { --fs-gut: 16px; --fs-card: min(88vw, 34rem); padding-top: 0; padding-bottom: 4px; }
+  .fs .fs-phone { display: none; }
+  .fs .fs-inner { display: block; }
+
+  .fs .fs-list {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    margin: 0 calc(var(--fs-gut) * -1);
+    padding: 6px var(--fs-gut) 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 16px;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .fs .fs-list::-webkit-scrollbar { display: none; }
+  .fs .fs-list:focus-visible { outline: 3px solid #fff; outline-offset: -3px; box-shadow: inset 0 0 0 6px rgba(252, 76, 19, 0.75); border-radius: 28px; }
+
+  .fs .fs-step {
+    position: relative;
+    flex: 0 0 var(--fs-card);
+    min-height: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 14px 16px 16px;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    touch-action: pan-x pan-y pinch-zoom;
+    border-radius: 26px;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03) 55%, rgba(252, 76, 19, 0.06));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 22px 50px -30px rgba(0, 0, 0, 0.8);
+    opacity: 1;
+    transition: opacity 0.4s var(--ease-out);
+  }
+  .fs-car-on .fs-step:not(.is-active) { opacity: 0.62; }
+
+  /* kicker, celular, título, texto: el orden visual no depende del DOM. */
+  .fs .fs-copy { display: contents; }
+  .fs .fs-copy > p:first-child { order: 1; font-size: 11px; }
+  .fs .fs-inline { order: 2; display: flex; justify-content: center; margin: 0; }
+  .fs .fs-copy > h2 { order: 3; margin-top: 2px; font-size: clamp(1.75rem, 8vw, 2.4rem); line-height: 0.96; }
+  .fs .fs-copy > p:last-child { order: 4; margin-top: 10px; max-width: none; font-size: 0.9375rem; line-height: 1.45; }
+
+  .fs .fs-inline .ph {
+    --pw: clamp(116px, min(calc(var(--fs-card) * 0.62), 260px, calc((100svh - 340px) / 2.11)), 260px);
+    transform: rotateY(calc(var(--cs, 0) * -14deg));
+    transition: transform 0.15s linear;
+  }
+  .fs .fs-inline .ph-stage { padding: 2px 0 8px; }
+  .fs .fs-inline .fs-phone-tilt { margin: 0 auto; }
+
+  /* Indicadores: 4 segmentos tocables + Anterior/Siguiente (visibles con foco o desde 768px). */
+  .fs-ctl { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px; }
+  .fs-dots { display: flex; gap: 6px; width: min(220px, 56vw); }
+  .fs-dot { flex: 1; height: 44px; display: grid; align-items: center; padding: 0; border: 0; background: none; cursor: pointer; }
+  .fs-dot > span { display: block; height: 4px; border-radius: 9999px; background: rgba(255, 255, 255, 0.38); transition: background 0.3s, transform 0.3s var(--ease-out); }
+  .fs-dot[aria-selected="true"] > span { background: var(--anc-vermilion); transform: scaleY(1.5); }
+  .fs-dot:focus-visible, .fs-nav:focus-visible { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 6px rgba(252, 76, 19, 0.75); border-radius: 12px; }
+  .fs-nav { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.06); color: rgba(255, 255, 255, 0.9); }
+  .fs-nav:disabled { opacity: 0.35; }
+}
+@media (max-width: 767.98px) and (prefers-reduced-motion: no-preference) {
+  .fs-nav:not(:focus-visible) { opacity: 0; pointer-events: none; }
+}
+
+/* Solo la tarjeta activa (y con la sección a la vista) anima su pantalla; las demás
+   quedan pausadas en su primer estado. */
+@media (max-width: 1023.98px) and (prefers-reduced-motion: no-preference) {
+  .fs-car-on .fs-inline .wz-type { animation: wz-type 0.9s steps(18, end) calc(0.5s + var(--i, 0) * 1.1s) both; }
+  .fs-car-on .fs-inline .wz-tick { animation: wz-pop 0.4s var(--ease-out) calc(1.3s + var(--i, 0) * 1.1s) both; }
+  .fs-car-on .fs-inline .wz-steps li { animation: wz-pop 0.4s var(--ease-out) calc(0.3s + var(--i, 0) * 1.1s) both; }
+  .fs-car-on .fs-inline .wz-progress span { animation: wz-fill 3.6s linear 0.3s both; }
+  .fs-car-on .fs-inline .wz-flyer { animation: wz-pop 0.6s var(--ease-out) 0.2s both; }
+  .fs-car-on .fs-inline .wz-cta { animation: wz-press 0.5s var(--ease-out) 4.6s both; }
+  .fs-car-on .fs-inline .wz-cta-a { animation: wz-out 0.2s linear 4.8s both; }
+  .fs-car-on .fs-inline .wz-cta-b { animation: wz-in 0.3s var(--ease-out) 4.9s both; }
+  .fs-car-on .fs-inline .wz-state-a { animation: wz-out 0.2s linear 4.9s both; }
+  .fs-car-on .fs-inline .wz-state-b { animation: wz-in 0.3s var(--ease-out) 5s both; }
+  .fs-car-on .fs-inline .am-rank li { animation: am-in 0.6s var(--ease-out) calc(0.3s + var(--i, 0) * 0.25s) both; }
+  .fs-car-on .fs-inline .am-bar span { animation: wz-fill 1.2s var(--ease-out) calc(0.6s + var(--i, 0) * 0.25s) both; }
+  .fs-car-on .fs-inline .am-code { animation: am-in 0.6s var(--ease-out) 1.6s both; }
+  .fs-car-on .fs-inline .am-pay { animation: am-in 0.6s var(--ease-out) 2.4s both; }
+  .fs-car-on .fs-inline * , .fs-car-on .fs-inline *::before, .fs-car-on .fs-inline *::after { animation-play-state: paused !important; }
+  .fs-car-on.fs-live .fs-step.is-active .fs-inline *, .fs-car-on.fs-live .fs-step.is-active .fs-inline *::before, .fs-car-on.fs-live .fs-step.is-active .fs-inline *::after { animation-play-state: running !important; }
+}
+
+/* Barra de instalar: una sola línea, ~56px. */
+.ibar { padding: 6px 8px; height: 56px; min-height: 56px; gap: 6px; --gr: 28px; }
+.ibar .gbtn { min-height: 44px; height: 44px; padding: 0 0.6rem; font-size: 0.82rem; }
+.ibar-x { width: 40px; height: 40px; }

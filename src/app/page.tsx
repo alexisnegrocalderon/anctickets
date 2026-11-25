@@ -101,7 +101,7 @@ export default async function Home() {
       <FeatureStage />
 
       {/* ---------------- REPARTO / PRECIO ---------------- */}
-      <section id="reparto" className="relative z-[1] px-4 py-14 sm:px-8 lg:px-12 lg:py-24">
+      <section id="reparto" className="relative z-[1] px-4 py-10 sm:px-8 sm:py-14 lg:px-12 lg:py-24">
         <div className="mx-auto max-w-3xl text-center">
           <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
             Precio, sin letra chica
@@ -115,14 +115,14 @@ export default async function Home() {
             el cargo de servicio lo paga quien compra.
           </p>
         </div>
-        <div className="reveal mx-auto mt-10 max-w-2xl">
+        <div className="reveal mx-auto mt-7 max-w-2xl sm:mt-10">
           <FeeCalculator />
         </div>
       </section>
 
       {/* ---------------- CARRUSEL DE FECHAS ---------------- */}
       {proximasFechas.length > 0 ? (
-        <section className="relative z-[1] bg-[var(--anc-surface)] py-14 sm:py-24">
+        <section className="relative z-[1] bg-[var(--anc-surface)] py-10 sm:py-24">
           <div className="mx-auto max-w-6xl px-4 sm:px-8 lg:px-12">
             <RevealHeading
               className="text-[clamp(2.4rem,6vw,4.2rem)] uppercase leading-[.98] text-white"
@@ -136,7 +136,7 @@ export default async function Home() {
       ) : null}
 
       {/* ---------------- FAQ ---------------- */}
-      <section id="preguntas" className="relative z-[1] px-4 py-14 sm:px-8 lg:px-12 lg:py-24">
+      <section id="preguntas" className="relative z-[1] px-4 py-10 sm:px-8 sm:py-14 lg:px-12 lg:py-24">
         <div className="mx-auto max-w-3xl">
           <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
             Preguntas frecuentes
@@ -152,8 +152,8 @@ export default async function Home() {
       </section>
 
       {/* ---------------- CIERRE ---------------- */}
-      <section id="cierre" className="relative z-[1] px-4 pb-14 sm:px-8 lg:px-12 lg:pb-24">
-        <div className="reveal glass relative mx-auto max-w-5xl px-6 py-14 text-center sm:px-16 sm:py-20" style={{ ["--gr" as string]: "32px" }} data-glow>
+      <section id="cierre" className="relative z-[1] px-4 pb-10 sm:px-8 sm:pb-14 lg:px-12 lg:pb-24">
+        <div className="reveal glass relative mx-auto max-w-5xl px-6 py-10 text-center sm:px-16 sm:py-20" style={{ ["--gr" as string]: "32px" }} data-glow>
           <RevealHeading
             className="text-[clamp(2.8rem,8vw,5.5rem)] uppercase leading-[.95] text-white"
             parts={[{ t: "Instala ANC Tickets y publica hoy." }]}
