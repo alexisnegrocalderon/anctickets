@@ -745,9 +745,19 @@ html {
 }
 
 /* ---------- Hero con video ---------- */
-.hero-media { position: absolute; inset: 0; z-index: -2; background: #1d1d1d; }
+/* El video es atmósfera: baja opacidad y brillo, el titular de la web manda. */
+.hero-media { position: absolute; inset: 0; z-index: -2; background: #1d1d1d; overflow: hidden; opacity: 0.62; }
 .hero-poster,
-.hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+.hero-video {
+  position: absolute;
+  left: 0;
+  top: 56px;
+  width: 100%;
+  height: 74%;
+  object-fit: cover;
+  object-position: center 18%;
+  filter: brightness(0.82) saturate(0.9);
+}
 .hero-video { opacity: 0; transition: opacity 0.7s ease; }
 .hero-video[data-playing] { opacity: 1; }
 /* Degradado hacia #1d1d1d: garantiza el contraste del texto en cualquier cuadro. */
@@ -756,16 +766,20 @@ html {
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(to bottom, rgba(29, 29, 29, 0.55) 0%, rgba(29, 29, 29, 0) 22%),
-    linear-gradient(to top, #1d1d1d 0%, rgba(29, 29, 29, 0.97) 34%, rgba(29, 29, 29, 0.9) 50%, rgba(29, 29, 29, 0.6) 63%, rgba(29, 29, 29, 0.22) 77%, rgba(29, 29, 29, 0) 90%);
+    linear-gradient(to bottom, rgba(29, 29, 29, 0.6) 0%, rgba(29, 29, 29, 0) 20%),
+    linear-gradient(to top, #1d1d1d 0%, #1d1d1d 22%, rgba(29, 29, 29, 0.97) 38%, rgba(29, 29, 29, 0.88) 52%, rgba(29, 29, 29, 0.55) 66%, rgba(29, 29, 29, 0.2) 80%, rgba(29, 29, 29, 0) 92%);
 }
 @media (min-width: 768px) {
-  .hero-poster, .hero-video { object-position: center 40%; }
+  .hero-poster, .hero-video { top: 0; height: 100%; object-position: 74% 40%; }
   .hero-scrim {
     background:
-      linear-gradient(to bottom, rgba(29, 29, 29, 0.5) 0%, rgba(29, 29, 29, 0) 20%),
-      linear-gradient(to top, #1d1d1d 0%, rgba(29, 29, 29, 0.95) 28%, rgba(29, 29, 29, 0.8) 44%, rgba(29, 29, 29, 0.3) 62%, rgba(29, 29, 29, 0) 80%);
+      linear-gradient(to bottom, rgba(29, 29, 29, 0.55) 0%, rgba(29, 29, 29, 0) 20%),
+      linear-gradient(to right, rgba(29, 29, 29, 0.92) 0%, rgba(29, 29, 29, 0.78) 34%, rgba(29, 29, 29, 0.25) 62%, rgba(29, 29, 29, 0) 80%),
+      linear-gradient(to top, #1d1d1d 0%, rgba(29, 29, 29, 0.9) 18%, rgba(29, 29, 29, 0.4) 40%, rgba(29, 29, 29, 0) 62%);
   }
+}
+@media (min-width: 1024px) {
+  .hero-poster, .hero-video { object-position: 62% 40%; }
 }
 
 /* ---------- Fondo: grano y luces que reaccionan al scroll ---------- */
