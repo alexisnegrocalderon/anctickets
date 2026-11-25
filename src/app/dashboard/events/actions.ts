@@ -220,6 +220,15 @@ export async function setEventStatus(
   const { supabase, user } = await requireUser();
 
   if (status === "published") {
+    const { data: ev } = await supabase
+      .from("events")
+      .select("title, event_date")
+      .eq("id", eventId)
+      .maybeSingle<{ title: string | null; event_date: string | null }>();
+    if (!ev) return { error: "No encontramos este evento. Recarga la página e inténtalo de nuevo." };
+    if (!ev.title?.trim()) return { error: "Pon un título al evento antes de publicar." };
+    if (!ev.event_date) return { error: "Elige la fecha y hora del evento antes de publicar." };
+
     const { data: types } = await supabase
       .from("ticket_types")
       .select("base_price")

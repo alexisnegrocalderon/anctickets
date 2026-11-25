@@ -26,7 +26,12 @@ const NAV: { label: string; href: string; icon: ComponentType<IconProps>; match:
     icon: PlusIcon,
     match: (path) => path.startsWith("/dashboard/events/new"),
   },
-  { label: "Entradas", href: "/mis-entradas", icon: QrIcon, match: (path) => path.startsWith("/mis-entradas") },
+  {
+    label: "Entradas",
+    href: "/dashboard/entradas",
+    icon: QrIcon,
+    match: (path) => path.startsWith("/dashboard/entradas"),
+  },
   {
     label: "Cuenta",
     href: "/dashboard/account",

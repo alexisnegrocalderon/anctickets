@@ -155,7 +155,14 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
     return data;
   }
 
-  async function persist() {
+  /** En producción Next oculta los errores lanzados por el servidor (ej. "#441"); no se los mostramos al usuario. */
+  function readableError(err: unknown, fallback: string) {
+    const message = err instanceof Error ? err.message : "";
+    if (!message || /^An error occurred|#\d+|digest|Server Components render/i.test(message)) return fallback;
+    return message;
+  }
+
+  async function persist(): Promise<string | null> {
     setSaving(true);
     setError(null);
 
@@ -167,13 +174,14 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
         // se reenviara el texto original en el próximo guardado, chocaría con
         // el evento ajeno que causó la colisión. Se sincroniza al resultado.
         setCustomSlug(created.slug);
+        return created.id;
       } else {
         await updateEvent(eventId, buildFormData());
       }
-      return true;
+      return eventId;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo guardar");
-      return false;
+      setError(readableError(err, "No se pudo guardar el borrador. Revisa tu conexión e inténtalo de nuevo."));
+      return null;
     } finally {
       setSaving(false);
     }
@@ -242,29 +250,46 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
       setTtPrice("");
       setTtQuantity("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo agregar la entrada");
+      setError(readableError(err, "No se pudo agregar la entrada. Revisa los datos e inténtalo de nuevo."));
     } finally {
       setSaving(false);
     }
   }
 
   async function handleFinish(publish: boolean) {
-    if (!eventId) return;
+    if (saving) return;
+
+    if (publish && !persistable) {
+      // Sin título o fecha no hay borrador que publicar: decimos qué falta.
+      setError(`No se puede publicar todavía. ${blockingIssues.map((issue) => issue.text).join(" ")}`);
+      return;
+    }
+
+    let id = eventId;
+    if (!id) {
+      if (!persistable) {
+        setError("Para guardar el borrador escribe al menos el título y elige la fecha del evento.");
+        return;
+      }
+      id = await persist();
+      if (!id) return;
+    }
+
     setSaving(true);
     setError(null);
 
     try {
       if (publish) {
-        const result = await setEventStatus(eventId, "published");
+        const result = await setEventStatus(id, "published");
         if (result.error) {
           setError(result.error);
           setSaving(false);
           return;
         }
       }
-      router.push(`/dashboard/events/${eventId}/edit`);
+      router.push(`/dashboard/events/${id}/edit`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo publicar");
+      setError(readableError(err, "No se pudo publicar. Tu borrador quedó guardado; revisa lo que falta e inténtalo de nuevo."));
       setSaving(false);
     }
   }
@@ -679,7 +704,7 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
                   <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <Button
                       variant="primary"
-                      disabled={saving || blockingIssues.length > 0}
+                      disabled={saving}
                       onClick={() => handleFinish(true)}
                     >
                       Crear y publicar
@@ -690,7 +715,7 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
                   </div>
                   {blockingIssues.length > 0 ? (
                     <p className="text-xs text-[var(--anc-muted-text)]">
-                      Para publicar resuelve lo que falta. Mientras tanto puedes guardar el borrador.
+                      Puedes pulsar publicar igual: te diremos qué falta. Mientras tanto puedes guardar el borrador.
                     </p>
                   ) : null}
                 </div>
