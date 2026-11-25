@@ -1,40 +1,45 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMpPayment, verifyMpWebhookSignature } from "@/lib/mercadopago";
-import { sendTicketConfirmationEmail } from "@/lib/email";
-import type { Event, Order, OrderItem, TicketType } from "@/lib/database.types";
+import { getMpPayment, MpApiError, verifyMpWebhookSignature, type MpPayment } from "@/lib/mercadopago";
+import {
+  getFreshSellerToken,
+  getMpAccountByMpUserId,
+  getMpAccountByOrganizer,
+} from "@/lib/mp-accounts";
+import { deliverOrderEmail } from "@/lib/orders";
+import type { Event, Order } from "@/lib/database.types";
 
+const ok = () => NextResponse.json({ received: true });
+
+/**
+ * Webhook de Mercado Pago. Diseñado para ser idempotente: MP puede mandar la
+ * misma notificación varias veces y en paralelo; toda la lógica que cambia
+ * estado vive en funciones SQL atómicas (approve_order, fail_order,
+ * revert_order). Errores transitorios devuelven 500 para que MP reintente;
+ * los permanentes (orden desconocida, monto distinto) se registran y devuelven 200.
+ */
 export async function POST(request: Request) {
   const url = new URL(request.url);
-  const paymentId =
-    url.searchParams.get("data.id") ?? url.searchParams.get("id");
-  const type = url.searchParams.get("type") ?? url.searchParams.get("topic");
-
-  let resolvedPaymentId = paymentId;
-
-  if (!resolvedPaymentId) {
-    try {
-      const body = await request.json();
-      resolvedPaymentId = body?.data?.id ?? null;
-    } catch {
-      // sin body JSON, seguimos con lo que vino en query params
-    }
+  let body: { data?: { id?: string | number }; type?: string; user_id?: string | number } = {};
+  try {
+    body = await request.json();
+  } catch {
+    // sin body JSON: seguimos con los query params
   }
 
-  if (type && type !== "payment") {
-    return NextResponse.json({ received: true });
-  }
+  const paymentId = url.searchParams.get("data.id") ?? url.searchParams.get("id") ?? body?.data?.id ?? null;
+  const type = url.searchParams.get("type") ?? url.searchParams.get("topic") ?? body?.type ?? null;
 
-  if (!resolvedPaymentId) {
+  if (type && type !== "payment") return ok();
+  if (!paymentId) {
     return NextResponse.json({ error: "missing payment id" }, { status: 400 });
   }
 
   const isValidSignature = verifyMpWebhookSignature({
     xSignature: request.headers.get("x-signature"),
     xRequestId: request.headers.get("x-request-id"),
-    dataId: String(resolvedPaymentId),
+    dataId: String(paymentId),
   });
-
   if (!isValidSignature) {
     console.error("Firma inválida en webhook de Mercado Pago");
     return NextResponse.json({ error: "invalid signature" }, { status: 401 });
@@ -43,125 +48,121 @@ export async function POST(request: Request) {
   const admin = createAdminClient();
 
   try {
-    const payment = await getMpPayment(String(resolvedPaymentId));
-    const orderId = payment.external_reference as string | undefined;
-
-    if (!orderId) {
-      return NextResponse.json({ error: "missing external_reference" }, { status: 400 });
+    // 1. Traer el pago con el token del VENDEDOR (el pago vive en su cuenta).
+    const tokens: string[] = [];
+    const sellerUserId = body?.user_id !== undefined ? String(body.user_id) : null;
+    if (sellerUserId) {
+      const account = await getMpAccountByMpUserId(admin, sellerUserId);
+      if (account) tokens.push(await getFreshSellerToken(admin, account));
     }
+    if (process.env.MP_ANC_ACCESS_TOKEN) tokens.push(process.env.MP_ANC_ACCESS_TOKEN);
 
-    const { data: order } = await admin
-      .from("orders")
-      .select("*")
-      .eq("id", orderId)
-      .single<Order>();
-
-    if (!order) {
-      return NextResponse.json({ error: "order not found" }, { status: 404 });
-    }
-
-    // Idempotencia: si ya fue procesada como aprobada, no repetir generación de tickets.
-    if (order.status === "approved") {
-      return NextResponse.json({ received: true });
-    }
-
-    if (payment.status !== "approved") {
-      await admin
-        .from("orders")
-        .update({
-          status: payment.status === "rejected" ? "rejected" : "pending",
-          mp_payment_id: String(resolvedPaymentId),
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", orderId);
-
-      return NextResponse.json({ received: true });
-    }
-
-    const { data: orderItems } = await admin
-      .from("order_items")
-      .select("*")
-      .eq("order_id", orderId)
-      .returns<OrderItem[]>();
-
-    if (!orderItems || orderItems.length === 0) {
-      return NextResponse.json({ error: "order has no items" }, { status: 400 });
-    }
-
-    const ticketsToInsert: { order_id: string; ticket_type_id: string }[] = [];
-    for (const item of orderItems) {
-      for (let i = 0; i < item.quantity; i++) {
-        ticketsToInsert.push({
-          order_id: orderId,
-          ticket_type_id: item.ticket_type_id,
-        });
+    let payment: MpPayment | null = null;
+    for (const token of tokens) {
+      try {
+        payment = await getMpPayment(String(paymentId), token);
+        break;
+      } catch (err) {
+        // 5xx: error transitorio, que MP reintente. 4xx: probar con el siguiente token.
+        if (!(err instanceof MpApiError) || err.status >= 500 || err.status === 429) throw err;
       }
     }
 
-    const { data: insertedTickets, error: ticketsError } = await admin
-      .from("tickets")
-      .insert(ticketsToInsert)
-      .select("id, qr_code, ticket_type_id");
-
-    if (ticketsError) {
-      throw new Error(ticketsError.message);
+    if (!payment) {
+      console.error(`Webhook MP: no se pudo consultar el pago ${paymentId} con ningún token disponible`);
+      return ok();
     }
 
-    for (const item of orderItems) {
-      const { data: ticketType } = await admin
-        .from("ticket_types")
-        .select("sold_count")
-        .eq("id", item.ticket_type_id)
-        .single<Pick<TicketType, "sold_count">>();
-
-      await admin
-        .from("ticket_types")
-        .update({
-          sold_count: (ticketType?.sold_count ?? 0) + item.quantity,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", item.ticket_type_id);
+    const orderId = payment.external_reference;
+    if (!orderId) {
+      console.error(`Webhook MP: pago ${paymentId} sin external_reference`);
+      return ok();
     }
 
-    await admin
-      .from("orders")
-      .update({
-        status: "approved",
-        mp_payment_id: String(resolvedPaymentId),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", orderId);
+    const { data: order } = await admin.from("orders").select("*").eq("id", orderId).maybeSingle<Order>();
+    if (!order) {
+      console.error(`Webhook MP: orden ${orderId} no existe (pago ${paymentId})`);
+      return ok();
+    }
+    if (order.kind !== "sale") return ok();
+
+    // 2. Verificar monto y vendedor antes de cambiar nada.
+    if (Math.abs(Number(payment.transaction_amount) - Number(order.total_amount)) > 1) {
+      console.error(
+        `Webhook MP: monto distinto en orden ${orderId}: pago ${payment.transaction_amount} vs orden ${order.total_amount}`
+      );
+      return ok();
+    }
 
     const { data: event } = await admin
       .from("events")
-      .select("*")
+      .select("organizer_id")
       .eq("id", order.event_id)
-      .single<Event>();
-
-    const { data: ticketTypes } = await admin
-      .from("ticket_types")
-      .select("id, name")
-      .eq("event_id", order.event_id)
-      .returns<Pick<TicketType, "id" | "name">[]>();
-
-    const ticketTypeNameById = new Map(
-      (ticketTypes ?? []).map((tt) => [tt.id, tt.name])
-    );
-
-    if (event && insertedTickets) {
-      await sendTicketConfirmationEmail({
-        to: order.buyer_email,
-        eventTitle: event.title,
-        eventDate: event.event_date,
-        venue: event.venue,
-        tickets: insertedTickets.map((t) => ({
-          ticketTypeName: ticketTypeNameById.get(t.ticket_type_id) ?? "Entrada",
-          qrCode: t.qr_code,
-        })),
-      });
+      .single<Pick<Event, "organizer_id">>();
+    const organizerAccount = event ? await getMpAccountByOrganizer(admin, event.organizer_id) : null;
+    if (
+      organizerAccount &&
+      payment.collector_id !== undefined &&
+      payment.collector_id !== null &&
+      String(payment.collector_id) !== organizerAccount.mp_user_id
+    ) {
+      console.error(
+        `Webhook MP: vendedor distinto en orden ${orderId}: pago ${payment.collector_id} vs ${organizerAccount.mp_user_id}`
+      );
+      return ok();
     }
 
-    return NextResponse.json({ received: true });
+    // 3. Aplicar el estado.
+    switch (payment.status) {
+      case "approved": {
+        const { data: result, error } = await admin.rpc("approve_order", {
+          p_order_id: orderId,
+          p_payment_id: String(payment.id),
+        });
+        if (error) throw new Error(error.message);
+        if (result?.overbooked) {
+          console.error(`Orden ${orderId} aprobada con sobreventa: coordinar reembolso con el productor`);
+        }
+        break;
+      }
+      case "rejected":
+      case "cancelled": {
+        const { error } = await admin.rpc("fail_order", {
+          p_order_id: orderId,
+          p_new_status: payment.status,
+        });
+        if (error) throw new Error(error.message);
+        break;
+      }
+      case "refunded":
+      case "charged_back": {
+        const { error } = await admin.rpc("revert_order", {
+          p_order_id: orderId,
+          p_new_status: payment.status,
+        });
+        if (error) throw new Error(error.message);
+        break;
+      }
+      default:
+        // pending / in_process / authorized: se espera otra notificación.
+        break;
+    }
+
+    // 4. Correo: si la orden está aprobada y nunca se envió (p. ej. falló Resend
+    // en una notificación anterior), se intenta de nuevo. Un fallo NO hace
+    // fallar el webhook: queda email_sent_at en null y hay botón "Reenviar".
+    if (payment.status === "approved") {
+      const { data: fresh } = await admin
+        .from("orders")
+        .select("email_sent_at, status")
+        .eq("id", orderId)
+        .single<Pick<Order, "email_sent_at" | "status">>();
+      if (fresh?.status === "approved" && !fresh.email_sent_at) {
+        await deliverOrderEmail(admin, orderId);
+      }
+    }
+
+    return ok();
   } catch (err) {
     console.error("Error procesando webhook de Mercado Pago:", err);
     return NextResponse.json({ error: "internal error" }, { status: 500 });

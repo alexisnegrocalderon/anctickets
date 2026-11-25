@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { safeNextPath } from "@/lib/safe-redirect";
 import GoogleSignInButton from "./google-sign-in-button";
 
 export default async function LoginPage({
@@ -14,7 +15,7 @@ export default async function LoginPage({
   } = await supabase.auth.getUser();
 
   if (user) {
-    redirect(next ?? "/dashboard/events");
+    redirect(safeNextPath(next));
   }
 
   return (
@@ -31,7 +32,7 @@ export default async function LoginPage({
           persiste, contacta a soporte.
         </p>
       ) : null}
-      <GoogleSignInButton next={next} />
+      <GoogleSignInButton next={next ? safeNextPath(next) : undefined} />
     </div>
   );
 }

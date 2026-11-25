@@ -51,6 +51,7 @@ export interface MpPreferenceItem {
   title: string;
   quantity: number;
   unit_price: number;
+  currency_id?: string;
 }
 
 export interface MpPreferenceParams {
@@ -63,6 +64,8 @@ export interface MpPreferenceParams {
   failureUrl: string;
   pendingUrl: string;
   notificationUrl: string;
+  /** Cuándo vence el link de pago (coincide con el fin de la reserva de stock). */
+  expirationDateTo?: string;
 }
 
 export async function createMpPreference(params: MpPreferenceParams) {
@@ -86,6 +89,13 @@ export async function createMpPreference(params: MpPreferenceParams) {
         },
         auto_return: "approved",
         notification_url: params.notificationUrl,
+        ...(params.expirationDateTo
+          ? {
+              expires: true,
+              expiration_date_from: new Date().toISOString(),
+              expiration_date_to: params.expirationDateTo,
+            }
+          : {}),
         // Solo pago único: con cuotas, la comisión real de Mercado Pago supera
         // el cargo de servicio y el organizador dejaría de recibir el 100%
         // del valor de su entrada (ver src/lib/fees.ts).
@@ -177,19 +187,44 @@ export async function refreshMpOAuthToken(
   return response.json();
 }
 
-export async function getMpPayment(paymentId: string) {
+export interface MpPayment {
+  id: number;
+  status: string;
+  status_detail?: string;
+  external_reference?: string | null;
+  transaction_amount: number;
+  currency_id?: string;
+  collector_id?: number | string | null;
+  transaction_amount_refunded?: number;
+}
+
+/** Error de la API de MP con el status HTTP, para decidir si conviene reintentar. */
+export class MpApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number
+  ) {
+    super(message);
+  }
+}
+
+/**
+ * Consulta un pago. Los pagos de un marketplace viven en la cuenta del
+ * VENDEDOR (el productor), así que hay que consultarlos con el token del
+ * vendedor; el token de ANC solo sirve como respaldo.
+ */
+export async function getMpPayment(paymentId: string, accessToken: string): Promise<MpPayment> {
   const response = await fetch(
-    `https://api.mercadopago.com/v1/payments/${paymentId}`,
+    `https://api.mercadopago.com/v1/payments/${encodeURIComponent(paymentId)}`,
     {
-      headers: {
-        Authorization: `Bearer ${process.env.MP_ANC_ACCESS_TOKEN}`,
-      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: "no-store",
     }
   );
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(`Error consultando pago de Mercado Pago: ${text}`);
+    throw new MpApiError(`Error consultando pago de Mercado Pago: ${text}`, response.status);
   }
 
   return response.json();
