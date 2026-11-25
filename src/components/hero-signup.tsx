@@ -1,10 +1,21 @@
 "use client";
 
 /** ANC — la acción primaria del productor: entrar con Google y publicar. */
+import Link from "next/link";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-export default function HeroSignup({ compact = false, muted = false }: { compact?: boolean; muted?: boolean }) {
+const ctaClass =
+  "flex min-h-14 w-full items-center justify-center gap-3 rounded-full bg-[var(--anc-vermilion)] px-7 py-4 text-base font-black uppercase tracking-tight text-[var(--anc-ink)] shadow-[0_18px_50px_-14px_rgba(252,76,19,.7)] transition duration-300 [transition-timing-function:var(--ease-out)] hover:brightness-95 active:scale-[.98] disabled:opacity-60";
+
+export default function HeroSignup({
+  compact = false,
+  loggedIn = false,
+}: {
+  compact?: boolean;
+  /** Con sesión, el CTA lleva directo al wizard en vez de abrir Google. */
+  loggedIn?: boolean;
+}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,14 +33,19 @@ export default function HeroSignup({ compact = false, muted = false }: { compact
     }
   }
 
+  if (loggedIn) {
+    return (
+      <div className={compact ? "" : "w-full max-w-sm"}>
+        <Link href="/dashboard/events/new" className={ctaClass}>
+          Publicar mi evento gratis
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className={compact ? "" : "w-full max-w-sm"}>
-      <button
-        type="button"
-        onClick={signInWithGoogle}
-        disabled={loading}
-        className="flex w-full items-center justify-center gap-3 rounded-full bg-[var(--anc-vermilion)] px-7 py-4 text-base font-black uppercase tracking-tight text-[var(--anc-ink)] transition-transform duration-150 hover:brightness-95 active:scale-[.98] disabled:opacity-60"
-      >
+      <button type="button" onClick={signInWithGoogle} disabled={loading} className={ctaClass}>
         <svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true">
           <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z" />
           <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z" />
@@ -39,12 +55,12 @@ export default function HeroSignup({ compact = false, muted = false }: { compact
         {loading ? "Abriendo Google…" : "Publicar mi evento gratis"}
       </button>
       {!compact ? (
-        <p className="mt-3 text-center text-sm text-[var(--anc-muted)]">
+        <p className="mt-3 text-sm text-[var(--anc-muted-text)] sm:text-left">
           Entras con tu cuenta de Google. Sin contraseñas nuevas, sin tarjeta de crédito.
         </p>
       ) : null}
       {error ? (
-        <p role="alert" className={`mt-3 text-center text-sm font-semibold ${muted ? "text-[#ffb39c]" : "text-[#c0225a]"}`}>
+        <p role="alert" className={`mt-3 text-sm font-semibold text-[#ffb39c]`}>
           {error}
         </p>
       ) : null}

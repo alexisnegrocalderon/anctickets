@@ -1,19 +1,24 @@
-import AssetPlaceholder from "@/components/asset-placeholder";
-
-/** ANC — grilla densa de capacidades del producto, al estilo "playbook" de agencia. */
+/** ANC — grilla de capacidades del producto: solo texto, sin imágenes pesadas ni huecos de captura. */
 export default function PlaybookGrid({
   items,
 }: {
-  items: { label: string; spec: string; title: string }[];
+  items: { title: string; spec: string }[];
 }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
+    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
       {items.map((item, index) => (
-        <div key={item.title} className="reveal" data-reveal-delay={index * 70}>
-          <AssetPlaceholder label={item.label} spec={item.spec} ratio="4/5" className="rounded-xl" />
-          <p className="mt-3 text-sm font-black leading-5 text-[var(--anc-ink)]">{item.title}</p>
-        </div>
+        <li
+          key={item.title}
+          className="reveal rounded-2xl border border-[var(--anc-border)] bg-[var(--anc-surface)] p-6"
+          data-reveal-delay={index * 70}
+        >
+          <p className="font-mono text-xs font-bold uppercase tracking-[.16em] text-[var(--anc-vermilion)]">
+            {String(index + 1).padStart(2, "0")}
+          </p>
+          <p className="mt-4 font-display text-3xl uppercase leading-[1] text-white">{item.title}</p>
+          <p className="mt-2 text-sm leading-6 text-[var(--anc-muted-text)]">{item.spec}</p>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

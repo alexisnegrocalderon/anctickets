@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
+const linkClass =
+  "inline-flex min-h-11 items-center transition-colors duration-200 hover:text-white active:text-[var(--anc-vermilion)]";
+
 export default async function SiteHeader() {
   const supabase = await createClient();
   const {
@@ -10,48 +13,37 @@ export default async function SiteHeader() {
 
   return (
     <header className="anc-header-material sticky top-0 z-50">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-8">
         <Link
           href="/"
-          data-cursor-hover
-          className="flex items-center gap-2 text-lg font-black tracking-tight text-[#f5f4f1] transition duration-100 active:scale-95"
+          className="flex min-h-11 items-center gap-2 font-display text-xl uppercase text-white transition duration-100 active:scale-95"
+          aria-label="ANC Tickets, inicio"
         >
           <Image src="/anc-mark.png" alt="" width={28} height={28} priority />
-          ANC<span className="text-[var(--anc-accent)]">TICKETS</span>
+          <span className="hidden min-[400px]:inline">
+            ANC <span className="text-[var(--anc-vermilion)]">Tickets</span>
+          </span>
         </Link>
 
-        <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs font-semibold uppercase tracking-[.1em] text-neutral-300">
-          <Link
-            href="/"
-            data-cursor-hover
-            className="transition duration-100 hover:text-[var(--anc-accent-light)] active:text-[var(--anc-accent)]"
-          >
+        <nav className="flex items-center gap-x-4 font-mono text-xs font-semibold uppercase tracking-[.08em] text-neutral-300 sm:gap-x-6">
+          <Link href="/" className={`${linkClass} hidden sm:inline-flex`}>
             Eventos
           </Link>
           {user ? (
             <>
-              <Link
-                href="/dashboard/events"
-                data-cursor-hover
-                className="transition duration-100 hover:text-[var(--anc-accent-light)] active:text-[var(--anc-accent)]"
-              >
+              <Link href="/dashboard/events" className={linkClass}>
                 Mis eventos
               </Link>
-              <Link
-                href="/mis-entradas"
-                data-cursor-hover
-                className="transition duration-100 hover:text-[var(--anc-accent-light)] active:text-[var(--anc-accent)]"
-              >
+              <Link href="/mis-entradas" className={linkClass}>
                 Mis entradas
               </Link>
             </>
           ) : (
             <Link
               href="/login"
-              data-cursor-hover
-              className="rounded-full bg-[#f5f4f1] px-4 py-1.5 text-black transition duration-100 hover:bg-[var(--anc-yellow)] active:scale-95"
+              className="inline-flex min-h-11 items-center rounded-full bg-white px-5 text-[var(--anc-ink)] transition duration-100 hover:bg-neutral-200 active:scale-95"
             >
-              Iniciar sesión
+              Ya tengo cuenta
             </Link>
           )}
         </nav>

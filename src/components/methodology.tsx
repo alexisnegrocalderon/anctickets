@@ -14,12 +14,12 @@ export default function Methodology() {
       {PASOS.map((paso, index) => (
         <li
           key={paso.n}
-          className="reveal grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-2 py-8 sm:grid-cols-[5rem_1fr_1.4fr] sm:gap-x-10"
+          className="reveal grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-2 py-7 sm:grid-cols-[5rem_1fr_1.4fr] sm:gap-x-10"
           data-reveal-delay={index * 60}
         >
-          <span className="font-display text-3xl font-black text-[var(--anc-ink)]/25 sm:text-4xl">{paso.n}</span>
-          <p className="font-display text-2xl font-black leading-tight text-[var(--anc-ink)] sm:text-3xl">{paso.t}</p>
-          <p className="col-span-2 text-base leading-6 text-[var(--anc-muted)] sm:col-span-1 sm:mt-1">{paso.d}</p>
+          <span className="font-display text-4xl text-[var(--anc-vermilion)] sm:text-5xl">{paso.n}</span>
+          <p className="font-display text-3xl uppercase leading-tight text-white sm:text-4xl">{paso.t}</p>
+          <p className="col-span-2 text-base leading-7 text-[var(--anc-muted-text)] sm:col-span-1 sm:mt-1">{paso.d}</p>
         </li>
       ))}
     </ol>

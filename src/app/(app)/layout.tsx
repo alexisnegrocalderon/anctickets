@@ -3,7 +3,7 @@ import SiteHeader from "@/components/site-header";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-[#090909] text-[#f5f4f1]">
+    <div className="flex min-h-dvh flex-col bg-[var(--anc-bg)] text-white">
       <SiteHeader />
       <div className="flex flex-1 flex-col">{children}</div>
     </div>

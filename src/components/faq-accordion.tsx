@@ -38,23 +38,23 @@ export default function FaqAccordion() {
               type="button"
               onClick={() => setOpen(isOpen ? null : index)}
               aria-expanded={isOpen}
-              className="flex w-full items-center justify-between gap-6 py-6 text-left"
+              className="flex w-full items-center justify-between gap-4 py-4 text-left"
             >
-              <span className="text-lg font-bold text-[var(--anc-ink)] sm:text-xl">{item.q}</span>
+              <span className="text-lg font-bold text-white sm:text-xl">{item.q}</span>
               <span
                 aria-hidden="true"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--anc-ink)]/20 text-lg text-[var(--anc-vermilion)] transition-transform duration-200"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25 text-lg text-[var(--anc-vermilion)] transition-transform duration-200"
                 style={{ transform: isOpen ? "rotate(45deg)" : "none" }}
               >
                 +
               </span>
             </button>
             <div
-              className="grid overflow-hidden transition-[grid-template-rows] duration-300 ease-out"
+              className="grid overflow-hidden transition-[grid-template-rows] duration-500 [transition-timing-function:var(--ease-out)] motion-reduce:transition-none"
               style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
             >
               <div className="min-h-0">
-                <p className="max-w-[62ch] pb-6 text-base leading-6 text-[var(--anc-ink)]/80">{item.a}</p>
+                <p className="max-w-[62ch] pb-6 text-base leading-7 text-[var(--anc-muted-text)]">{item.a}</p>
               </div>
             </div>
           </div>

@@ -33,10 +33,12 @@
   color-scheme: dark;
 }
 
-/* Cabecera del producto (fuera del home): bloque sólido con remate de acento. */
+/* Cabecera del producto (fuera del home): vidrio oscuro sobre el lienzo. */
 .anc-header-material {
-  background: var(--anc-charcoal);
-  border-bottom: 3px solid var(--anc-vermilion);
+  background: rgba(29, 29, 29, 0.88);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--anc-border);
 }
 
 /* Confirmación al sumar una entrada en el checkout. */
