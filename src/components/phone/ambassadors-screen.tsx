@@ -1,4 +1,6 @@
 /** Embajadores, código de descuento y pago directo a Mercado Pago (solo HTML/CSS). */
+import PhoneTabs from "./tabs";
+
 const RANKING = [
   { name: "Valentina", sold: 42 },
   { name: "Matías", sold: 31 },
@@ -45,6 +47,7 @@ export default function AmbassadorsScreen() {
           <small>+$24.000 · acreditado ahora</small>
         </span>
       </div>
+      <PhoneTabs on="Más" />
     </div>
   );
 }

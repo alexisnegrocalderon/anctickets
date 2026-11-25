@@ -85,19 +85,19 @@ export default async function Home() {
 
         <div className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 text-center sm:px-8 lg:pb-24">
           <Phone mode="hero" label="Celular con el panel de ventas de un evento de ejemplo, Noche Neón">
-            <LiveSalesScreen />
+            <LiveSalesScreen variant="full" />
           </Phone>
           <p className="mt-2 font-mono text-[11px] uppercase tracking-[.18em] text-white/60">
             Evento de ejemplo · datos ficticios
           </p>
 
-          <h1 className="mx-auto mt-6 max-w-4xl text-[clamp(3.4rem,14.5vw,8.5rem)] uppercase leading-[.92] text-white">
+          <h1 className="mx-auto mt-6 max-w-4xl text-[clamp(2.8rem,12vw,6.5rem)] uppercase leading-[.92] text-white">
             Toda tu ticketera en{" "}
             <span className="text-[var(--anc-vermilion)]">la palma de tu mano</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-[52ch] text-lg leading-7 text-white/80">
-            ANC Tickets es una webapp que se instala en tu celular. Crea tus eventos, mira las
-            ventas en vivo, controla la puerta y cobra directo en tu Mercado Pago.
+          <p className="mx-auto mt-5 max-w-[52ch] text-base sm:text-lg leading-7 text-white/80">
+            Webapp que se instala en tu celular: crea eventos, mira las ventas en vivo, controla
+            la puerta y cobra directo en tu Mercado Pago.
           </p>
 
           <div id="hero-cta" className="mx-auto mt-8 flex w-full max-w-sm scroll-mt-24 flex-col gap-3 sm:max-w-xl sm:flex-row">

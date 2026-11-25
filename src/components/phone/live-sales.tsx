@@ -6,6 +6,7 @@
  * Todo es dato de ejemplo. Con reduced motion queda quieto en el estado final.
  */
 import { useEffect, useRef, useState } from "react";
+import PhoneTabs from "./tabs";
 import { clp, useCountTo, useInView, useReducedMotion } from "./hooks";
 
 const CAPACITY = 400;
@@ -46,10 +47,10 @@ export default function LiveSalesScreen({ variant = "hero" }: { variant?: "hero"
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, "80px");
 
-  // Estado inicial = ya van 3 ventas (idéntico en servidor y cliente).
+  // Estado inicial = ya van 4 ventas (idéntico en servidor y cliente).
   const [state, setState] = useState(() => ({
-    step: 3,
-    toasts: [makeToast(2, false), makeToast(1, false), makeToast(0, false)],
+    step: 4,
+    toasts: [makeToast(3, false), makeToast(2, false), makeToast(1, false), makeToast(0, false)],
   }));
 
   useEffect(() => {
@@ -58,8 +59,8 @@ export default function LiveSalesScreen({ variant = "hero" }: { variant?: "hero"
       setState((prev) => {
         const next = prev.step + 1;
         return {
-          step: next >= SALES.length * 2 ? 3 : next,
-          toasts: [makeToast(next - 1, true, next), ...prev.toasts].slice(0, 3),
+          step: next >= SALES.length * 2 ? 4 : next,
+          toasts: [makeToast(next - 1, true, next), ...prev.toasts].slice(0, 4),
         };
       });
     }, 2600);
@@ -116,6 +117,7 @@ export default function LiveSalesScreen({ variant = "hero" }: { variant?: "hero"
           </li>
         ))}
       </ul>
+      <PhoneTabs on="Resumen" />
     </div>
   );
 }

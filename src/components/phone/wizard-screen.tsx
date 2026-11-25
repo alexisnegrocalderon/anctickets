@@ -39,6 +39,11 @@ export default function WizardScreen() {
         ))}
       </div>
 
+      <div className="wz-preview">
+        <span className="wz-preview-art">Noche Neón</span>
+        <span className="wz-preview-meta">Vista previa de tu página · Sáb 14 dic</span>
+      </div>
+
       <div className="wz-end">
         <div className="wz-cta">Publicar evento</div>
         <div className="wz-live">

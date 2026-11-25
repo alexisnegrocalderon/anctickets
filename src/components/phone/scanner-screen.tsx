@@ -2,6 +2,7 @@
 
 /** Escáner QR de la puerta: busca, marca VÁLIDA en verde y sube el contador. */
 import { useEffect, useRef, useState } from "react";
+import PhoneTabs from "./tabs";
 import { useInView, useReducedMotion } from "./hooks";
 
 const START = 187;
@@ -91,6 +92,12 @@ export default function ScannerScreen() {
         </div>
         <p className="sc-hint">Apunta al QR de la entrada</p>
       </div>
+
+      <ul className="sc-log">
+        <li><span>#0{count - 1} · General</span><em>VÁLIDA</em></li>
+        <li><span>#0{count - 2} · VIP</span><em>VÁLIDA</em></li>
+      </ul>
+      <PhoneTabs on="Escáner" />
     </div>
   );
 }
