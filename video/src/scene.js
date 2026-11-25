@@ -40,13 +40,12 @@ SALES.forEach((s, i) => {
 
 // ---- estados iniciales
 gsap.set(".layer", { opacity: 0 });
-gsap.set(["#brand", ".cap", "#outro"], { opacity: 1 });
+gsap.set([".cap", "#outro"], { opacity: 1 });
 gsap.set(".cap", { autoAlpha: 0 });
-gsap.set("#brand", { opacity: 0 });
 gsap.set(".ln > span", { yPercent: 115 });
 gsap.set("#outro", { autoAlpha: 0 });
 gsap.set("#stage", { autoAlpha: 1 });
-gsap.set("#spin", { rotationY: -30, rotationX: 8, y: WIDE ? 90 : 140 });
+gsap.set("#spin", { rotationY: -30, rotationX: 8, y: WIDE ? 60 : 100 });
 gsap.set([".wf", ".ws"], { opacity: 0, y: 14 });
 gsap.set(".wz-type", { clipPath: "inset(0 100% 0 0)" });
 gsap.set(".wz-tick", { opacity: 0, scale: 0.4 });
@@ -76,7 +75,6 @@ tl.to("#glow-b", { x: -200, y: -120, duration: DUR, ease: "none" }, 0);
 
 // ================= celular entra =================
 tl.to("#spin", { y: 0, rotationY: -14, rotationX: 5, duration: 1.3, ease: "power3.out" }, 3.5);
-tl.to("#brand", { opacity: 1, duration: 0.6 }, 3.8);
 
 const show = (id, a, b) => { tl.to(id, { opacity: 1, duration: 0.35 }, a); if (b) tl.to(id, { opacity: 0, duration: 0.3 }, b); };
 const cap = (id, a, b) => {
@@ -152,7 +150,6 @@ tl.to("#am-pay", { opacity: 1, x: 0, duration: 0.5, ease }, 19.8);
 // ================= 20.8–24: cierre =================
 tl.to("#spin", { y: WIDE ? 900 : 1500, rotationY: -40, rotationX: 12, duration: 0.8, ease: "power3.in" }, 20.7);
 tl.set("#stage", { autoAlpha: 0 }, 21.55);
-tl.to("#brand", { opacity: 0, duration: 0.3 }, 20.8);
 tl.set("#outro", { autoAlpha: 1 }, 21.2);
 tl.to("#o-logo", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 21.3);
 lines("#outro", 21.5, 0.7);

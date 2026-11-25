@@ -21,38 +21,33 @@ html,body{width:{{W}}px;height:{{H}}px;overflow:hidden;background:#1d1d1d;font-f
 #brand b{font:400 52px Anton;text-transform:uppercase}
 .pill{display:inline-flex;align-items:center;border-radius:999px;background:#fc4c13;color:#1d1d1d;font-weight:900;text-transform:uppercase}
 
-/* ---- 9:16 ---- */
-.f916 .ph{--pw:620px}
-.f916 .stage{left:0;right:0;top:500px}
-.f916 #brand{left:70px;bottom:90px}
-.f916 .cap{left:70px;right:70px;top:150px;text-align:center}
-.f916 .cap .mono{font-size:30px;color:#fc4c13}
-.f916 .cap .anton{font-size:138px;margin-top:22px}
-.f916 .intro{left:60px;right:60px;top:420px;text-align:center}
-.f916 .intro img{width:190px;height:190px;margin-bottom:40px}
-.f916 .intro .anton{font-size:172px}
-.f916 .intro .mono{font-size:30px;margin-top:40px;color:#bdbdbd}
-.f916 .outro{left:60px;right:60px;top:500px;text-align:center}
-.f916 .outro img{width:170px;height:170px}
-.f916 .outro .anton{font-size:230px;margin-top:40px}
-.f916 .outro .pill{margin-top:70px;font-size:54px;padding:34px 60px}
-.f916 .outro .mono{font-size:24px;letter-spacing:.12em;margin-top:50px;color:#bdbdbd}
+/* ---- Títulos de escena: etiqueta pequeña tipo kicker, el celular manda ---- */
+.cap .mono{color:#fc4c13;opacity:.9}
+.cap .anton{color:rgba(255,255,255,.82);line-height:1}
+.outro{opacity:.8}
+.outro img{display:none}
+.outro .anton{line-height:1}
+.outro .v{font-weight:400}
+.outro .pill{background:rgba(252,76,19,.85)}
 
-/* ---- 16:9 ---- */
-.f169 .ph{--pw:420px}
-.f169 .stage{left:1100px;width:700px;top:70px}
-.f169 #brand{left:110px;bottom:60px}
-.f169 .cap{left:110px;width:900px;top:170px}
-.f169 .cap .mono{font-size:26px;color:#fc4c13}
-.f169 .cap .anton{font-size:122px;margin-top:18px}
-.f169 .cap p{display:none}
-.f169 .intro{left:0;right:0;top:110px;text-align:center}
-.f169 .intro img{width:130px;height:130px;margin-bottom:24px}
-.f169 .intro .anton{font-size:132px}
-.f169 .intro .mono{font-size:26px;margin-top:30px;color:#bdbdbd}
-.f169 .outro{left:0;right:0;top:170px;text-align:center}
-.f169 .outro img{width:120px;height:120px}
-.f169 .outro .anton{font-size:200px;margin-top:20px}
-.f169 .outro .pill{margin-top:46px;font-size:46px;padding:26px 50px}
-.f169 .outro .mono{font-size:24px;margin-top:36px;color:#bdbdbd}
-.f916 .cap p{display:none}
+/* ---- 9:16: arriba, centrado; tercio inferior libre de texto ---- */
+.f916 .ph{--pw:620px}
+.f916 .stage{left:0;right:0;top:330px}
+.f916 .cap{left:70px;right:70px;top:150px;text-align:center}
+.f916 .cap .mono{font-size:26px}
+.f916 .cap .anton{font-size:64px;margin-top:12px}
+.f916 .outro{left:60px;right:60px;top:150px;text-align:center}
+.f916 .outro .anton{font-size:64px}
+.f916 .outro .pill{margin-top:26px;font-size:30px;padding:14px 32px}
+.f916 .outro .mono{font-size:22px;letter-spacing:.14em;margin-top:22px;color:#bdbdbd}
+
+/* ---- 16:9: columna derecha (celular), lado izquierdo y tercio inferior libres ---- */
+.f169 .ph{--pw:400px}
+.f169 .stage{left:1100px;width:700px;top:190px}
+.f169 .cap{left:1100px;width:700px;top:96px;text-align:center}
+.f169 .cap .mono{font-size:20px}
+.f169 .cap .anton{font-size:44px;margin-top:8px}
+.f169 .outro{left:1100px;width:700px;top:96px;text-align:center}
+.f169 .outro .anton{font-size:44px}
+.f169 .outro .pill{margin-top:18px;font-size:22px;padding:10px 24px}
+.f169 .outro .mono{font-size:16px;letter-spacing:.14em;margin-top:16px;color:#bdbdbd}
