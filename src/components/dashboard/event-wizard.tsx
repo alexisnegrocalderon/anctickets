@@ -1,13 +1,14 @@
 "use client";
 
 /**
- * ANC dashboard: wizard de creación de evento — secuencia de pasos saltables con
- * transiciones en spring, vista previa en vivo de la página del evento y un primer
- * paso de "mood" que define el color de la tarjeta pública. Apenas se completan
- * título+fecha el evento ya queda guardado como borrador: si el usuario abandona
- * el wizard, retoma desde "Mis eventos" → editar, sin perder nada.
+ * ANC dashboard: wizard de creación de evento. La barra de pasos es tocable:
+ * cualquier paso ya visitado se puede abrir para volver (y se conserva todo lo
+ * escrito, porque el estado vive en este componente). Cada paso tiene su botón
+ * Atrás. Apenas se completan título+fecha el evento queda guardado como
+ * borrador: si el usuario abandona, retoma desde "Eventos" → editar.
  */
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { createDraftEvent, updateEvent, createTicketType, setEventStatus } from "@/app/dashboard/events/actions";
@@ -115,10 +116,11 @@ function LivePreview({
   );
 }
 
-export default function EventWizard() {
+export default function EventWizard({ mpConnected = true }: { mpConnected?: boolean }) {
   const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
   const [step, setStep] = useState(0);
+  const [maxStep, setMaxStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [eventId, setEventId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -177,19 +179,46 @@ export default function EventWizard() {
     }
   }
 
-  async function goNext() {
-    // Los pasos 1 y 2 cargan título+fecha: recién ahí se crea el borrador.
-    if (step === 2 || (eventId && step >= 2)) {
+  const persistable = title.trim().length > 0 && eventDate.length > 0;
+
+  /** Cambia de paso guardando el borrador cuando corresponde. No borra nada. */
+  async function go(target: number) {
+    if (saving || target === step || target < 0 || target >= TOTAL_STEPS) return;
+    const forward = target > step;
+
+    if (forward && step === 1 && title.trim().length === 0) {
+      setError("Escribe el título de tu evento para seguir.");
+      return;
+    }
+    if (forward && step === 2 && eventDate.length === 0) {
+      setError("Elige la fecha y hora de tu evento para seguir.");
+      return;
+    }
+
+    // Desde el paso 2 en adelante hay título+fecha: se crea o actualiza el borrador.
+    if (step >= 2 && persistable && (eventId !== null || forward)) {
       const ok = await persist();
       if (!ok) return;
     }
-    setDirection(1);
-    setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
+
+    setError(null);
+    setDirection(forward ? 1 : -1);
+    setStep(target);
+    setMaxStep((value) => Math.max(value, target));
+  }
+
+  function goNext() {
+    return go(step + 1);
   }
 
   function goBack() {
-    setDirection(-1);
-    setStep((s) => Math.max(s - 1, 0));
+    return go(step - 1);
+  }
+
+  /** Solo los pasos ya visitados son tocables en la barra. */
+  function goToVisited(target: number) {
+    if (target > maxStep) return;
+    return go(target);
   }
 
   async function handleAddTicketType() {
@@ -240,32 +269,101 @@ export default function EventWizard() {
     }
   }
 
+  type ReviewIssue = {
+    id: string;
+    text: string;
+    blocking: boolean;
+    label: string;
+    step?: number;
+    href?: string;
+  };
+  const hasPaidTicket = ticketTypes.some((tt) => tt.base_price > 0);
+  const reviewIssues: ReviewIssue[] = [
+    ...(title.trim().length === 0
+      ? [{ id: "title", blocking: true, step: 1, label: "Poner título", text: "Tu evento no tiene título." }]
+      : []),
+    ...(eventDate.length === 0
+      ? [{ id: "date", blocking: true, step: 2, label: "Elegir fecha", text: "Falta la fecha y hora del evento." }]
+      : []),
+    ...(ticketTypes.length === 0
+      ? [
+          {
+            id: "tickets",
+            blocking: true,
+            step: 5,
+            label: "Agregar entrada",
+            text: "Aún no tienes ningún tipo de entrada. Sin al menos una, nadie puede comprar y no podemos publicar el evento.",
+          },
+        ]
+      : []),
+    ...(hasPaidTicket && !mpConnected
+      ? [
+          {
+            id: "mp",
+            blocking: true,
+            href: "/dashboard/mercadopago/connect",
+            label: "Conectar Mercado Pago",
+            text: "Tienes entradas de pago y tu cuenta de Mercado Pago no está conectada. Tu borrador queda guardado.",
+          },
+        ]
+      : []),
+    ...(!imageUrl
+      ? [
+          {
+            id: "image",
+            blocking: false,
+            step: 4,
+            label: "Subir imagen",
+            text: "Sin imagen, tu página se verá con un degradado. Es opcional, pero vende más con flyer.",
+          },
+        ]
+      : []),
+  ];
+  const blockingIssues = reviewIssues.filter((issue) => issue.blocking);
   const canAdvanceStep1 = title.trim().length > 0;
   const canAdvanceStep2 = eventDate.length > 0;
-  const activeThemeStyle = resolveEventTheme(theme, accentColor);
   const stepTransition = prefersReducedMotion ? { duration: 0 } : SPRING;
 
   return (
     <div className="mx-auto max-w-5xl">
-      <div className="mb-6 flex items-center gap-2">
-        {STEP_LABELS.map((label, index) => (
-          <div key={label} className="flex flex-1 flex-col gap-1.5">
-            <div className="h-1 overflow-hidden rounded-full bg-white/10">
-              <motion.div
-                className="h-full rounded-full"
-                style={{ backgroundColor: activeThemeStyle.from, transformOrigin: "left" }}
-                initial={false}
-                animate={{ scaleX: index <= step ? 1 : 0 }}
-                transition={stepTransition}
-              />
-            </div>
-            <span className="hidden text-[10px] font-semibold uppercase tracking-wide text-neutral-500 sm:block">
-              {label}
-            </span>
-          </div>
-        ))}
-      </div>
-      <p className="mb-6 text-xs font-semibold uppercase tracking-wide text-neutral-500">
+      <nav aria-label="Pasos para crear tu evento" className="mb-3">
+        <ol className="flex items-stretch gap-1.5">
+          {STEP_LABELS.map((label, index) => {
+            const visited = index <= maxStep;
+            const current = index === step;
+            return (
+              <li key={label} className="min-w-0 flex-1">
+                <button
+                  type="button"
+                  disabled={!visited || saving}
+                  onClick={() => goToVisited(index)}
+                  aria-current={current ? "step" : undefined}
+                  aria-label={`Paso ${index + 1}: ${label}${visited && !current ? " (volver)" : ""}`}
+                  className="group flex min-h-11 w-full flex-col justify-center gap-1.5 text-left disabled:cursor-default"
+                >
+                  <span className="h-1 overflow-hidden rounded-full bg-white/10">
+                    <motion.span
+                      className="block h-full rounded-full"
+                      style={{ backgroundColor: current ? "var(--anc-vermilion)" : "rgba(255,255,255,.55)", transformOrigin: "left" }}
+                      initial={false}
+                      animate={{ scaleX: visited ? 1 : 0 }}
+                      transition={stepTransition}
+                    />
+                  </span>
+                  <span
+                    className={`hidden truncate text-[10px] font-semibold uppercase tracking-wide transition-colors sm:block ${
+                      current ? "text-white" : visited ? "text-neutral-300 group-hover:text-white" : "text-neutral-600"
+                    }`}
+                  >
+                    {label}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+      <p className="mb-6 font-mono text-[11px] font-bold uppercase tracking-[.16em] text-[var(--anc-muted-text)]">
         Paso {step + 1} de {TOTAL_STEPS} · {STEP_LABELS[step]}
       </p>
 
@@ -284,7 +382,7 @@ export default function EventWizard() {
               {step === 0 ? (
                 <div className="flex flex-col gap-6">
                   <div className="flex flex-col gap-4">
-                    <h1 className="text-2xl font-bold tracking-tight text-[#f5f4f1]">¿Cuál es el mood de tu fiesta?</h1>
+                    <h1 className="text-[clamp(1.9rem,7vw,2.6rem)] uppercase leading-[1] text-white">¿Cuál es el mood de tu fiesta?</h1>
                     <p className="text-sm text-neutral-400">
                       Define el color de tu página pública, o usa el tuyo propio si ya tienes una marca.
                     </p>
@@ -367,7 +465,7 @@ export default function EventWizard() {
 
                   <div className="flex flex-col gap-3 border-t border-white/10 pt-6">
                     <div>
-                      <h2 className="text-lg font-bold tracking-tight text-[#f5f4f1]">Tu logo (opcional)</h2>
+                      <h2 className="text-2xl uppercase text-white">Tu logo (opcional)</h2>
                       <p className="text-sm text-neutral-400">
                         Si lo subes, tu página lo muestra en vez del logo de ANC — es tu marca, tu evento.
                       </p>
@@ -379,7 +477,7 @@ export default function EventWizard() {
 
               {step === 1 ? (
                 <div className="flex flex-col gap-4">
-                  <h1 className="text-2xl font-bold tracking-tight text-[#f5f4f1]">
+                  <h1 className="text-[clamp(1.9rem,7vw,2.6rem)] uppercase leading-[1] text-white">
                     ¿Cómo se llama tu evento?
                   </h1>
                   <Field label="Título del evento">
@@ -391,7 +489,7 @@ export default function EventWizard() {
                     />
                   </Field>
                   <Field label="Link de tu evento (opcional)">
-                    <div className="flex items-center overflow-hidden rounded-lg border border-white/15 focus-within:border-[var(--anc-accent)]">
+                    <div className="flex items-center overflow-hidden rounded-xl border border-white/15 focus-within:border-[var(--anc-accent)]">
                       <span className="whitespace-nowrap bg-white/5 px-3 py-2 text-sm text-neutral-500">
                         {SITE_HOST}/
                       </span>
@@ -399,7 +497,7 @@ export default function EventWizard() {
                         value={customSlug}
                         onChange={(e) => setCustomSlug(slugify(e.target.value))}
                         placeholder={slugify(title) || "mi-fiesta"}
-                        className="w-full bg-transparent px-2 py-2 text-sm text-[#f5f4f1] outline-none"
+                        className="min-h-11 w-full bg-transparent px-2 py-2 text-base text-white outline-none sm:text-sm"
                       />
                     </div>
                     <p className="mt-1.5 text-xs text-neutral-500">
@@ -411,7 +509,7 @@ export default function EventWizard() {
 
               {step === 2 ? (
                 <div className="flex flex-col gap-4">
-                  <h1 className="text-2xl font-bold tracking-tight text-[#f5f4f1]">
+                  <h1 className="text-[clamp(1.9rem,7vw,2.6rem)] uppercase leading-[1] text-white">
                     ¿Cuándo y dónde es?
                   </h1>
                   <Field label="Fecha y hora">
@@ -433,7 +531,7 @@ export default function EventWizard() {
 
               {step === 3 ? (
                 <div className="flex flex-col gap-4">
-                  <h1 className="text-2xl font-bold tracking-tight text-[#f5f4f1]">
+                  <h1 className="text-[clamp(1.9rem,7vw,2.6rem)] uppercase leading-[1] text-white">
                     Cuéntale a tu público de qué se trata
                   </h1>
                   <p className="text-sm text-neutral-400">Puedes saltar este paso y agregarlo después.</p>
@@ -449,7 +547,7 @@ export default function EventWizard() {
 
               {step === 4 ? (
                 <div className="flex flex-col gap-4">
-                  <h1 className="text-2xl font-bold tracking-tight text-[#f5f4f1]">
+                  <h1 className="text-[clamp(1.9rem,7vw,2.6rem)] uppercase leading-[1] text-white">
                     Súbele una imagen
                   </h1>
                   <p className="text-sm text-neutral-400">Puedes saltar este paso y agregarlo después.</p>
@@ -459,7 +557,7 @@ export default function EventWizard() {
 
               {step === 5 ? (
                 <div className="flex flex-col gap-4">
-                  <h1 className="text-2xl font-bold tracking-tight text-[#f5f4f1]">
+                  <h1 className="text-[clamp(1.9rem,7vw,2.6rem)] uppercase leading-[1] text-white">
                     ¿Qué entradas vas a vender?
                   </h1>
                   <p className="text-sm text-neutral-400">
@@ -523,41 +621,111 @@ export default function EventWizard() {
 
               {step === 6 ? (
                 <div className="flex flex-col gap-4">
-                  <h1 className="text-2xl font-bold tracking-tight text-[#f5f4f1]">
-                    Listo para vender
+                  <h1 className="text-[clamp(1.9rem,7vw,2.6rem)] uppercase leading-[1] text-white">
+                    Revisión final
                   </h1>
-                  <div className="rounded-xl border border-white/10 bg-[#101010] p-5 text-sm text-neutral-300">
-                    <p className="font-semibold text-[#f5f4f1]">{title}</p>
-                    <p className="mt-1 text-neutral-400">
+                  <div className="rounded-2xl border border-[var(--anc-border)] bg-[var(--anc-surface)] p-5 text-sm text-neutral-300">
+                    <p className="text-base font-semibold text-white">{title || "Sin título"}</p>
+                    <p className="mt-1 text-[var(--anc-muted-text)]">
                       {eventDate ? new Date(eventDate).toLocaleString("es-CL") : "Sin fecha"}
                       {venue ? ` · ${venue}` : ""}
                     </p>
-                    <p className="mt-3 text-neutral-400">
+                    <p className="mt-3 text-[var(--anc-muted-text)]">
                       {ticketTypes.length > 0
                         ? `${ticketTypes.length} tipo(s) de entrada cargados`
-                        : "Sin tipos de entrada todavía — puedes agregarlos después"}
+                        : "Sin tipos de entrada todavía"}
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-3">
-                    <Button variant="primary" disabled={saving} onClick={() => handleFinish(true)}>
+
+                  {reviewIssues.length > 0 ? (
+                    <ul className="flex flex-col gap-2" aria-label="Pendientes antes de publicar">
+                      {reviewIssues.map((issue) => (
+                        <li
+                          key={issue.id}
+                          className={`flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between ${
+                            issue.blocking
+                              ? "border-[var(--anc-vermilion)]/50 bg-[var(--anc-vermilion)]/10"
+                              : "border-white/10 bg-white/[.03]"
+                          }`}
+                        >
+                          <p className="text-sm text-neutral-100">
+                            <span className="mr-1.5 font-mono text-[11px] font-bold uppercase tracking-[.14em] text-[var(--anc-vermilion)]">
+                              {issue.blocking ? "Falta" : "Sugerencia"}
+                            </span>
+                            {issue.text}
+                          </p>
+                          {issue.href ? (
+                            <Link
+                              href={issue.href}
+                              className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[var(--anc-vermilion)] px-5 text-sm font-semibold text-[var(--anc-ink)]"
+                            >
+                              {issue.label}
+                            </Link>
+                          ) : (
+                            <Button
+                              variant={issue.blocking ? "primary" : "outline"}
+                              className="shrink-0"
+                              disabled={saving}
+                              onClick={() => go(issue.step!)}
+                            >
+                              {issue.label}
+                            </Button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+
+                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                    <Button
+                      variant="primary"
+                      disabled={saving || blockingIssues.length > 0}
+                      onClick={() => handleFinish(true)}
+                    >
                       Crear y publicar
                     </Button>
                     <Button variant="outline" disabled={saving} onClick={() => handleFinish(false)}>
                       Guardar como borrador
                     </Button>
                   </div>
+                  {blockingIssues.length > 0 ? (
+                    <p className="text-xs text-[var(--anc-muted-text)]">
+                      Para publicar resuelve lo que falta. Mientras tanto puedes guardar el borrador.
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
             </motion.div>
           </AnimatePresence>
 
-          {error ? <p className="mt-4 text-sm text-red-400">{error}</p> : null}
+          {error ? (
+            <p role="alert" className="mt-4 text-sm text-red-400">
+              {error}
+              {/Mercado Pago/.test(error) ? (
+                <>
+                  {" "}
+                  <Link href="/dashboard/mercadopago/connect" className="font-semibold text-white underline underline-offset-4">
+                    Conectar ahora
+                  </Link>
+                </>
+              ) : null}
+            </p>
+          ) : null}
 
-          {step < 6 ? (
-            <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
-              <Button variant="outline" disabled={step === 0} onClick={goBack}>
+          <div className="mt-8 flex items-center justify-between gap-3">
+            {step === 0 ? (
+              <Link
+                href="/dashboard/events"
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/20 px-5 text-sm font-semibold text-white transition hover:border-[var(--anc-accent-light)] hover:text-[var(--anc-accent-light)]"
+              >
+                Atrás
+              </Link>
+            ) : (
+              <Button variant="outline" disabled={saving} onClick={goBack}>
                 Atrás
               </Button>
+            )}
+            {step < TOTAL_STEPS - 1 ? (
               <div className="flex gap-2">
                 {step >= 3 ? (
                   <Button variant="outline" disabled={saving} onClick={goNext}>
@@ -576,8 +744,8 @@ export default function EventWizard() {
                   {saving ? "Guardando..." : "Siguiente"}
                 </Button>
               </div>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </div>
 
         <div className="lg:sticky lg:top-6">
