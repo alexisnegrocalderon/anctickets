@@ -1,6 +1,11 @@
 const WIDE = document.body.classList.contains("f169");
 const DUR = {{DURATION}};
+const O = 3.5; // la apertura con logo y lema se quitó: todo el guion se corre 3,5 s
 const tl = gsap.timeline({ paused: true });
+[["to", 2], ["from", 2], ["set", 2], ["fromTo", 3], ["call", 2]].forEach(([name, i]) => {
+  const f = tl[name].bind(tl);
+  tl[name] = (...a) => { if (typeof a[i] === "number") a[i] = Math.max(0, a[i] - O); return f(...a); };
+});
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => Array.from(document.querySelectorAll(s));
 const clp = (n) => "$" + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -35,15 +40,13 @@ SALES.forEach((s, i) => {
 
 // ---- estados iniciales
 gsap.set(".layer", { opacity: 0 });
-gsap.set(["#intro", "#brand", ".cap", "#outro"], { opacity: 1 });
+gsap.set(["#brand", ".cap", "#outro"], { opacity: 1 });
 gsap.set(".cap", { autoAlpha: 0 });
 gsap.set("#brand", { opacity: 0 });
 gsap.set(".ln > span", { yPercent: 115 });
-gsap.set("#i-logo", { scale: 0.4, opacity: 0 });
-gsap.set("#i-tag", { opacity: 0, y: 20 });
 gsap.set("#outro", { autoAlpha: 0 });
-gsap.set("#stage", { autoAlpha: 0 });
-gsap.set("#spin", { rotationY: -38, rotationX: 10, y: WIDE ? 700 : 1100 });
+gsap.set("#stage", { autoAlpha: 1 });
+gsap.set("#spin", { rotationY: -30, rotationX: 8, y: WIDE ? 90 : 140 });
 gsap.set([".wf", ".ws"], { opacity: 0, y: 14 });
 gsap.set(".wz-type", { clipPath: "inset(0 100% 0 0)" });
 gsap.set(".wz-tick", { opacity: 0, scale: 0.4 });
@@ -71,19 +74,9 @@ const linesOut = (sel, t) => tl.to(`${sel} .ln > span`, { yPercent: -115, durati
 tl.to("#glow-a", { x: 220, y: 160, duration: DUR, ease: "none" }, 0);
 tl.to("#glow-b", { x: -200, y: -120, duration: DUR, ease: "none" }, 0);
 
-// ================= 0–4: apertura =================
-tl.to("#i-logo", { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.6)" }, 0.15);
-tl.to("#i-tag", { opacity: 1, y: 0, duration: 0.5, ease }, 0.5);
-lines("#intro", 0.8, 0.75);
-// salida de la apertura
-linesOut("#intro", 3.3);
-tl.to(["#i-logo", "#i-tag"], { opacity: 0, y: -30, duration: 0.4 }, 3.3);
-tl.set("#intro", { autoAlpha: 0 }, 3.95);
-
 // ================= celular entra =================
-tl.set("#stage", { autoAlpha: 1 }, 3.5);
 tl.to("#spin", { y: 0, rotationY: -14, rotationX: 5, duration: 1.3, ease: "power3.out" }, 3.5);
-tl.to("#brand", { opacity: 1, duration: 0.5 }, 4.3);
+tl.to("#brand", { opacity: 1, duration: 0.6 }, 3.8);
 
 const show = (id, a, b) => { tl.to(id, { opacity: 1, duration: 0.35 }, a); if (b) tl.to(id, { opacity: 0, duration: 0.3 }, b); };
 const cap = (id, a, b) => {
@@ -96,7 +89,7 @@ const cap = (id, a, b) => {
 };
 
 // ================= 4.2–8.5: crear =================
-cap("#cap1", 4.2, 8.5); show("#L1", 4.2, 8.6);
+cap("#cap1", 4.2, 8.5); show("#L1", 3.5, 8.6);
 tl.to("#spin", { rotationY: 10, rotationX: 3, duration: 3.8, ease: "sine.inOut" }, 4.85);
 tl.to(".ws", { opacity: 1, y: 0, duration: 0.4, stagger: 1.2, ease }, 4.7);
 [0, 1, 2].forEach((i) => {
@@ -165,7 +158,7 @@ tl.to("#o-logo", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)" },
 lines("#outro", 21.5, 0.7);
 tl.to("#o-pill", { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" }, 22.3);
 tl.to("#o-sub", { opacity: 1, duration: 0.5 }, 22.6);
-tl.to({}, { duration: 0.01 }, DUR - 0.01);
+tl.to({}, { duration: 0.01 }, DUR + O - 0.01);
 
 window.__timelines = window.__timelines || {};
 window.__timelines["main"] = tl;

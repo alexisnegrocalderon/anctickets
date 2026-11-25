@@ -1,7 +1,7 @@
 /* Efectos de interfaz sutiles generados por código (sin pistas ni samples). Salida: out/sfx.wav (mono, 48 kHz). */
 import { mkdirSync, writeFileSync } from "node:fs";
 
-const SR = 48000, DUR = 24;
+const SR = 48000, DUR = 20.5;
 const buf = new Float32Array(SR * DUR);
 
 function add(t, len, fn, gain) {
@@ -25,13 +25,13 @@ const whoosh = (t, len = 0.5) => add(t, len, (x, p) => { lp += (rnd() - lp) * (0
 // toque: clic suave
 const tap = (t) => add(t, 0.06, (x, p) => Math.sin(2 * Math.PI * 520 * x) * env(p, 0.005), 0.08);
 
-whoosh(3.4, 0.9);                       // entra el celular
-whoosh(4.15); whoosh(8.45); whoosh(12.85); whoosh(17.25); // cambios de escena
-tap(7.7);                               // Publicar
-[8.9, 9.9, 10.9, 11.9].forEach(chime); // ventas
-beep(14.45); ok(14.6);                  // escáner 1
-beep(16.25); ok(16.4);                  // escáner 2
-whoosh(20.7, 0.8); whoosh(21.3, 0.6);   // cierre
+whoosh(0.0, 0.9);                       // entra el celular
+whoosh(0.65); whoosh(5.1); whoosh(9.5); whoosh(13.9); // cambios de escena
+tap(4.2);                               // Publicar
+[5.4, 6.4, 7.4, 8.4].forEach(chime);    // ventas
+beep(10.95); ok(11.1);                  // escáner 1
+beep(12.75); ok(12.9);                  // escáner 2
+whoosh(17.2, 0.8); whoosh(17.8, 0.6);   // cierre
 
 let peak = 0; for (const v of buf) peak = Math.max(peak, Math.abs(v));
 const k = peak > 0.5 ? 0.5 / peak : 1;

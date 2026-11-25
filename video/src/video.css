@@ -24,7 +24,7 @@ html,body{width:{{W}}px;height:{{H}}px;overflow:hidden;background:#1d1d1d;font-f
 /* ---- 9:16 ---- */
 .f916 .ph{--pw:620px}
 .f916 .stage{left:0;right:0;top:500px}
-.f916 #brand{left:70px;top:70px}
+.f916 #brand{left:70px;bottom:90px}
 .f916 .cap{left:70px;right:70px;top:150px;text-align:center}
 .f916 .cap .mono{font-size:30px;color:#fc4c13}
 .f916 .cap .anton{font-size:138px;margin-top:22px}
@@ -41,11 +41,11 @@ html,body{width:{{W}}px;height:{{H}}px;overflow:hidden;background:#1d1d1d;font-f
 /* ---- 16:9 ---- */
 .f169 .ph{--pw:420px}
 .f169 .stage{left:1100px;width:700px;top:70px}
-.f169 #brand{left:110px;top:70px}
-.f169 .cap{left:110px;width:900px;top:300px}
+.f169 #brand{left:110px;bottom:60px}
+.f169 .cap{left:110px;width:900px;top:170px}
 .f169 .cap .mono{font-size:26px;color:#fc4c13}
-.f169 .cap .anton{font-size:150px;margin-top:20px}
-.f169 .cap p{font-size:34px;line-height:1.35;color:#d0d0d0;margin-top:30px;max-width:760px}
+.f169 .cap .anton{font-size:122px;margin-top:18px}
+.f169 .cap p{display:none}
 .f169 .intro{left:0;right:0;top:110px;text-align:center}
 .f169 .intro img{width:130px;height:130px;margin-bottom:24px}
 .f169 .intro .anton{font-size:132px}

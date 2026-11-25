@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const DURATION = 24;
+const DURATION = 20.5;
 const read = (p) => readFileSync(join(HERE, p), "utf8");
 const FORMATS = { "9x16": { W: 1080, H: 1920, cls: "f916" }, "16x9": { W: 1920, H: 1080, cls: "f169" } };
 
