@@ -8,7 +8,7 @@ import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, TextareaHTML
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <section className={`rounded-xl border border-white/10 bg-[#101010] p-5 sm:p-6 ${className}`}>
+    <section className={`rounded-2xl border border-[var(--anc-border)] bg-[var(--anc-surface)] p-4 sm:p-6 ${className}`}>
       {children}
     </section>
   );
@@ -24,12 +24,12 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
-      <div className="min-w-0">
-        <h1 className="truncate text-xl font-bold tracking-tight text-[#f5f4f1] sm:text-2xl">
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+      <div className="min-w-0 max-w-full">
+        <h1 className="text-[clamp(2rem,8vw,3rem)] uppercase leading-[.98] text-white [overflow-wrap:anywhere]">
           {title}
         </h1>
-        {subtitle ? <p className="mt-1 text-sm text-neutral-400">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-1.5 text-sm text-[var(--anc-muted-text)]">{subtitle}</p> : null}
       </div>
       {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
     </div>
@@ -38,9 +38,9 @@ export function PageHeader({
 
 const buttonVariants = {
   primary:
-    "bg-[var(--anc-accent)] text-[#120d1b] hover:bg-[var(--anc-accent-light)]",
+    "bg-[var(--anc-accent)] text-[var(--anc-ink)] hover:bg-[var(--anc-accent-light)]",
   outline:
-    "border border-white/20 text-[#f5f4f1] hover:border-[var(--anc-accent-light)] hover:text-[var(--anc-accent-light)]",
+    "border border-white/20 text-white hover:border-[var(--anc-accent-light)] hover:text-[var(--anc-accent-light)]",
   danger:
     "border border-red-500/40 text-red-300 hover:bg-red-500/10",
   dangerSolid: "bg-emerald-500 text-[#0b0b0b] hover:bg-emerald-400",
@@ -49,7 +49,7 @@ const buttonVariants = {
 type ButtonVariant = keyof typeof buttonVariants;
 
 const buttonBase =
-  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap min-h-11 rounded-full px-5 py-2 text-sm font-semibold transition active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50";
 
 export function Button({
   variant = "outline",
@@ -102,7 +102,7 @@ export function LinkButton({
 }
 
 const fieldClass =
-  "w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-[#f5f4f1] placeholder:text-neutral-500 transition focus:border-[var(--anc-accent)] focus:outline-none";
+  "min-h-11 w-full rounded-xl border border-white/15 bg-transparent px-3.5 py-2 text-base text-white placeholder:text-neutral-500 sm:text-sm transition focus:border-[var(--anc-accent)] focus:outline-none";
 
 export function Field({
   label,
@@ -112,7 +112,7 @@ export function Field({
   children: ReactNode;
 }) {
   return (
-    <label className="flex flex-col gap-1 text-sm font-medium text-neutral-300">
+    <label className="flex flex-col gap-1 text-sm font-medium text-[var(--anc-muted-text)]">
       {label}
       {children}
     </label>
@@ -135,7 +135,7 @@ export function Badge({
   children: ReactNode;
 }) {
   const toneClass = {
-    neutral: "bg-white/10 text-neutral-300",
+    neutral: "bg-white/10 text-neutral-200",
     success: "bg-emerald-500/15 text-emerald-300",
     danger: "bg-red-500/15 text-red-300",
   }[tone];

@@ -4,7 +4,7 @@
 import { useState } from "react";
 
 const buttonBase =
-  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-[#f5f4f1] transition hover:border-[var(--anc-accent-light)] hover:text-[var(--anc-accent-light)]";
+  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap min-h-11 rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-white transition hover:border-[var(--anc-accent-light)] hover:text-[var(--anc-accent-light)]";
 
 export default function CopyEventLinkButton({
   slug,

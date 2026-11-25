@@ -1,19 +1,25 @@
 /*
- * ANC Tickets — sistema de marca "Vermilion & Cod Gray": casi-negro cálido de
- * fondo, blanco para el texto y las secciones claras, gris para el apoyo, y
- * un único acento vermilion racionado para toda acción. Tokens compartidos
- * por el home, la página pública de evento y el panel del organizador.
+ * ANC Tickets — sistema de marca "Vermilion & Cod Gray", versión oscura
+ * inmersiva: Cod Gray (#1d1d1d) de lienzo en todo el producto, blanco para el
+ * texto, gris para el apoyo y un único acento vermilion para toda acción.
+ * Tokens compartidos por el home, la página pública de evento y el panel.
  */
 
 :root {
-  --anc-bg: #ffffff;
-  --anc-ink: #1d1d1d;
+  --anc-bg: #1d1d1d;
+  --anc-ink: #1d1d1d; /* texto sobre vermilion */
+  --anc-text: #ffffff;
   --anc-muted: #808080;
+  --anc-muted-text: #a8a8a8; /* gris legible sobre --anc-bg (AA) */
   --anc-vermilion: #fc4c13;
-  --anc-card: #f4f4f4;
-  --anc-border: rgba(29, 29, 29, 0.14);
+  --anc-surface: #262626;
+  --anc-surface-2: #303030;
+  --anc-card: var(--anc-surface);
+  --anc-border: rgba(255, 255, 255, 0.12);
   --anc-border-dark: rgba(255, 255, 255, 0.15);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --anc-tap: 44px; /* área táctil mínima */
+  --anc-gutter: 16px; /* margen lateral en celular */
 
   /* Alias heredados: mismos nombres que usan site-header.tsx, buy-form.tsx y
      el resto del panel, reapuntados a la paleta nueva para que el acento de
@@ -24,6 +30,7 @@
   --anc-turquoise: var(--anc-vermilion);
   --anc-charcoal: var(--anc-ink);
   --anc-warm-white: #ffffff;
+  color-scheme: dark;
 }
 
 /* Cabecera del producto (fuera del home): bloque sólido con remate de acento. */
@@ -101,4 +108,165 @@ html {
 
 .scrollbar-none::-webkit-scrollbar {
   display: none;
+}
+
+/* ---------- Hojas (sheets) que suben desde abajo ---------- */
+
+.anc-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 320ms var(--ease-out), visibility 0s linear 320ms;
+}
+
+.anc-sheet-backdrop[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 320ms var(--ease-out);
+}
+
+.anc-sheet {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 61;
+  max-height: 86dvh;
+  overflow-y: auto;
+  border-radius: 28px 28px 0 0;
+  border: 1px solid var(--anc-border);
+  border-bottom: 0;
+  background: var(--anc-surface);
+  padding: 12px var(--anc-gutter) calc(20px + env(safe-area-inset-bottom));
+  transform: translateY(105%);
+  visibility: hidden;
+  transition: transform 420ms var(--ease-out), visibility 0s linear 420ms;
+}
+
+.anc-sheet[data-open="true"] {
+  transform: translateY(0);
+  visibility: visible;
+  transition: transform 420ms var(--ease-out);
+}
+
+@media (min-width: 768px) {
+  .anc-sheet {
+    inset-inline: auto;
+    left: 50%;
+    width: min(32rem, 100%);
+    margin-left: calc(min(32rem, 100%) / -2);
+  }
+}
+
+/* ---------- Navegación del panel ---------- */
+
+.anc-bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Barra lateral: en tablet (768px) es un riel de íconos, en escritorio
+   (>=1024px) se abre sola; el botón de colapsar manda sobre ambos. */
+.anc-side {
+  width: 5rem;
+  transition: width 320ms var(--ease-out);
+}
+.anc-side .anc-side-label {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .anc-side[data-mode="auto"] {
+    width: 16rem;
+  }
+  .anc-side[data-mode="auto"] .anc-side-label {
+    display: inline;
+  }
+}
+.anc-side[data-mode="open"] {
+  width: 16rem;
+}
+.anc-side[data-mode="open"] .anc-side-label {
+  display: inline;
+}
+
+/* ---------- Pestañas deslizables ---------- */
+
+.anc-tabs {
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+}
+.anc-tabs > * {
+  scroll-snap-align: start;
+}
+
+/* ---------- Luces lentas del home ---------- */
+
+.anc-lights {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.anc-light {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform;
+}
+
+.anc-light-a {
+  width: 80vmax;
+  height: 80vmax;
+  left: -30vmax;
+  top: -35vmax;
+  background: radial-gradient(closest-side, rgba(252, 76, 19, 0.38), transparent 70%);
+  animation: anc-drift-a 26s ease-in-out infinite alternate;
+}
+
+.anc-light-b {
+  width: 70vmax;
+  height: 70vmax;
+  right: -30vmax;
+  top: 5vmax;
+  background: radial-gradient(closest-side, rgba(255, 130, 86, 0.18), transparent 70%);
+  animation: anc-drift-b 34s ease-in-out infinite alternate;
+}
+
+.anc-light-c {
+  width: 90vmax;
+  height: 90vmax;
+  left: 10vmax;
+  bottom: -60vmax;
+  background: radial-gradient(closest-side, rgba(252, 76, 19, 0.22), transparent 70%);
+  animation: anc-drift-c 42s ease-in-out infinite alternate;
+}
+
+@keyframes anc-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(14vmax, 10vmax, 0) scale(1.12); }
+}
+@keyframes anc-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.05); }
+  to { transform: translate3d(-12vmax, 14vmax, 0) scale(0.94); }
+}
+@keyframes anc-drift-c {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-16vmax, -8vmax, 0) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anc-light-a,
+  .anc-light-b,
+  .anc-light-c {
+    animation: none;
+  }
+  .anc-sheet,
+  .anc-sheet-backdrop,
+  .anc-side {
+    transition: none;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
 }
