@@ -1,8 +1,7 @@
-/** Wizard de creación de evento (solo HTML/CSS; la animación la dispara .scene.is-in). */
+/** Wizard de creación de evento: flyer, fecha, entradas y publicar (solo HTML/CSS; se anima con .fs-live .is-active). */
 const FIELDS = [
   { label: "Nombre del evento", value: "Noche Neón" },
   { label: "Fecha y hora", value: "Sáb 14 dic · 22:00" },
-  { label: "Entrada General", value: "$12.000 · 400 cupos" },
 ];
 
 export default function WizardScreen() {
@@ -25,6 +24,15 @@ export default function WizardScreen() {
         <span />
       </div>
 
+      <div className="wz-flyer">
+        <span className="wz-flyer-art">Noche Neón</span>
+        <span className="wz-flyer-date">
+          <b>14</b>
+          <i>Dic</i>
+        </span>
+        <span className="wz-flyer-meta">Flyer del evento · Sáb 22:00</span>
+      </div>
+
       <div className="wz-fields">
         {FIELDS.map((f, i) => (
           <div key={f.label} className="wz-field" style={{ ["--i" as string]: i }}>
@@ -37,22 +45,34 @@ export default function WizardScreen() {
             </p>
           </div>
         ))}
-      </div>
-
-      <div className="wz-preview">
-        <span className="wz-preview-art">Noche Neón</span>
-        <span className="wz-preview-meta">Vista previa de tu página · Sáb 14 dic</span>
-      </div>
-
-      <div className="wz-end">
-        <div className="wz-cta">Publicar evento</div>
-        <div className="wz-live">
-        <span className="wz-live-dot" aria-hidden="true">
-          ✓
-        </span>
-        <strong>Tu evento está en vivo</strong>
-        <small>tickets.ancdigital.cl/noche-neon</small>
+        <div className="wz-field" style={{ ["--i" as string]: 2 }}>
+          <p className="lv-label">Entradas</p>
+          <p className="wz-value">
+            <span className="wz-type">General · $12.000</span>
+            <em className="wz-tick" aria-hidden="true">
+              ✓
+            </em>
+          </p>
+          <p className="wz-value wz-value-2">
+            <span className="wz-type">VIP · $25.000</span>
+            <em className="wz-tick" aria-hidden="true">
+              ✓
+            </em>
+          </p>
         </div>
+      </div>
+
+      <div className="wz-link">
+        <span>tickets.ancdigital.cl/noche-neon</span>
+        <span className="wz-state">
+          <em className="wz-state-a">Borrador</em>
+          <em className="wz-state-b">En vivo</em>
+        </span>
+      </div>
+
+      <div className="wz-cta">
+        <span className="wz-cta-a">Publicar evento</span>
+        <span className="wz-cta-b">✓ Publicado</span>
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ export default function ScrollReveal() {
 
     document.documentElement.classList.add("motion-on");
 
-    const items = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
+    const items = Array.from(document.querySelectorAll<HTMLElement>(".reveal, .rh"));
     const timers: number[] = [];
 
     function show(el: HTMLElement) {

@@ -96,6 +96,9 @@ export default function ScannerScreen() {
       <ul className="sc-log">
         <li><span>#0{count - 1} · General</span><em>VÁLIDA</em></li>
         <li><span>#0{count - 2} · VIP</span><em>VÁLIDA</em></li>
+        <li><span>#0{count - 3} · General</span><em>VÁLIDA</em></li>
+        <li><span>#0{count - 4} · General</span><em>VÁLIDA</em></li>
+        <li><span>#0{count - 5} · VIP</span><em>VÁLIDA</em></li>
       </ul>
       <PhoneTabs on="Escáner" />
     </div>

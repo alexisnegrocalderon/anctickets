@@ -18,7 +18,7 @@ export default function FeeCalculator() {
   const fees = useMemo(() => calculateFees(price), [price]);
 
   return (
-    <div className="rounded-3xl border border-[var(--anc-border)] bg-[var(--anc-surface)] p-5 sm:p-9">
+    <div className="glass p-5 sm:p-9" style={{ ["--gr" as string]: "28px" }} data-glow>
       <label htmlFor="fee-calc-price" className="font-mono text-xs font-black uppercase tracking-[.18em] text-[var(--anc-vermilion)]">
         Precio de tu entrada
       </label>
@@ -47,17 +47,17 @@ export default function FeeCalculator() {
       />
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl bg-[var(--anc-bg)] p-4 sm:p-5">
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4 sm:p-5">
           <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[var(--anc-muted-text)]">Tú publicas</p>
           <p className="mt-1 text-2xl font-black text-white">{clp.format(fees.basePrice)}</p>
         </div>
-        <div className="rounded-2xl bg-[var(--anc-bg)] p-4 sm:p-5">
+        <div className="rounded-2xl border border-white/10 bg-black/30 p-4 sm:p-5">
           <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[var(--anc-muted-text)]">
             El comprador paga
           </p>
           <p className="mt-1 text-2xl font-black text-white">{clp.format(fees.totalAmount)}</p>
         </div>
-        <div className="rounded-2xl border-2 border-[var(--anc-vermilion)] bg-[var(--anc-bg)] p-4 sm:p-5">
+        <div className="rounded-2xl border-2 border-[var(--anc-vermilion)] bg-[var(--anc-vermilion)]/10 p-4 sm:p-5">
           <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[.16em] text-[var(--anc-vermilion)]">
             A tu Mercado Pago
           </p>

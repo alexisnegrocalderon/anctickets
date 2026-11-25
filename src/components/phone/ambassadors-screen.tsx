@@ -50,6 +50,10 @@ export default function AmbassadorsScreen() {
           <small>+$24.000 · acreditado ahora</small>
         </span>
       </div>
+      <div className="am-total">
+        <small>Ventas con código</small>
+        <strong>{RANKING.reduce((n, r) => n + r.sold, 0)} entradas</strong>
+      </div>
       <PhoneTabs on="Más" />
     </div>
   );

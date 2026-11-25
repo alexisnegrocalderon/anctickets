@@ -18,7 +18,7 @@ export function InstallAppButton({
   variant = "primary",
   className,
 }: {
-  variant?: "primary" | "ghost";
+  variant?: "primary" | "ghost" | "glass";
   className?: string;
 }) {
   const standalone = useSyncExternalStore(subscribeInstall, getStandalone, serverTrue);
@@ -29,10 +29,13 @@ export function InstallAppButton({
 
   if (standalone) return null;
 
-  const base =
-    "inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition active:scale-[.98]";
-  const tone =
-    variant === "primary"
+  const glass = variant === "glass";
+  const base = glass
+    ? "gbtn gbtn--primary"
+    : "inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold transition active:scale-[.98]";
+  const tone = glass
+    ? ""
+    : variant === "primary"
       ? "bg-[var(--anc-accent)] text-[var(--anc-ink)] hover:bg-[var(--anc-accent-light)]"
       : "border border-white/20 text-white hover:border-[var(--anc-accent-light)] hover:text-[var(--anc-accent-light)]";
 
@@ -48,7 +51,7 @@ export function InstallAppButton({
 
   return (
     <>
-      <button type="button" onClick={onClick} className={`${base} ${tone} ${className ?? ""}`}>
+      <button type="button" onClick={onClick} className={`${base} ${tone} ${className ?? ""}`} data-glow={glass ? "" : undefined}>
         <DownloadIcon className="h-4 w-4" />
         {canPrompt || guide ? "Instalar app" : "Cómo instalar"}
       </button>

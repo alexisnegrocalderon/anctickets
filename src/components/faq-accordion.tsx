@@ -29,7 +29,7 @@ export default function FaqAccordion() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <div className="divide-y divide-[var(--anc-border)] border-y border-[var(--anc-border)]">
+    <div className="glass divide-y divide-white/10 overflow-hidden px-4 sm:px-7" style={{ ["--gr" as string]: "28px" }} data-glow>
       {FAQS.map((item, index) => {
         const isOpen = open === index;
         return (
@@ -38,7 +38,7 @@ export default function FaqAccordion() {
               type="button"
               onClick={() => setOpen(isOpen ? null : index)}
               aria-expanded={isOpen}
-              className="flex w-full items-center justify-between gap-4 py-4 text-left"
+              className="flex min-h-14 w-full items-center justify-between gap-4 py-4 text-left"
             >
               <span className="text-lg font-bold text-white sm:text-xl">{item.q}</span>
               <span
