@@ -38,7 +38,7 @@ export default async function SiteHeader() {
                 Mis eventos
               </Link>
               <Link
-                href="/dashboard/tickets"
+                href="/mis-entradas"
                 data-cursor-hover
                 className="transition duration-100 hover:text-[var(--anc-accent-light)] active:text-[var(--anc-accent)]"
               >
