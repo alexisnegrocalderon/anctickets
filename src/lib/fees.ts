@@ -72,3 +72,46 @@ export function calculateFees(basePrice: number): FeeBreakdown {
 export function calculateOrderFees(basePriceSum: number): FeeBreakdown {
   return calculateFees(basePriceSum);
 }
+
+export interface OrderLineInput {
+  /** Precio base unitario FINAL (ya con descuento aplicado). */
+  unitBasePrice: number;
+  quantity: number;
+}
+
+export interface OrderTotals {
+  /** Suma de precios base finales: lo que recibe el productor. */
+  baseTotal: number;
+  /** Exactamente lo que cobra Mercado Pago (suma de unit_price * quantity). */
+  totalAmount: number;
+  serviceFeeAmount: number;
+  mpFeeAmount: number;
+  ancFeeAmount: number;
+}
+
+/**
+ * Totales de una orden. El cargo de servicio se calcula POR ENTRADA (igual que
+ * el `unit_price` que se manda a Mercado Pago) y luego se suma, así el total
+ * guardado en la orden es idéntico al que cobra MP: no hay desfase por
+ * redondear sobre la suma en vez de por unidad.
+ */
+export function calculateOrderTotals(lines: OrderLineInput[]): OrderTotals {
+  let baseTotal = 0;
+  let totalAmount = 0;
+
+  for (const line of lines) {
+    const unit = calculateFees(Math.max(line.unitBasePrice, 0));
+    baseTotal += unit.basePrice * line.quantity;
+    totalAmount += unit.totalAmount * line.quantity;
+  }
+
+  if (totalAmount === 0) {
+    return { baseTotal, totalAmount: 0, serviceFeeAmount: 0, mpFeeAmount: 0, ancFeeAmount: 0 };
+  }
+
+  const serviceFeeAmount = totalAmount - baseTotal;
+  const mpFeeAmount = Math.min(roundUpToPeso(totalAmount * MP_FEE_RATE), serviceFeeAmount);
+  const ancFeeAmount = Math.max(serviceFeeAmount - mpFeeAmount, 0);
+
+  return { baseTotal, totalAmount, serviceFeeAmount, mpFeeAmount, ancFeeAmount };
+}
