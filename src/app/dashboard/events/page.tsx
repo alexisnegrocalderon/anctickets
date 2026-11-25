@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Event, Profile } from "@/lib/database.types";
 import { LinkButton, PageHeader } from "@/components/dashboard/ui";
+import InstallBanner from "@/components/pwa/install-banner";
 import CopyEventLinkButton from "@/components/dashboard/copy-event-link-button";
 import { resolveEventTheme } from "@/lib/event-themes";
 
@@ -38,6 +39,7 @@ export default async function DashboardEventsPage() {
 
   return (
     <div>
+      <InstallBanner />
       {!profile?.mp_connected ? (
         <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-[var(--anc-vermilion)]/40 bg-[var(--anc-vermilion)]/10 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
           <div>

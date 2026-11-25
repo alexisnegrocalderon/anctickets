@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/database.types";
+import { InstallAppButton } from "@/components/pwa/install-app-button";
 import { Badge, Button, Card, LinkButton, PageHeader } from "@/components/dashboard/ui";
 
 export default async function DashboardAccountPage() {
@@ -51,6 +52,18 @@ export default async function DashboardAccountPage() {
               </LinkButton>
             </div>
           ) : null}
+        </Card>
+
+        <Card>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="text-2xl uppercase text-white">App en tu celular</h2>
+              <p className="mt-1 text-sm text-[var(--anc-muted-text)]">
+                Instala ANC Tickets para abrirla como una app y escanear entradas incluso sin internet.
+              </p>
+            </div>
+            <InstallAppButton />
+          </div>
         </Card>
 
         <form action="/auth/signout" method="post">

@@ -30,7 +30,7 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-dvh bg-[var(--anc-bg)] text-white md:flex">
       <DashboardNav />
-      <main className="min-w-0 flex-1 px-4 pb-28 pt-6 md:px-8 md:pb-12 md:pt-10 lg:px-12">
+      <main className="min-w-0 flex-1 px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-[calc(1.5rem+env(safe-area-inset-top))] md:px-8 md:pb-12 md:pt-10 lg:px-12">
         <div className="mx-auto w-full max-w-6xl">
           <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
             Productora
