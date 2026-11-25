@@ -269,10 +269,11 @@
 /* ---------- Embajadores ---------- */
 .am-label { margin-bottom: 3cqw; }
 .am-rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3cqw; }
-.am-rank li { display: grid; grid-template-columns: 7cqw 20cqw 1fr 8cqw; align-items: center; gap: 2.4cqw; padding: 3cqw; border-radius: 4cqw; background: #1d1d1d; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 4.4cqw; }
+.am-rank li { display: grid; grid-template-columns: 7cqw 27cqw 1fr 8cqw; align-items: center; gap: 2.4cqw; padding: 3cqw; border-radius: 4cqw; background: #1d1d1d; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 4.4cqw; }
 .am-pos { width: 6.4cqw; height: 6.4cqw; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, 0.12); font-weight: 800; font-size: 3.8cqw; }
 .am-rank li:first-child .am-pos { background: #fc4c13; color: #1d1d1d; }
-.am-name { font-weight: 700; }
+.am-name { font-weight: 700; display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.am-role { font-size: 2.8cqw; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--anc-vermilion, #fc4c13); }
 .am-bar { height: 2.4cqw; border-radius: 9999px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
 .am-bar span { display: block; height: 100%; background: #fc4c13; border-radius: inherit; transform-origin: left; }
 .am-n { font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
@@ -375,7 +376,7 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#1d1d1d;font-fam
   <div class="cap" id="cap1"><div class="mono">01 · Crear</div><div class="anton"><span class="ln"><span>Crea tu evento</span></span><span class="ln"><span class="v">en 2 minutos</span></span></div><p>Nombre, fecha y entradas. Tu evento queda publicado con su propio link.</p></div>
   <div class="cap" id="cap2"><div class="mono">02 · Vender</div><div class="anton"><span class="ln"><span>Ventas</span></span><span class="ln"><span class="v">en vivo</span></span></div><p>Cada entrada vendida llega como notificación. Mira subir tus ingresos.</p></div>
   <div class="cap" id="cap3"><div class="mono">03 · Controlar</div><div class="anton"><span class="ln"><span>Escáner QR</span></span><span class="ln"><span class="v">en la puerta</span></span></div><p>Tu staff valida desde su teléfono: VÁLIDA en verde y el contador sube.</p></div>
-  <div class="cap" id="cap4"><div class="mono">04 · Crecer</div><div class="anton"><span class="ln"><span>Embajadores</span></span><span class="ln"><span class="v">y descuentos</span></span></div><p>Códigos para tu equipo y el dinero directo a tu Mercado Pago.</p></div>
+  <div class="cap" id="cap4"><div class="mono">04 · Crecer</div><div class="anton"><span class="ln"><span>Embajadores</span></span><span class="ln"><span class="v">y descuentos</span></span></div><p>Ranking de embajadores (nombres de ejemplo), códigos de descuento y el dinero directo a tu Mercado Pago.</p></div>
 
   <div class="stage" id="stage">
     <div class="ph-stage" data-mode="scene"><div class="ph"><div class="ph-spin" id="spin">
@@ -420,10 +421,10 @@ html,body{width:1920px;height:1080px;overflow:hidden;background:#1d1d1d;font-fam
           <div class="lv-bar"><span class="lv-title">Embajadores</span><span class="lv-tag">Ejemplo</span></div>
           <p class="lv-label am-label">Ranking de ventas</p>
           <ol class="am-rank">
-            <li class="ar"><span class="am-pos">1</span><span class="am-name">Valentina</span><span class="am-bar"><span style="width:100%"></span></span><span class="am-n">42</span></li>
-            <li class="ar"><span class="am-pos">2</span><span class="am-name">Matías</span><span class="am-bar"><span style="width:74%"></span></span><span class="am-n">31</span></li>
-            <li class="ar"><span class="am-pos">3</span><span class="am-name">Josefa</span><span class="am-bar"><span style="width:57%"></span></span><span class="am-n">24</span></li>
-            <li class="ar"><span class="am-pos">4</span><span class="am-name">Tomás</span><span class="am-bar"><span style="width:29%"></span></span><span class="am-n">12</span></li>
+            <li class="ar"><span class="am-pos">1</span><span class="am-name">Valentina<span class="am-role">Embajador</span></span><span class="am-bar"><span style="width:100%"></span></span><span class="am-n">42</span></li>
+            <li class="ar"><span class="am-pos">2</span><span class="am-name">Matías<span class="am-role">Embajador</span></span><span class="am-bar"><span style="width:74%"></span></span><span class="am-n">31</span></li>
+            <li class="ar"><span class="am-pos">3</span><span class="am-name">Josefa<span class="am-role">Embajador</span></span><span class="am-bar"><span style="width:57%"></span></span><span class="am-n">24</span></li>
+            <li class="ar"><span class="am-pos">4</span><span class="am-name">Tomás<span class="am-role">Embajador</span></span><span class="am-bar"><span style="width:29%"></span></span><span class="am-n">12</span></li>
           </ol>
           <div class="am-code" id="am-code"><div><p class="lv-label">Código de descuento</p><p class="am-code-val">NEON10</p></div><span class="am-off">-10%</span></div>
           <div class="am-pay" id="am-pay"><span class="am-pay-ico">$</span><span><strong>Directo a tu Mercado Pago</strong><small>+$24.000 · acreditado ahora</small></span></div>

@@ -83,32 +83,36 @@ export default async function Home() {
           <div className="anc-light anc-light-c" />
         </div>
 
-        <div className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 text-center sm:px-8 lg:pb-24">
-          <Phone mode="hero" label="Celular con el panel de ventas de un evento de ejemplo, Noche Neón">
-            <LiveSalesScreen variant="full" />
-          </Phone>
-          <p className="mt-2 font-mono text-[11px] uppercase tracking-[.18em] text-white/60">
-            Evento de ejemplo · datos ficticios
-          </p>
-
-          <h1 className="mx-auto mt-6 max-w-4xl text-[clamp(2.8rem,12vw,6.5rem)] uppercase leading-[.92] text-white">
-            Toda tu ticketera en{" "}
-            <span className="text-[var(--anc-vermilion)]">la palma de tu mano</span>
-          </h1>
-          <p className="mx-auto mt-5 max-w-[52ch] text-base sm:text-lg leading-7 text-white/80">
-            Webapp que se instala en tu celular: crea eventos, mira las ventas en vivo, controla
-            la puerta y cobra directo en tu Mercado Pago.
-          </p>
-
-          <div id="hero-cta" className="mx-auto mt-8 flex w-full max-w-sm scroll-mt-24 flex-col gap-3 sm:max-w-xl sm:flex-row">
-            <InstallAppButton variant="primary" className="w-full sm:flex-1" />
-            <div className="w-full sm:flex-1">
-              <HeroSignup compact loggedIn={loggedIn} variant="ghost" />
-            </div>
+        <div className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 text-center sm:px-8 lg:grid lg:max-w-6xl lg:grid-cols-[minmax(0,1.15fr)_minmax(0,.85fr)] lg:items-center lg:gap-10 lg:px-12 lg:pb-16 lg:pt-8 lg:text-left">
+          <div className="lg:order-2">
+            <Phone mode="hero" label="Celular con el panel de ventas de un evento de ejemplo, Noche Neón">
+              <LiveSalesScreen variant="full" />
+            </Phone>
+            <p className="mt-2 text-center font-mono text-[11px] uppercase tracking-[.18em] text-white/60">
+              Evento de ejemplo · datos ficticios
+            </p>
           </div>
-          <p className="mt-4 text-sm text-[var(--anc-muted-text)]">
-            Publicar es gratis. Entras con tu cuenta de Google, sin tarjeta de crédito.
-          </p>
+
+          <div className="lg:order-1">
+            <h1 className="mx-auto mt-6 max-w-4xl text-[clamp(2.8rem,12vw,6.5rem)] uppercase leading-[.92] text-white lg:mx-0 lg:mt-0 lg:text-[clamp(3.2rem,5.6vw,5.5rem)]">
+              Toda tu ticketera en{" "}
+              <span className="text-[var(--anc-vermilion)]">la palma de tu mano</span>
+            </h1>
+            <p className="mx-auto mt-5 max-w-[52ch] text-base sm:text-lg leading-7 text-white/80 lg:mx-0">
+              Webapp que se instala en tu celular: crea eventos, mira las ventas en vivo, controla
+              la puerta y cobra directo en tu Mercado Pago.
+            </p>
+
+            <div id="hero-cta" className="mx-auto mt-8 flex w-full max-w-sm scroll-mt-24 flex-col gap-3 sm:max-w-xl sm:flex-row lg:mx-0">
+              <InstallAppButton variant="primary" className="w-full sm:flex-1" />
+              <div className="w-full sm:flex-1">
+                <HeroSignup compact loggedIn={loggedIn} variant="ghost" />
+              </div>
+            </div>
+            <p className="mt-4 text-sm text-[var(--anc-muted-text)]">
+              Publicar es gratis. Entras con tu cuenta de Google, sin tarjeta de crédito.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -157,7 +161,7 @@ export default async function Home() {
       <AppScene
         eyebrow="04 · Crecer"
         title={<>Embajadores <span className="text-[var(--anc-vermilion)]">y descuentos.</span></>}
-        body="Dale un código a tus embajadores y mira quién vende más. El dinero va directo a tu Mercado Pago, sin cuenta intermedia."
+        body="Dale un código a tus embajadores y mira quién vende más. El dinero va directo a tu Mercado Pago, sin cuenta intermedia. Los nombres de la lista son de ejemplo."
         label="Celular con el ranking de embajadores, un código de descuento y el pago directo a Mercado Pago"
         reverse
       >

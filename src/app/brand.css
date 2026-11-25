@@ -298,6 +298,9 @@ html {
 @media (min-width: 768px) {
   .ph-stage[data-mode="hero"] .ph { --pw: 220px; }
 }
+@media (min-width: 1024px) {
+  .ph-stage[data-mode="hero"] .ph { --pw: 250px; }
+}
 
 .ph-spin {
   position: absolute;
@@ -533,10 +536,11 @@ html {
 /* ---------- Embajadores ---------- */
 .am-label { margin-bottom: 3cqw; }
 .am-rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3cqw; }
-.am-rank li { display: grid; grid-template-columns: 7cqw 20cqw 1fr 8cqw; align-items: center; gap: 2.4cqw; padding: 3cqw; border-radius: 4cqw; background: #1d1d1d; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 4.4cqw; }
+.am-rank li { display: grid; grid-template-columns: 7cqw 27cqw 1fr 8cqw; align-items: center; gap: 2.4cqw; padding: 3cqw; border-radius: 4cqw; background: #1d1d1d; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 4.4cqw; }
 .am-pos { width: 6.4cqw; height: 6.4cqw; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, 0.12); font-weight: 800; font-size: 3.8cqw; }
 .am-rank li:first-child .am-pos { background: var(--anc-vermilion); color: #1d1d1d; }
-.am-name { font-weight: 700; }
+.am-name { font-weight: 700; display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.am-role { font-size: 2.8cqw; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--anc-vermilion, #fc4c13); }
 .am-bar { height: 2.4cqw; border-radius: 9999px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
 .am-bar span { display: block; height: 100%; background: var(--anc-vermilion); border-radius: inherit; transform-origin: left; }
 .am-n { font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }

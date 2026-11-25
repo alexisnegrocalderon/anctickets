@@ -21,7 +21,10 @@ export default function AmbassadorsScreen() {
         {RANKING.map((r, i) => (
           <li key={r.name} style={{ ["--i" as string]: i }}>
             <span className="am-pos">{i + 1}</span>
-            <span className="am-name">{r.name}</span>
+            <span className="am-name">
+              {r.name}
+              <span className="am-role">Embajador</span>
+            </span>
             <span className="am-bar">
               <span style={{ width: `${(r.sold / 42) * 100}%` }} />
             </span>
