@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { getClaimsUser, getSupabase } from "@/lib/auth";
+import { EntradasListSkeleton } from "@/components/dashboard/skeletons";
 import type { Event, TicketType } from "@/lib/database.types";
 import { LinkButton, PageHeader } from "@/components/dashboard/ui";
 
@@ -23,58 +26,8 @@ export default async function EntradasPage({ searchParams }: { searchParams: Pro
   const { tab } = await searchParams;
   const active = tab === "escaner" ? "escaner" : "ventas";
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: eventsData } = await supabase
-    .from("events")
-    .select("id, title, event_date, status")
-    .eq("organizer_id", user!.id)
-    .order("event_date", { ascending: false })
-    .returns<EventRow[]>();
-  const events = eventsData ?? [];
-  const ids = events.map((e) => e.id);
-
-  const sold = new Map<string, { sold: number; reserved: number; total: number }>();
-  const revenue = new Map<string, number>();
-
-  if (active === "ventas" && ids.length > 0) {
-    const { data: types } = await supabase
-      .from("ticket_types")
-      .select("event_id, quantity, sold_count, reserved_count")
-      .in("event_id", ids)
-      .returns<TypeRow[]>();
-    for (const t of types ?? []) {
-      const acc = sold.get(t.event_id) ?? { sold: 0, reserved: 0, total: 0 };
-      acc.sold += t.sold_count;
-      acc.reserved += t.reserved_count;
-      acc.total += t.quantity;
-      sold.set(t.event_id, acc);
-    }
-
-    // Mismo cálculo que la pestaña Ventas de la edición: lo que recibe el productor (precio base, sin cargo de servicio).
-    for (let from = 0; ; from += PAGE_SIZE) {
-      const { data } = await supabase
-        .from("orders")
-        .select("event_id, order_items(quantity, unit_base_price)")
-        .in("event_id", ids)
-        .eq("status", "approved")
-        .order("created_at", { ascending: true })
-        .range(from, from + PAGE_SIZE - 1)
-        .returns<OrderRow[]>();
-      for (const order of data ?? []) {
-        const base = order.order_items.reduce((s, i) => s + i.quantity * Number(i.unit_base_price), 0);
-        revenue.set(order.event_id, (revenue.get(order.event_id) ?? 0) + base);
-      }
-      if (!data || data.length < PAGE_SIZE) break;
-    }
-  }
-
-  const published = events.filter((e) => e.status === "published");
-  const list = active === "ventas" ? events : published;
-
+  // Cabecera y pestañas salen de inmediato; la lista (consultas a la base)
+  // llega por streaming dentro del Suspense.
   return (
     <div>
       <PageHeader title="Entradas" subtitle="Ventas de tus eventos y control de acceso en puerta." />
@@ -99,6 +52,73 @@ export default async function EntradasPage({ searchParams }: { searchParams: Pro
         ))}
       </nav>
 
+      <Suspense key={active} fallback={<EntradasListSkeleton />}>
+        <EntradasList active={active} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function EntradasList({ active }: { active: "ventas" | "escaner" }) {
+  const user = await getClaimsUser();
+  if (!user) redirect("/login?next=/dashboard/entradas");
+
+  const supabase = await getSupabase();
+
+  const { data: eventsData } = await supabase
+    .from("events")
+    .select("id, title, event_date, status")
+    .eq("organizer_id", user.id)
+    .order("event_date", { ascending: false })
+    .returns<EventRow[]>();
+  const events = eventsData ?? [];
+  const ids = events.map((e) => e.id);
+
+  const sold = new Map<string, { sold: number; reserved: number; total: number }>();
+  const revenue = new Map<string, number>();
+
+  if (active === "ventas" && ids.length > 0) {
+    // Cupos y recaudación dependen solo de los ids de eventos: en paralelo.
+    const typesQuery = supabase
+      .from("ticket_types")
+      .select("event_id, quantity, sold_count, reserved_count")
+      .in("event_id", ids)
+      .returns<TypeRow[]>();
+
+    // Mismo cálculo que la pestaña Ventas de la edición: lo que recibe el productor (precio base, sin cargo de servicio).
+    const revenueTask = (async () => {
+      for (let from = 0; ; from += PAGE_SIZE) {
+        const { data } = await supabase
+          .from("orders")
+          .select("event_id, order_items(quantity, unit_base_price)")
+          .in("event_id", ids)
+          .eq("status", "approved")
+          .order("created_at", { ascending: true })
+          .range(from, from + PAGE_SIZE - 1)
+          .returns<OrderRow[]>();
+        for (const order of data ?? []) {
+          const base = order.order_items.reduce((s, i) => s + i.quantity * Number(i.unit_base_price), 0);
+          revenue.set(order.event_id, (revenue.get(order.event_id) ?? 0) + base);
+        }
+        if (!data || data.length < PAGE_SIZE) break;
+      }
+    })();
+
+    const [{ data: types }] = await Promise.all([typesQuery, revenueTask]);
+    for (const t of types ?? []) {
+      const acc = sold.get(t.event_id) ?? { sold: 0, reserved: 0, total: 0 };
+      acc.sold += t.sold_count;
+      acc.reserved += t.reserved_count;
+      acc.total += t.quantity;
+      sold.set(t.event_id, acc);
+    }
+  }
+
+  const published = events.filter((e) => e.status === "published");
+  const list = active === "ventas" ? events : published;
+
+  return (
+    <>
       {list.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-white/20 px-6 py-14 text-center">
           <p className="font-display text-3xl uppercase text-white">
@@ -165,6 +185,6 @@ export default async function EntradasPage({ searchParams }: { searchParams: Pro
           ))}
         </ul>
       )}
-    </div>
+    </>
   );
 }

@@ -25,8 +25,12 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Refresca la sesión si el token expiró — necesario para Server Components.
-  await supabase.auth.getUser();
+  // Refresca la sesión si el token está por vencer (necesario para Server
+  // Components). getClaims() renueva igual y verifica la firma del JWT en el
+  // propio servidor, sin la ida y vuelta de red a Supabase Auth que hace
+  // getUser() en cada petición. Las decisiones de acceso (layout del panel y
+  // rutas de escritura) siguen usando getUser().
+  await supabase.auth.getClaims();
 
   return supabaseResponse;
 }

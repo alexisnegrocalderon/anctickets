@@ -1,19 +1,13 @@
-import { createClient } from "@/lib/supabase/server";
-import type { Profile } from "@/lib/database.types";
+import { redirect } from "next/navigation";
+import { getClaimsUser, getOrganizerProfile } from "@/lib/auth";
 import { InstallAppButton } from "@/components/pwa/install-app-button";
 import { Badge, Button, Card, LinkButton, PageHeader } from "@/components/dashboard/ui";
 
 export default async function DashboardAccountPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getClaimsUser();
+  if (!user) redirect("/login?next=/dashboard/account");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("organizer_name, mp_connected")
-    .eq("id", user!.id)
-    .single<Pick<Profile, "organizer_name" | "mp_connected">>();
+  const profile = await getOrganizerProfile(user.id);
 
   return (
     <div className="max-w-2xl">

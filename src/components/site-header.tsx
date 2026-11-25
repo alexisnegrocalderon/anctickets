@@ -1,15 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getVerifiedUser } from "@/lib/auth";
 
 const linkClass =
   "inline-flex min-h-11 items-center transition-colors duration-200 hover:text-white active:text-[var(--anc-vermilion)]";
 
 export default async function SiteHeader() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getVerifiedUser();
 
   return (
     <header className="anc-header-material sticky top-0 z-50">
@@ -47,6 +44,27 @@ export default async function SiteHeader() {
             </Link>
           )}
         </nav>
+      </div>
+    </header>
+  );
+}
+
+/** Mismo encabezado sin sesión: se ve al instante mientras llega el estado del usuario. */
+export function SiteHeaderFallback() {
+  return (
+    <header className="anc-header-material sticky top-0 z-50">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-8">
+        <Link
+          href="/"
+          className="flex min-h-11 items-center gap-2 font-display text-xl uppercase text-white"
+          aria-label="ANC Tickets, inicio"
+        >
+          <Image src="/anc-mark.png" alt="" width={28} height={28} priority />
+          <span className="hidden min-[400px]:inline">
+            ANC <span className="text-[var(--anc-vermilion)]">Tickets</span>
+          </span>
+        </Link>
+        <div className="min-h-11" aria-hidden="true" />
       </div>
     </header>
   );

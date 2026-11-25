@@ -1,27 +1,21 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getOrganizerProfile, getVerifiedUser } from "@/lib/auth";
 import DashboardNav from "@/components/dashboard/dashboard-nav";
-import type { Profile } from "@/lib/database.types";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Verificación fuerte del usuario (servidor de Auth); la página reutiliza
+  // este mismo resultado dentro de la petición.
+  const user = await getVerifiedUser();
 
   if (!user) {
     redirect("/login?next=/dashboard/events");
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("organizer_name")
-    .eq("id", user.id)
-    .single<Pick<Profile, "organizer_name">>();
+  const profile = await getOrganizerProfile(user.id);
 
   if (!profile?.organizer_name) {
     redirect("/onboarding");
@@ -29,6 +23,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-dvh bg-[var(--anc-bg)] text-white md:flex">
+      <div className="anc-progress" aria-hidden="true" />
       <DashboardNav />
       <main className="min-w-0 flex-1 px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-[calc(1.5rem+env(safe-area-inset-top))] md:px-8 md:pb-12 md:pt-10 lg:px-12">
         <div className="mx-auto w-full max-w-6xl">

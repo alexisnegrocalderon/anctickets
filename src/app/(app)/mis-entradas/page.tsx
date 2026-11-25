@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getVerifiedUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Badge, Card } from "@/components/dashboard/ui";
 import type { OrderStatus, TicketStatus } from "@/lib/database.types";
@@ -47,10 +47,9 @@ export default async function MyTicketsPage({
 }) {
   const { order: highlighted } = await searchParams;
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Verificación fuerte (servidor de Auth): con service role se leen entradas con QR.
+  // Compartida con el encabezado del sitio dentro de la misma petición.
+  const user = await getVerifiedUser();
   if (!user) {
     const next = highlighted ? `/mis-entradas?order=${encodeURIComponent(highlighted)}` : "/mis-entradas";
     redirect(`/login?next=${encodeURIComponent(next)}`);

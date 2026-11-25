@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import type { Event, Profile } from "@/lib/database.types";
+import { redirect } from "next/navigation";
+import { getClaimsUser, getOrganizerProfile, getSupabase } from "@/lib/auth";
+import type { Event } from "@/lib/database.types";
 import { LinkButton, PageHeader } from "@/components/dashboard/ui";
 import InstallBanner from "@/components/pwa/install-banner";
 import CopyEventLinkButton from "@/components/dashboard/copy-event-link-button";
@@ -19,23 +20,21 @@ const statusClass: Record<Event["status"], string> = {
 };
 
 export default async function DashboardEventsPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getClaimsUser();
+  if (!user) redirect("/login?next=/dashboard/events");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user!.id)
-    .single<Profile>();
+  const supabase = await getSupabase();
 
-  const { data: events } = await supabase
-    .from("events")
-    .select("*")
-    .eq("organizer_id", user!.id)
-    .order("created_at", { ascending: false })
-    .returns<Event[]>();
+  // Perfil y eventos no dependen entre sí: van en paralelo.
+  const [profile, { data: events }] = await Promise.all([
+    getOrganizerProfile(user.id),
+    supabase
+      .from("events")
+      .select("*")
+      .eq("organizer_id", user.id)
+      .order("created_at", { ascending: false })
+      .returns<Event[]>(),
+  ]);
 
   return (
     <div>
