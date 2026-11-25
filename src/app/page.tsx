@@ -67,28 +67,31 @@ export default async function Home() {
         </Link>
       </header>
 
-      {/* ---------------- HERO: video de fondo, texto en el tercio inferior ---------------- */}
-      <section id="hero" className="hero relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden">
+      {/* ---------------- HERO: video de fondo; texto abajo en celular, centrado en escritorio ---------------- */}
+      <section id="hero" className="hero relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden lg:justify-center">
         <HeroVideo />
         <div className="hero-scrim" aria-hidden="true" />
 
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-8 pt-32 sm:px-8 lg:px-12 lg:pb-14">
-          <h1 className="max-w-4xl text-[clamp(2.3rem,10vw,5.6rem)] uppercase leading-[.93] text-white [text-shadow:0_2px_24px_rgba(0,0,0,.45)]">
-            Toda tu ticketera en{" "}
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-5 pt-24 sm:px-8 md:pb-8 md:pt-32 lg:px-12 lg:pb-24 lg:pt-28">
+          <h1 className="max-w-4xl text-[clamp(1.95rem,9vw,5.6rem)] uppercase leading-[.93] text-white [text-shadow:0_2px_24px_rgba(0,0,0,.55)]">
+            Todo tu evento en{" "}
             <span className="text-[var(--anc-vermilion)]">la palma de tu mano</span>
           </h1>
-          <p className="mt-4 max-w-[52ch] text-base leading-7 text-white/90 [text-shadow:0_1px_12px_rgba(0,0,0,.5)] sm:text-lg">
-            Webapp que se instala en tu celular: crea eventos, mira las ventas en vivo, controla
-            la puerta y cobra directo en tu Mercado Pago.
+          <p className="mt-3 max-w-[52ch] text-[0.95rem] leading-6 text-white/95 [text-shadow:0_1px_12px_rgba(0,0,0,.6)] sm:mt-4 sm:text-lg sm:leading-7">
+            <span className="sm:hidden">Webapp instalable: vende entradas, mira las ventas en vivo y cobra en tu Mercado Pago.</span>
+            <span className="hidden sm:inline">
+              Webapp que se instala en tu celular: vende entradas, mira las ventas en vivo, controla
+              la puerta y cobra directo en tu Mercado Pago.
+            </span>
           </p>
 
-          <div id="hero-cta" className="mt-6 flex w-full max-w-sm scroll-mt-24 flex-col gap-3 sm:max-w-xl sm:flex-row">
+          <div id="hero-cta" className="mt-4 flex w-full max-w-sm scroll-mt-24 flex-col gap-2.5 sm:mt-6 sm:max-w-xl sm:flex-row sm:gap-3">
             <InstallAppButton variant="glass" className="w-full sm:flex-1" />
             <div className="w-full sm:flex-1">
               <HeroSignup compact loggedIn={loggedIn} variant="ghost" />
             </div>
           </div>
-          <p className="mt-3 text-sm text-white/70">
+          <p className="mt-3 hidden text-sm text-white/70 md:block">
             Publicar es gratis. Entras con tu cuenta de Google, sin tarjeta de crédito.
           </p>
         </div>
