@@ -8,6 +8,7 @@
  */
 import { useState } from "react";
 import { slugify } from "@/lib/slug";
+import { isReservedSlug } from "@/lib/reserved-slugs";
 
 export default function SlugField({ defaultValue, host }: { defaultValue: string; host: string }) {
   const [value, setValue] = useState(defaultValue);
@@ -24,6 +25,11 @@ export default function SlugField({ defaultValue, host }: { defaultValue: string
           placeholder="mi-fiesta"
         />
       </div>
+      {isReservedSlug(value) ? (
+        <p className="mt-1.5 text-xs text-red-400">
+          &ldquo;{value}&rdquo; está reservado por el sistema. Elige otro link.
+        </p>
+      ) : null}
       <p className="mt-1.5 text-xs text-neutral-500">
         Corto y fácil de decir en tu historia. Si lo cambias, el link viejo deja de funcionar.
       </p>

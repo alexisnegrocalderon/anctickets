@@ -40,7 +40,6 @@ export async function sendTicketConfirmationEmail(params: {
   const when = new Date(params.eventDate).toLocaleString("es-CL", {
     dateStyle: "full",
     timeStyle: "short",
-    timeZone: "America/Santiago",
   });
 
   const { error } = await resend.emails.send({

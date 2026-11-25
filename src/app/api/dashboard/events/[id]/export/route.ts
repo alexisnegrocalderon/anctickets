@@ -1,22 +1,37 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { csvRow } from "@/lib/csv";
 import type { Event } from "@/lib/database.types";
 
-interface OrderRow {
-  id: string;
-  buyer_email: string;
-  total_amount: number;
-  created_at: string;
-  order_items: { quantity: number; ticket_types: { name: string } | null }[];
+interface TicketRow {
+  qr_code: string;
+  status: string;
+  used_at: string | null;
+  holder_name: string | null;
+  holder_email: string | null;
+  ticket_types: { name: string } | null;
+  orders: {
+    id: string;
+    status: string;
+    kind: string;
+    buyer_email: string;
+    created_at: string;
+    discount_codes: { code: string } | null;
+    ambassadors: { name: string } | null;
+  } | null;
 }
 
-function csvEscape(value: string): string {
-  if (/[",\n]/.test(value)) {
-    return `"${value.replace(/"/g, '""')}"`;
-  }
-  return value;
+const PAGE_SIZE = 1000;
+
+const KIND_LABEL: Record<string, string> = { sale: "Venta", free: "Gratis", courtesy: "Cortesía" };
+const STATUS_LABEL: Record<string, string> = { valid: "Válida", used: "Ingresó", cancelled: "Anulada" };
+
+function santiago(iso: string | null) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleString("es-CL", { timeZone: "America/Santiago", hourCycle: "h23" });
 }
 
+/** CSV de asistentes: una fila por entrada emitida (solo el productor dueño del evento). */
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -41,36 +56,62 @@ export async function GET(
     return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
   }
 
-  const { data: orders, error } = await supabase
-    .from("orders")
-    .select(
-      "id, buyer_email, total_amount, created_at, order_items(quantity, ticket_types(name))"
-    )
-    .eq("event_id", eventId)
-    .eq("status", "approved")
-    .order("created_at", { ascending: true })
-    .returns<OrderRow[]>();
+  const rows: TicketRow[] = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from("tickets")
+      .select(
+        "qr_code, status, used_at, holder_name, holder_email, ticket_types(name), orders!inner(id, status, kind, buyer_email, created_at, discount_codes(code), ambassadors(name))"
+      )
+      .eq("event_id", eventId)
+      .in("orders.status", ["approved", "refunded", "charged_back"])
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true })
+      .range(from, from + PAGE_SIZE - 1)
+      .returns<TicketRow[]>();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    rows.push(...(data ?? []));
+    if (!data || data.length < PAGE_SIZE) break;
   }
 
-  const header = ["Email comprador", "Entradas", "Total pagado", "Fecha de compra"];
-  const rows = (orders ?? []).map((order) => {
-    const items = order.order_items
-      .map((item) => `${item.quantity}x ${item.ticket_types?.name ?? "Entrada"}`)
-      .join(" + ");
+  const header = csvRow([
+    "Entrada",
+    "Titular",
+    "Correo titular",
+    "Correo comprador",
+    "Tipo de orden",
+    "Estado de la orden",
+    "Código de descuento",
+    "Embajador",
+    "Estado de la entrada",
+    "Ingresó a las",
+    "Fecha de compra",
+    "Código QR",
+  ]);
 
-    return [
-      csvEscape(order.buyer_email),
-      csvEscape(items),
-      order.total_amount.toString(),
-      new Date(order.created_at).toISOString(),
-    ].join(",");
-  });
+  const lines = rows.map((t) =>
+    csvRow([
+      t.ticket_types?.name ?? "",
+      t.holder_name,
+      t.holder_email,
+      t.orders?.buyer_email,
+      KIND_LABEL[t.orders?.kind ?? ""] ?? t.orders?.kind,
+      t.orders?.status,
+      t.orders?.discount_codes?.code,
+      t.orders?.ambassadors?.name,
+      STATUS_LABEL[t.status] ?? t.status,
+      santiago(t.used_at),
+      santiago(t.orders?.created_at ?? null),
+      t.qr_code,
+    ])
+  );
 
-  const csv = [header.join(","), ...rows].join("\n");
-  const filename = `compradores-${event.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.csv`;
+  // BOM para que Excel abra bien las tildes.
+  const csv = "﻿" + [header, ...lines].join("\n");
+  const filename = `asistentes-${event.slug}.csv`;
 
   return new NextResponse(csv, {
     headers: {

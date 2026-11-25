@@ -4,6 +4,9 @@
 import { useId, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
+const MAX_BYTES = 5 * 1024 * 1024;
+
 export default function ImageUpload({
   name,
   defaultValue,
@@ -28,8 +31,18 @@ export default function ImageUpload({
   }
 
   async function handleFile(file: File) {
-    setUploading(true);
     setError(null);
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setError("Sube una imagen JPG, PNG, WebP, GIF o AVIF.");
+      return;
+    }
+    if (file.size > MAX_BYTES) {
+      setError("La imagen pesa más de 5 MB. Comprímela e intenta de nuevo.");
+      return;
+    }
+
+    setUploading(true);
 
     try {
       const supabase = createClient();
@@ -38,7 +51,7 @@ export default function ImageUpload({
       } = await supabase.auth.getUser();
       if (!user) throw new Error("Debes iniciar sesión");
 
-      const ext = file.name.split(".").pop() ?? "jpg";
+      const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 5) || "jpg";
       const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
@@ -81,7 +94,7 @@ export default function ImageUpload({
           ref={fileInputRef}
           id={inputId}
           type="file"
-          accept="image/*"
+          accept={ALLOWED_TYPES.join(",")}
           className="hidden"
           onChange={(event) => {
             const file = event.target.files?.[0];

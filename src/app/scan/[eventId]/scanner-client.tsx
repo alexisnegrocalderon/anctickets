@@ -300,13 +300,11 @@ function ManualSearch({ eventId, onCheckIn }: { eventId: string; onCheckIn: (qr:
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const searching = query.trim().length >= 2;
 
   useEffect(() => {
     const q = query.trim();
-    if (q.length < 2) {
-      setResults(null);
-      return;
-    }
+    if (q.length < 2) return;
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       setLoading(true);
@@ -343,10 +341,10 @@ function ManualSearch({ eventId, onCheckIn }: { eventId: string; onCheckIn: (qr:
       />
       {loading ? <p className="mt-3 text-xs text-neutral-500">Buscando…</p> : null}
       {error ? <p className="mt-3 text-xs text-red-400">{error}</p> : null}
-      {results && results.length === 0 && !loading ? (
+      {searching && results && results.length === 0 && !loading ? (
         <p className="mt-3 text-sm text-neutral-400">Sin resultados.</p>
       ) : null}
-      {results && results.length > 0 ? (
+      {searching && results && results.length > 0 ? (
         <ul className="mt-3 divide-y divide-white/10">
           {results.map((r) => {
             const usable = r.status === "valid";

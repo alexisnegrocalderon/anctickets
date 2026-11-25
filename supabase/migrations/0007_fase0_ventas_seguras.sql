@@ -794,3 +794,12 @@ begin
   end loop;
 end;
 $$;
+
+-- =========================================================
+-- 10. Storage: el bucket de imágenes solo acepta imágenes (máx. 5 MB)
+-- =========================================================
+-- Sin SVG a propósito (puede traer scripts). Complementa la validación del navegador.
+update storage.buckets
+set file_size_limit = 5242880,
+    allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']
+where id = 'event-images';

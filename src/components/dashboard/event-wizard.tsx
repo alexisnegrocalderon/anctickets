@@ -225,7 +225,14 @@ export default function EventWizard() {
     setError(null);
 
     try {
-      if (publish) await setEventStatus(eventId, "published");
+      if (publish) {
+        const result = await setEventStatus(eventId, "published");
+        if (result.error) {
+          setError(result.error);
+          setSaving(false);
+          return;
+        }
+      }
       router.push(`/dashboard/events/${eventId}/edit`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo publicar");

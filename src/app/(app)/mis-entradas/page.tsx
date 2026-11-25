@@ -14,6 +14,8 @@ interface OrderRow {
   id: string;
   status: OrderStatus;
   kind: string;
+  buyer_id: string;
+  buyer_email: string;
   total_amount: number;
   created_at: string;
   reserved_until: string | null;
@@ -29,7 +31,12 @@ interface OrderRow {
 }
 
 const SELECT =
-  "id, status, kind, total_amount, created_at, reserved_until, events(title, slug, event_date, venue), tickets(id, qr_code, status, holder_name, seq, ticket_types(name))";
+  "id, status, kind, buyer_id, buyer_email, total_amount, created_at, reserved_until, events(title, slug, event_date, venue), tickets(id, qr_code, status, holder_name, seq, ticket_types(name))";
+
+/** Fuera del render para no marcar el componente como impuro. */
+function nowMs() {
+  return Date.now();
+}
 
 const CLOSED: OrderStatus[] = ["rejected", "cancelled", "expired"];
 
@@ -64,9 +71,14 @@ export default async function MyTicketsPage({
   const merged = new Map<string, OrderRow>();
   for (const o of [...(byId.data ?? []), ...(byEmail.data ?? [])]) merged.set(o.id, o);
 
-  const now = Date.now();
+  const now = nowMs();
   const orders = [...merged.values()]
     .filter((o) => {
+      // Las cortesías que el productor emite a nombre de otra persona quedan a su
+      // nombre en la base (buyer_id) pero no son suyas: no se le muestran.
+      if (o.kind === "courtesy" && o.buyer_id === user.id && o.buyer_email.toLowerCase() !== (user.email ?? "").toLowerCase()) {
+        return false;
+      }
       if (o.id === highlighted) return true;
       if (CLOSED.includes(o.status)) return false;
       if (o.status === "pending") return !o.reserved_until || new Date(o.reserved_until).getTime() > now;
@@ -115,7 +127,6 @@ function OrderCard({ order, highlighted }: { order: OrderRow; highlighted: boole
               {new Date(event.event_date).toLocaleString("es-CL", {
                 dateStyle: "full",
                 timeStyle: "short",
-                timeZone: "America/Santiago",
               })}
               {event.venue ? ` · ${event.venue}` : ""}
             </p>

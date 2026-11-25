@@ -17,11 +17,11 @@ const FAQS = [
   },
   {
     q: "¿Cómo controlo el acceso el día del evento?",
-    a: "Cada entrada tiene un código QR único. Tu staff lo escanea desde su propio teléfono con acceso a tu evento, y un código ya usado no vuelve a entrar.",
+    a: "Cada entrada tiene un código QR único. Desde tu panel agregas el correo de tu staff de puerta: ellos inician sesión con Google, abren el link de escaneo de tu evento y validan desde su propio teléfono, sin instalar nada. Un código ya usado no vuelve a entrar y el contador te muestra cuántos han ingresado. El staff solo puede validar entradas: no ve tus ventas ni edita el evento.",
   },
   {
     q: "¿Qué pasa si necesito hacer un reembolso?",
-    a: "Tú decides: puedes anular una entrada específica desde tu panel y el reembolso se procesa directo por Mercado Pago hacia el comprador.",
+    a: "ANC no reembolsa automáticamente: lo coordinas con tu comprador y lo procesas tú desde tu cuenta de Mercado Pago, que es donde cayó el pago. Cuando Mercado Pago nos avisa del reembolso, la entrada se anula sola y el cupo vuelve a quedar disponible.",
   },
 ];
 
