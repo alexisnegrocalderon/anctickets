@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import DashboardSidebar from "@/components/dashboard/dashboard-sidebar";
+import DashboardNav from "@/components/dashboard/dashboard-nav";
 import type { Profile } from "@/lib/database.types";
 
 export default async function DashboardLayout({
@@ -28,18 +28,18 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-full flex-col bg-[var(--anc-ink)] text-[#f5f4f1] sm:flex-row">
-      <DashboardSidebar userEmail={user.email ?? null} />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:py-10">
-        <div className="mb-8">
-          <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[var(--anc-accent)]">
+    <div className="min-h-dvh bg-[var(--anc-bg)] text-white md:flex">
+      <DashboardNav />
+      <main className="min-w-0 flex-1 px-4 pb-28 pt-6 md:px-8 md:pb-12 md:pt-10 lg:px-12">
+        <div className="mx-auto w-full max-w-6xl">
+          <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
             Productora
           </p>
-          <h1 className="mt-1 text-4xl font-black tracking-tight text-[#f5f4f1] sm:text-5xl">
+          <p className="mb-6 mt-1 truncate font-display text-lg uppercase text-[var(--anc-muted-text)]">
             {profile.organizer_name}
-          </h1>
+          </p>
+          {children}
         </div>
-        {children}
       </main>
     </div>
   );
