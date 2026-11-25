@@ -20,6 +20,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Vendored skill assets (scripts/data shipped by installed skills), not project code.
     ".agents/**",
+    // Proyecto de video (Hyperframes), aparte de la app.
+    "video/**",
   ]),
 ]);
 

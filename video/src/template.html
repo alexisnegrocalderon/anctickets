@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="assets/gsap.min.js"></script>
+<style>
+@font-face{font-family:"Anton";src:url("assets/fonts/anton.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"Geist";src:url("assets/fonts/geist.woff2") format("woff2");font-weight:100 900}
+@font-face{font-family:"Geist Mono";src:url("assets/fonts/geist-mono.woff2") format("woff2");font-weight:100 900}
+{{PHONECSS}}
+{{VIDEOCSS}}
+</style>
+</head>
+<body class="{{FORMAT}}">
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DURATION}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="glow-a" class="glow"></div><div id="glow-b" class="glow"></div>
+{{BODY}}
+</div>
+<script>
+{{SCRIPT}}
+</script>
+</body>
+</html>

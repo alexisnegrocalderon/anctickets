@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<script src="assets/gsap.min.js"></script>
+<style>
+@font-face{font-family:"Anton";src:url("assets/fonts/anton.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"Geist";src:url("assets/fonts/geist.woff2") format("woff2");font-weight:100 900}
+@font-face{font-family:"Geist Mono";src:url("assets/fonts/geist-mono.woff2") format("woff2");font-weight:100 900}
+/* Copia del celular de la portada (src/app/brand.css) para los videos. */
+/* =====================================================================
+   PORTADA — celular 3D en CSS y pantallas de ejemplo ("Noche Neón").
+   Todo se mide en cqw dentro de .ph-screen, así escala con el celular.
+   ===================================================================== */
+
+.ph-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  perspective: 1500px;
+  padding: 8px 0 22px;
+}
+
+.ph {
+  --pw: clamp(200px, 60vw, 280px);
+  position: relative;
+  width: var(--pw);
+  aspect-ratio: 9 / 19;
+}
+.ph-stage[data-mode="hero"] .ph {
+  --pw: clamp(176px, 50vw, 208px);
+}
+@media (min-width: 768px) {
+  .ph-stage[data-mode="hero"] .ph { --pw: 220px; }
+}
+
+.ph-spin {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(5deg) rotateY(-14deg);
+}
+.ph-stage[data-mode="hero"] .ph-spin {
+  animation: ph-float 10s ease-in-out infinite;
+}
+@keyframes ph-float {
+  0%, 100% { transform: translateY(0) rotateX(7deg) rotateY(-20deg) rotateZ(-1deg); }
+  50% { transform: translateY(-14px) rotateX(3deg) rotateY(14deg) rotateZ(1deg); }
+}
+
+.ph-slab,
+.ph-face {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--pw) * 0.16);
+}
+.ph-slab {
+  background: linear-gradient(135deg, #4a4a4e, #1c1c1e 55%, #3a3a3e);
+}
+.ph-face {
+  background: linear-gradient(145deg, #5a5a5e, #1c1c1e 38%, #2e2e31 70%, #4a4a4e);
+  padding: calc(var(--pw) * 0.028);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+.ph-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--pw) * 0.132);
+  background: #111;
+  container-type: inline-size;
+  color: #fff;
+  font-size: 4.6cqw;
+  line-height: 1.25;
+}
+.ph-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.14), transparent 30%);
+}
+.ph-island {
+  position: absolute;
+  top: 2.6cqw;
+  left: 50%;
+  width: 27cqw;
+  height: 7.6cqw;
+  margin-left: -13.5cqw;
+  border-radius: 9999px;
+  background: #000;
+  z-index: 3;
+}
+.ph-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3.6cqw 8cqw 0;
+  height: 13cqw;
+  font-size: 4cqw;
+  font-weight: 700;
+}
+.ph-status-icons { display: inline-flex; gap: 1.4cqw; align-items: center; }
+.ph-status-icons i { width: 4.4cqw; height: 2.6cqw; border-radius: 0.6cqw; background: #fff; }
+.ph-status-icons i + i { width: 3cqw; opacity: 0.8; }
+.ph-status-icons b { width: 6.4cqw; height: 3cqw; border-radius: 1cqw; border: 0.4cqw solid #fff; }
+
+.ph-btn {
+  position: absolute;
+  width: 3px;
+  background: #3a3a3e;
+  border-radius: 2px;
+  transform: translateZ(-6px);
+}
+.ph-btn-a { left: -2px; top: 17%; height: 5%; }
+.ph-btn-b { left: -2px; top: 25%; height: 8%; }
+.ph-btn-c { right: -2px; top: 24%; height: 12%; }
+
+.ph-shadow {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -26px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.55), transparent);
+}
+.ph-stage[data-mode="hero"] .ph-shadow { animation: ph-shadow 10s ease-in-out infinite; }
+@keyframes ph-shadow {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.8); opacity: 0.6; }
+}
+
+.ph-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(120vw, 560px);
+  height: min(120vw, 560px);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, rgba(252, 76, 19, 0.3), transparent 70%);
+  pointer-events: none;
+}
+
+/* ---------- Piezas comunes de las pantallas ---------- */
+.lv, .sc, .wz, .am { padding: 0 6cqw 6cqw; display: flex; flex-direction: column; height: calc(100% - 13cqw); }
+.lv-bar { display: flex; align-items: center; justify-content: space-between; gap: 3cqw; padding: 1cqw 0 3.5cqw; }
+.lv-title { font-weight: 800; font-size: 5.4cqw; white-space: nowrap; }
+.lv-tag {
+  font-family: "Geist Mono", monospace;
+  font-size: 3.4cqw;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1cqw 2.6cqw;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.85);
+}
+.lv-label {
+  font-family: "Geist Mono", monospace;
+  font-size: 3.7cqw;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b4b4b4;
+}
+
+/* ---------- Ventas en vivo ---------- */
+.lv-card { border-radius: 5cqw; background: #1d1d1d; border: 1px solid rgba(255, 255, 255, 0.08); padding: 5cqw; }
+.lv-money { margin-top: 1.5cqw; font-family: Anton, sans-serif; font-size: 15cqw; line-height: 1; font-variant-numeric: tabular-nums; }
+.lv-meter { margin-top: 4cqw; height: 3cqw; border-radius: 9999px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+.lv-meter span { display: block; height: 100%; border-radius: inherit; background: #fc4c13;  }
+.lv-sold { margin-top: 2.4cqw; font-size: 4.2cqw; color: #d0d0d0; font-variant-numeric: tabular-nums; }
+.lv-sold strong { color: #fff; }
+.lv-chart { margin-top: 3.4cqw; }
+.lv-bars { display: flex; align-items: flex-end; gap: 1.8cqw; height: 16cqw; margin-top: 2cqw; }
+.lv-bars span { flex: 1; border-radius: 1cqw 1cqw 0 0; background: rgba(252, 76, 19, 0.75); transform-origin: bottom; }
+.lv-feed-label { margin-top: 4cqw; }
+.lv-feed { list-style: none; margin: 2.4cqw 0 3cqw; padding: 0; display: flex; flex-direction: column; gap: 2.4cqw; overflow: hidden; flex: 1; min-height: 0; }
+.lv-tabs { display: flex; justify-content: space-between; margin: auto -6cqw -6cqw; flex: none; padding: 3.4cqw 6cqw 5cqw; border-top: 1px solid rgba(255, 255, 255, 0.1); background: #161616; font-size: 3.6cqw; color: #9a9a9a; font-weight: 700; }
+.lv-tabs [data-on] { color: #fc4c13; }
+.lv-toast {
+  display: flex; align-items: center; gap: 3cqw;
+  padding: 3cqw; border-radius: 4cqw;
+  background: #232323; border: 1px solid rgba(255, 255, 255, 0.08);
+  max-height: 20cqw;
+}
+.lv-toast-new { animation: lv-in 0.7s ease both; }
+@keyframes lv-in {
+  from { max-height: 0; padding-block: 0; opacity: 0; transform: translateX(45%); margin-top: -2.4cqw; }
+  to { max-height: 20cqw; opacity: 1; transform: none; margin-top: 0; }
+}
+.lv-dot {
+  flex: none; width: 8cqw; height: 8cqw; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #fc4c13; color: #1d1d1d; font-weight: 900; font-size: 5cqw;
+}
+.lv-toast-body { display: flex; flex-direction: column; min-width: 0; }
+.lv-toast-line { font-size: 4.2cqw; font-weight: 800; white-space: nowrap; }
+.lv-toast-sub { font-size: 3.5cqw; color: #b4b4b4; }
+
+/* ---------- Escáner ---------- */
+.sc-count { display: flex; align-items: baseline; justify-content: space-between; padding: 1cqw 0 4cqw; }
+.sc-num { font-family: Anton, sans-serif; font-size: 12cqw; line-height: 1; font-variant-numeric: tabular-nums; animation: sc-pop 0.5s ease; }
+.sc-num small { font-family: Geist, sans-serif; font-size: 4.6cqw; color: #b4b4b4; }
+@keyframes sc-pop { from { transform: scale(1.35); color: #34d399; } to { transform: none; } }
+.sc-view {
+  position: relative; align-self: center; width: 68cqw; aspect-ratio: 1; border-radius: 5cqw; overflow: hidden;
+  background: #0a0a0a; border: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid; place-items: center;
+  
+}
+.sc[data-valid="true"] .sc-view { border-color: #34d399; box-shadow: 0 0 0 1cqw rgba(52, 211, 153, 0.25); }
+.sc-qr { width: 44cqw; height: 44cqw; display: grid; grid-template-columns: repeat(11, 1fr); gap: 0.5cqw; padding: 2.4cqw; background: #fff; border-radius: 2.4cqw; }
+.sc-qr span { background: transparent; border-radius: 0.5cqw; }
+.sc-qr span.on { background: #111; }
+.sc-corner { position: absolute; width: 8cqw; height: 8cqw; border: 1cqw solid #fff; z-index: 2; }
+.sc-c1 { top: 3cqw; left: 3cqw; border-right: 0; border-bottom: 0; border-top-left-radius: 3cqw; }
+.sc-c2 { top: 3cqw; right: 3cqw; border-left: 0; border-bottom: 0; border-top-right-radius: 3cqw; }
+.sc-c3 { bottom: 3cqw; left: 3cqw; border-right: 0; border-top: 0; border-bottom-left-radius: 3cqw; }
+.sc-c4 { bottom: 3cqw; right: 3cqw; border-left: 0; border-top: 0; border-bottom-right-radius: 3cqw; }
+.sc[data-valid="true"] .sc-corner { border-color: #34d399; }
+.sc-line {
+  position: absolute; left: 4cqw; right: 4cqw; top: 6cqw; height: 0.9cqw; border-radius: 9999px;
+  background: #fc4c13; box-shadow: 0 0 4cqw #fc4c13;
+  animation: sc-scan 1.5s ease-in-out infinite alternate;
+}
+.sc[data-valid="true"] .sc-line { opacity: 0; animation: none; }
+@keyframes sc-scan { from { top: 6cqw; } to { top: 60cqw; } }
+.sc-result { position: relative; margin-top: 5cqw; flex: 1; }
+.sc-ok, .sc-hint { position: absolute; left: 0; right: 0;  }
+.sc-ok {
+  display: flex; align-items: center; gap: 4cqw; padding: 4cqw 5cqw; border-radius: 5cqw;
+  background: #34d399; color: #062a1c; opacity: 0; transform: translateY(6cqw);
+}
+.sc[data-valid="true"] .sc-ok { opacity: 1; transform: none; }
+.sc-check { flex: none; width: 11cqw; height: 11cqw; border-radius: 50%; display: grid; place-items: center; background: #062a1c; color: #34d399; font-size: 7cqw; font-weight: 900; }
+.sc-ok-text { display: flex; flex-direction: column; }
+.sc-ok-text strong { font-family: Anton, sans-serif; font-size: 9cqw; letter-spacing: 0.04em; line-height: 1; }
+.sc-ok-text small { font-size: 3.9cqw; font-weight: 700; }
+.sc-hint { top: 5cqw; text-align: center; color: #b4b4b4; font-size: 4.2cqw; opacity: 1; }
+.sc[data-valid="true"] .sc-hint { opacity: 0; }
+
+/* ---------- Wizard ---------- */
+.wz-steps { list-style: none; margin: 0; padding: 0; display: flex; justify-content: space-between; }
+.wz-steps li { display: flex; align-items: center; gap: 2cqw; font-size: 3.9cqw; font-weight: 700; color: #fff; }
+.wz-steps b { width: 6.4cqw; height: 6.4cqw; border-radius: 50%; display: grid; place-items: center; background: #fc4c13; color: #1d1d1d; font-size: 3.8cqw; }
+.wz-progress { margin: 3.5cqw 0 5cqw; height: 1.6cqw; border-radius: 9999px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+.wz-progress span { display: block; height: 100%; width: 100%; background: #fc4c13; border-radius: inherit; transform-origin: left; }
+.wz-fields { display: flex; flex-direction: column; gap: 3.4cqw; }
+.wz-field { padding: 3.6cqw 4cqw; border-radius: 4cqw; background: #1d1d1d; border: 1px solid rgba(255, 255, 255, 0.08); }
+.wz-value { display: flex; align-items: center; justify-content: space-between; margin-top: 1.4cqw; font-size: 5cqw; font-weight: 800; }
+.wz-type { display: inline-block; overflow: hidden; white-space: nowrap; }
+.wz-tick { font-style: normal; color: #34d399; font-size: 5cqw; }
+.wz-end { display: grid; margin-top: 5cqw; }
+.wz-end > * { grid-area: 1 / 1; }
+.wz-cta { display: grid; place-items: center; height: 14cqw; border-radius: 9999px; background: #fc4c13; color: #1d1d1d; font-weight: 900; font-size: 4.8cqw; text-transform: uppercase; opacity: 0; }
+.wz-live {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1cqw; text-align: center;
+  padding: 4cqw; border-radius: 5cqw; background: #1d1d1d; border: 1px solid #34d399;
+}
+.wz-live strong { font-size: 5cqw; }
+.wz-live small { font-size: 3.7cqw; color: #b4b4b4; font-family: "Geist Mono", monospace; }
+.wz-live-dot { width: 9cqw; height: 9cqw; border-radius: 50%; display: grid; place-items: center; background: #34d399; color: #062a1c; font-weight: 900; font-size: 5.6cqw; }
+
+/* ---------- Embajadores ---------- */
+.am-label { margin-bottom: 3cqw; }
+.am-rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3cqw; }
+.am-rank li { display: grid; grid-template-columns: 7cqw 20cqw 1fr 8cqw; align-items: center; gap: 2.4cqw; padding: 3cqw; border-radius: 4cqw; background: #1d1d1d; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 4.4cqw; }
+.am-pos { width: 6.4cqw; height: 6.4cqw; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, 0.12); font-weight: 800; font-size: 3.8cqw; }
+.am-rank li:first-child .am-pos { background: #fc4c13; color: #1d1d1d; }
+.am-name { font-weight: 700; }
+.am-bar { height: 2.4cqw; border-radius: 9999px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+.am-bar span { display: block; height: 100%; background: #fc4c13; border-radius: inherit; transform-origin: left; }
+.am-n { font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+.am-code { margin-top: 5cqw; display: flex; align-items: center; justify-content: space-between; padding: 4cqw 5cqw; border-radius: 4cqw; border: 1.5px dashed rgba(255, 255, 255, 0.4); }
+.am-code-val { margin-top: 1cqw; font-family: "Geist Mono", monospace; font-weight: 800; font-size: 6.4cqw; letter-spacing: 0.1em; }
+.am-off { padding: 1.6cqw 3.6cqw; border-radius: 9999px; background: #fc4c13; color: #1d1d1d; font-weight: 900; font-size: 5cqw; }
+.am-pay { margin-top: 5cqw; display: flex; align-items: center; gap: 3.6cqw; padding: 4cqw; border-radius: 4cqw; background: #1d1d1d; border: 1px solid #34d399; }
+.am-pay-ico { flex: none; width: 10cqw; height: 10cqw; border-radius: 50%; display: grid; place-items: center; background: #34d399; color: #062a1c; font-weight: 900; font-size: 6cqw; }
+.am-pay strong { display: block; font-size: 4.6cqw; }
+.am-pay small { font-size: 3.8cqw; color: #b4b4b4; }
+
+
+.wz-preview { margin-top: 5cqw; border-radius: 4cqw; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.08); background: #1d1d1d; }
+.wz-preview-art { display: grid; place-items: center; height: 24cqw; background: linear-gradient(135deg, #fc4c13, #7a1d00 70%); font-family: Anton, sans-serif; font-size: 9cqw; text-transform: uppercase; letter-spacing: 0.02em; }
+.wz-preview-meta { display: block; padding: 2.6cqw 4cqw; font-size: 3.7cqw; color: #b4b4b4; }
+.sc-log { list-style: none; margin: 4cqw 0 0; padding: 0; display: flex; flex-direction: column; gap: 2cqw; }
+.sc-log li { display: flex; justify-content: space-between; padding: 2.6cqw 4cqw; border-radius: 3cqw; background: #1d1d1d; font-size: 4cqw; }
+.sc-log em { font-style: normal; font-weight: 800; color: #34d399; font-size: 3.6cqw; }
+.sc-view { width: 62cqw; }
+.sc-result { flex: none; height: 19cqw; }
+.am-pay > span:last-child { display: flex; flex-direction: column; gap: 0.6cqw; } .am-pay small { display: block; }
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#1d1d1d;font-family:Geist,sans-serif;color:#fff}
+#root{position:absolute;inset:0;overflow:hidden;background:#1d1d1d}
+/* El video se mueve solo con GSAP: se anulan las animaciones CSS del celular. */
+*{animation:none!important}
+.glow{position:absolute;border-radius:50%;pointer-events:none}
+#glow-a{width:1500px;height:1500px;left:-500px;top:-600px;background:radial-gradient(closest-side,rgba(252,76,19,.34),transparent 70%)}
+#glow-b{width:1300px;height:1300px;right:-500px;bottom:-500px;background:radial-gradient(closest-side,rgba(255,130,86,.2),transparent 70%)}
+.mono{font-family:"Geist Mono",monospace;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+.anton{font-family:Anton,sans-serif;text-transform:uppercase;line-height:.95}
+.v{color:#fc4c13}
+.ln{display:block;overflow:hidden;padding:.14em 0 .06em;margin-top:-.14em}
+.ln>span{display:block}
+.cap,.intro,.outro{position:absolute}
+.stage{position:absolute;perspective:1800px;display:flex;justify-content:center}
+.stage .ph-stage{padding:0}
+.ph-glow{display:none}
+.layer{position:absolute;left:0;right:0;top:13cqw;bottom:0;height:auto!important;opacity:0}
+#brand{position:absolute;display:flex;align-items:center;gap:18px;opacity:0}
+#brand img{width:64px;height:64px}
+#brand b{font:400 52px Anton;text-transform:uppercase}
+.pill{display:inline-flex;align-items:center;border-radius:999px;background:#fc4c13;color:#1d1d1d;font-weight:900;text-transform:uppercase}
+
+/* ---- 9:16 ---- */
+.f916 .ph{--pw:620px}
+.f916 .stage{left:0;right:0;top:500px}
+.f916 #brand{left:70px;top:70px}
+.f916 .cap{left:70px;right:70px;top:150px;text-align:center}
+.f916 .cap .mono{font-size:30px;color:#fc4c13}
+.f916 .cap .anton{font-size:138px;margin-top:22px}
+.f916 .intro{left:60px;right:60px;top:420px;text-align:center}
+.f916 .intro img{width:190px;height:190px;margin-bottom:40px}
+.f916 .intro .anton{font-size:172px}
+.f916 .intro .mono{font-size:30px;margin-top:40px;color:#bdbdbd}
+.f916 .outro{left:60px;right:60px;top:500px;text-align:center}
+.f916 .outro img{width:170px;height:170px}
+.f916 .outro .anton{font-size:230px;margin-top:40px}
+.f916 .outro .pill{margin-top:70px;font-size:54px;padding:34px 60px}
+.f916 .outro .mono{font-size:24px;letter-spacing:.12em;margin-top:50px;color:#bdbdbd}
+
+/* ---- 16:9 ---- */
+.f169 .ph{--pw:420px}
+.f169 .stage{left:1100px;width:700px;top:70px}
+.f169 #brand{left:110px;top:70px}
+.f169 .cap{left:110px;width:900px;top:300px}
+.f169 .cap .mono{font-size:26px;color:#fc4c13}
+.f169 .cap .anton{font-size:150px;margin-top:20px}
+.f169 .cap p{font-size:34px;line-height:1.35;color:#d0d0d0;margin-top:30px;max-width:760px}
+.f169 .intro{left:0;right:0;top:110px;text-align:center}
+.f169 .intro img{width:130px;height:130px;margin-bottom:24px}
+.f169 .intro .anton{font-size:132px}
+.f169 .intro .mono{font-size:26px;margin-top:30px;color:#bdbdbd}
+.f169 .outro{left:0;right:0;top:170px;text-align:center}
+.f169 .outro img{width:120px;height:120px}
+.f169 .outro .anton{font-size:200px;margin-top:20px}
+.f169 .outro .pill{margin-top:46px;font-size:46px;padding:26px 50px}
+.f169 .outro .mono{font-size:24px;margin-top:36px;color:#bdbdbd}
+.f916 .cap p{display:none}
+
+</style>
+</head>
+<body class="f169">
+<div id="root" data-composition-id="main" data-start="0" data-duration="24" data-width="1920" data-height="1080" data-fps="30">
+  <div id="glow-a" class="glow"></div><div id="glow-b" class="glow"></div>
+  <div id="brand"><img src="assets/anc-mark.png" alt=""><b>ANC Tickets</b></div>
+
+  <div class="intro" id="intro">
+    <img id="i-logo" src="assets/anc-mark.png" alt="">
+    <div class="mono" id="i-tag">ANC Tickets</div>
+    <div class="anton" id="i-head">
+      <span class="ln"><span>Toda tu</span></span>
+      <span class="ln"><span>ticketera</span></span>
+      <span class="ln"><span class="v">en la palma</span></span>
+      <span class="ln"><span class="v">de tu mano</span></span>
+    </div>
+  </div>
+
+  <div class="cap" id="cap1"><div class="mono">01 · Crear</div><div class="anton"><span class="ln"><span>Crea tu evento</span></span><span class="ln"><span class="v">en 2 minutos</span></span></div><p>Nombre, fecha y entradas. Tu evento queda publicado con su propio link.</p></div>
+  <div class="cap" id="cap2"><div class="mono">02 · Vender</div><div class="anton"><span class="ln"><span>Ventas</span></span><span class="ln"><span class="v">en vivo</span></span></div><p>Cada entrada vendida llega como notificación. Mira subir tus ingresos.</p></div>
+  <div class="cap" id="cap3"><div class="mono">03 · Controlar</div><div class="anton"><span class="ln"><span>Escáner QR</span></span><span class="ln"><span class="v">en la puerta</span></span></div><p>Tu staff valida desde su teléfono: VÁLIDA en verde y el contador sube.</p></div>
+  <div class="cap" id="cap4"><div class="mono">04 · Crecer</div><div class="anton"><span class="ln"><span>Embajadores</span></span><span class="ln"><span class="v">y descuentos</span></span></div><p>Códigos para tu equipo y el dinero directo a tu Mercado Pago.</p></div>
+
+  <div class="stage" id="stage">
+    <div class="ph-stage" data-mode="scene"><div class="ph"><div class="ph-spin" id="spin">
+      <span class="ph-slab" style="transform:translateZ(-2px)"></span><span class="ph-slab" style="transform:translateZ(-4px)"></span><span class="ph-slab" style="transform:translateZ(-6px)"></span><span class="ph-slab" style="transform:translateZ(-8px)"></span><span class="ph-slab" style="transform:translateZ(-10px)"></span><span class="ph-slab" style="transform:translateZ(-12px)"></span><span class="ph-slab" style="transform:translateZ(-14px)"></span>
+      <span class="ph-btn ph-btn-a"></span><span class="ph-btn ph-btn-b"></span><span class="ph-btn ph-btn-c"></span>
+      <div class="ph-face"><div class="ph-screen">
+        <div class="ph-island"></div>
+        <div class="ph-status"><span>9:41</span><span class="ph-status-icons"><i></i><i></i><b></b></span></div>
+
+        <div class="layer wz" id="L1">
+          <div class="lv-bar"><span class="lv-title">Nuevo evento</span><span class="lv-tag">Ejemplo</span></div>
+          <ol class="wz-steps"><li class="ws"><b>1</b><span>Datos</span></li><li class="ws"><b>2</b><span>Fecha</span></li><li class="ws"><b>3</b><span>Entradas</span></li></ol>
+          <div class="wz-progress"><span id="wz-prog"></span></div>
+          <div class="wz-fields">
+            <div class="wz-field wf"><p class="lv-label">Nombre del evento</p><p class="wz-value"><span class="wz-type">Noche Neón</span><em class="wz-tick">✓</em></p></div>
+            <div class="wz-field wf"><p class="lv-label">Fecha y hora</p><p class="wz-value"><span class="wz-type">Sáb 14 dic · 22:00</span><em class="wz-tick">✓</em></p></div>
+            <div class="wz-field wf"><p class="lv-label">Entrada General</p><p class="wz-value"><span class="wz-type">$12.000 · 400 cupos</span><em class="wz-tick">✓</em></p></div>
+          </div>
+          <div class="wz-preview" id="wz-prev"><span class="wz-preview-art">Noche Neón</span><span class="wz-preview-meta">Vista previa de tu página · Sáb 14 dic</span></div>
+          <div class="wz-end"><div class="wz-cta" id="wz-cta">Publicar evento</div><div class="wz-live" id="wz-live"><span class="wz-live-dot">✓</span><strong>Tu evento está en vivo</strong><small>tickets.ancdigital.cl/noche-neon</small></div></div>
+        </div>
+
+        <div class="layer lv" id="L2">
+          <div class="lv-bar"><span class="lv-title">Noche Neón</span><span class="lv-tag">Ejemplo</span></div>
+          <div class="lv-card"><p class="lv-label">Ingresos</p><p class="lv-money" id="money">$2.980.000</p><div class="lv-meter"><span id="meter" style="width:62%"></span></div><p class="lv-sold"><strong id="sold">248</strong> / 400 entradas vendidas</p></div>
+          <div class="lv-chart"><p class="lv-label">Ventas por hora</p><div class="lv-bars" id="bars"></div></div>
+          <p class="lv-label lv-feed-label">Ventas en vivo</p>
+          <ul class="lv-feed" id="feed"></ul>
+          <nav class="lv-tabs"><span data-on>Resumen</span><span>Ventas</span><span>Escáner</span><span>Más</span></nav>
+        </div>
+
+        <div class="layer sc" id="L3">
+          <div class="lv-bar"><span class="lv-title">Escáner · Noche Neón</span><span class="lv-tag">Ejemplo</span></div>
+          <div class="sc-count"><span class="lv-label">Ingresados</span><span class="sc-num"><span id="in-n">187</span><small> / 261</small></span></div>
+          <div class="sc-view" id="sc-view"><i class="sc-corner sc-c1"></i><i class="sc-corner sc-c2"></i><i class="sc-corner sc-c3"></i><i class="sc-corner sc-c4"></i><div class="sc-qr" id="qr"></div><span class="sc-line" id="sc-line"></span></div>
+          <div class="sc-result"><div class="sc-ok" id="sc-ok"><span class="sc-check">✓</span><span class="sc-ok-text"><strong>VÁLIDA</strong><small id="ok-small">General · Entrada #0188</small></span></div><p class="sc-hint" id="sc-hint">Apunta al QR de la entrada</p></div>
+          <ul class="sc-log"><li><span>#0186 · General</span><em>VÁLIDA</em></li><li><span>#0185 · VIP</span><em>VÁLIDA</em></li></ul>
+          <nav class="lv-tabs"><span>Resumen</span><span>Ventas</span><span data-on>Escáner</span><span>Más</span></nav>
+        </div>
+
+        <div class="layer am" id="L4">
+          <div class="lv-bar"><span class="lv-title">Embajadores</span><span class="lv-tag">Ejemplo</span></div>
+          <p class="lv-label am-label">Ranking de ventas</p>
+          <ol class="am-rank">
+            <li class="ar"><span class="am-pos">1</span><span class="am-name">Valentina</span><span class="am-bar"><span style="width:100%"></span></span><span class="am-n">42</span></li>
+            <li class="ar"><span class="am-pos">2</span><span class="am-name">Matías</span><span class="am-bar"><span style="width:74%"></span></span><span class="am-n">31</span></li>
+            <li class="ar"><span class="am-pos">3</span><span class="am-name">Josefa</span><span class="am-bar"><span style="width:57%"></span></span><span class="am-n">24</span></li>
+            <li class="ar"><span class="am-pos">4</span><span class="am-name">Tomás</span><span class="am-bar"><span style="width:29%"></span></span><span class="am-n">12</span></li>
+          </ol>
+          <div class="am-code" id="am-code"><div><p class="lv-label">Código de descuento</p><p class="am-code-val">NEON10</p></div><span class="am-off">-10%</span></div>
+          <div class="am-pay" id="am-pay"><span class="am-pay-ico">$</span><span><strong>Directo a tu Mercado Pago</strong><small>+$24.000 · acreditado ahora</small></span></div>
+          <nav class="lv-tabs"><span>Resumen</span><span>Ventas</span><span>Escáner</span><span data-on>Más</span></nav>
+        </div>
+      </div><span class="ph-sheen"></span></div>
+    </div><div class="ph-shadow"></div></div></div>
+  </div>
+
+  <div class="outro" id="outro">
+    <img id="o-logo" src="assets/anc-mark.png" alt="">
+    <div class="anton" id="o-head"><span class="ln"><span>Instala</span></span><span class="ln"><span class="v">ANC Tickets</span></span></div>
+    <div><span class="pill" id="o-pill">tickets.ancdigital.cl</span></div>
+    <div class="mono" id="o-sub">Publicar es gratis · Webapp para tu celular</div>
+  </div>
+
+</div>
+<script>
+const WIDE = document.body.classList.contains("f169");
+const DUR = 24;
+const tl = gsap.timeline({ paused: true });
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const clp = (n) => "$" + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+// ---- QR de adorno (determinista)
+(() => {
+  const q = $("#qr"); const n = 11;
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const f = (x < 3 && y < 3) || (x > 7 && y < 3) || (x < 3 && y > 7);
+    const s = document.createElement("span");
+    if (f || ((x * 7 + y * 13 + x * y) % 5) % 2 === 0) s.className = "on";
+    q.appendChild(s);
+  }
+  [18, 26, 22, 34, 41, 38, 52, 64, 58, 72, 88, 100].forEach((h) => {
+    const b = document.createElement("span"); b.style.height = h + "%"; $("#bars").appendChild(b);
+  });
+})();
+
+// ---- ventas de ejemplo (mismas que la portada)
+const SALES = [
+  { n: 2, tier: "General", amount: 24000, at: 8.9 },
+  { n: 1, tier: "VIP", amount: 25000, at: 9.9 },
+  { n: 3, tier: "General", amount: 36000, at: 10.9 },
+  { n: 2, tier: "VIP", amount: 50000, at: 11.9 },
+];
+SALES.forEach((s, i) => {
+  const li = document.createElement("li");
+  li.className = "lv-toast"; li.id = "t" + i;
+  li.innerHTML = `<span class="lv-dot">+</span><span class="lv-toast-body"><span class="lv-toast-line">+${s.n} ${s.n === 1 ? "entrada" : "entradas"} · ${s.tier} · ${clp(s.amount)}</span><span class="lv-toast-sub">Pagado con Mercado Pago · ahora</span></span>`;
+  $("#feed").appendChild(li);
+});
+
+// ---- estados iniciales
+gsap.set(".layer", { opacity: 0 });
+gsap.set(["#intro", "#brand", ".cap", "#outro"], { opacity: 1 });
+gsap.set(".cap", { autoAlpha: 0 });
+gsap.set("#brand", { opacity: 0 });
+gsap.set(".ln > span", { yPercent: 115 });
+gsap.set("#i-logo", { scale: 0.4, opacity: 0 });
+gsap.set("#i-tag", { opacity: 0, y: 20 });
+gsap.set("#outro", { autoAlpha: 0 });
+gsap.set("#stage", { autoAlpha: 0 });
+gsap.set("#spin", { rotationY: -38, rotationX: 10, y: WIDE ? 700 : 1100 });
+gsap.set([".wf", ".ws"], { opacity: 0, y: 14 });
+gsap.set(".wz-type", { clipPath: "inset(0 100% 0 0)" });
+gsap.set(".wz-tick", { opacity: 0, scale: 0.4 });
+gsap.set("#wz-prog", { scaleX: 0.05, transformOrigin: "left" });
+gsap.set("#wz-prev", { opacity: 0, y: 14 });
+gsap.set("#wz-cta", { opacity: 0 });
+gsap.set("#wz-live", { opacity: 0, y: 16 });
+gsap.set([".lv-toast"], { opacity: 0, x: 80 });
+gsap.set("#bars span", { scaleY: 0.05, transformOrigin: "bottom" });
+gsap.set("#sc-ok", { opacity: 0, y: 24 });
+const PX = parseFloat(getComputedStyle($(".ph")).width) * 0.944 / 100; // 1cqw en px
+gsap.set("#sc-line", { y: 0 });
+gsap.set(".ar", { opacity: 0, x: 40 });
+gsap.set(".am-bar span", { scaleX: 0, transformOrigin: "left" });
+gsap.set(["#am-code", "#am-pay"], { opacity: 0, x: 40 });
+gsap.set("#o-pill", { scale: 0.8, opacity: 0 });
+gsap.set("#o-sub", { opacity: 0 });
+gsap.set("#o-logo", { opacity: 0, scale: 0.5 });
+
+const ease = "power3.out";
+const lines = (sel, t, d = 0.7) => tl.to(`${sel} .ln > span`, { yPercent: 0, duration: d, ease: "power4.out", stagger: 0.12 }, t);
+const linesOut = (sel, t) => tl.to(`${sel} .ln > span`, { yPercent: -115, duration: 0.45, ease: "power3.in", stagger: 0.06 }, t);
+
+// fondo vivo
+tl.to("#glow-a", { x: 220, y: 160, duration: DUR, ease: "none" }, 0);
+tl.to("#glow-b", { x: -200, y: -120, duration: DUR, ease: "none" }, 0);
+
+// ================= 0–4: apertura =================
+tl.to("#i-logo", { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.6)" }, 0.15);
+tl.to("#i-tag", { opacity: 1, y: 0, duration: 0.5, ease }, 0.5);
+lines("#intro", 0.8, 0.75);
+// salida de la apertura
+linesOut("#intro", 3.3);
+tl.to(["#i-logo", "#i-tag"], { opacity: 0, y: -30, duration: 0.4 }, 3.3);
+tl.set("#intro", { autoAlpha: 0 }, 3.95);
+
+// ================= celular entra =================
+tl.set("#stage", { autoAlpha: 1 }, 3.5);
+tl.to("#spin", { y: 0, rotationY: -14, rotationX: 5, duration: 1.3, ease: "power3.out" }, 3.5);
+tl.to("#brand", { opacity: 1, duration: 0.5 }, 4.3);
+
+const show = (id, a, b) => { tl.to(id, { opacity: 1, duration: 0.35 }, a); if (b) tl.to(id, { opacity: 0, duration: 0.3 }, b); };
+const cap = (id, a, b) => {
+  tl.set(id, { autoAlpha: 1 }, a);
+  lines(id, a + 0.05, 0.6);
+  tl.from(`${id} .mono, ${id} p`, { opacity: 0, y: 16, duration: 0.5, ease }, a + 0.2);
+  linesOut(id, b - 0.45);
+  tl.to(`${id} .mono, ${id} p`, { opacity: 0, duration: 0.3 }, b - 0.4);
+  tl.set(id, { autoAlpha: 0 }, b);
+};
+
+// ================= 4.2–8.5: crear =================
+cap("#cap1", 4.2, 8.5); show("#L1", 4.2, 8.6);
+tl.to("#spin", { rotationY: 10, rotationX: 3, duration: 3.8, ease: "sine.inOut" }, 4.85);
+tl.to(".ws", { opacity: 1, y: 0, duration: 0.4, stagger: 1.2, ease }, 4.7);
+[0, 1, 2].forEach((i) => {
+  const t = 4.9 + i * 1.05;
+  tl.to($$(".wf")[i], { opacity: 1, y: 0, duration: 0.35, ease }, t);
+  tl.to($$(".wz-type")[i], { clipPath: "inset(0 0% 0 0)", duration: 0.7, ease: "steps(14)" }, t + 0.25);
+  tl.to($$(".wz-tick")[i], { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, t + 0.95);
+});
+tl.to("#wz-prog", { scaleX: 1, duration: 3.1, ease: "none" }, 4.8);
+tl.to("#wz-prev", { opacity: 1, y: 0, duration: 0.45, ease }, 7.3);
+tl.to("#wz-cta", { opacity: 1, duration: 0.2 }, 7.3);
+tl.to("#wz-cta", { scale: 0.95, duration: 0.15, yoyo: true, repeat: 1 }, 7.7);
+tl.to("#wz-cta", { opacity: 0, duration: 0.2 }, 8.0);
+tl.to("#wz-live", { opacity: 1, y: 0, duration: 0.4, ease }, 8.0);
+
+// ================= 8.5–12.9: ventas en vivo =================
+cap("#cap2", 8.6, 13.0); show("#L2", 8.6, 13.1);
+tl.to("#spin", { rotationY: -14, rotationX: 5, duration: 4.2, ease: "sine.inOut" }, 8.85);
+tl.to("#bars span", { scaleY: 1, duration: 0.6, stagger: 0.05, ease }, 8.9);
+const tot = { rev: 2980000, sold: 248 };
+const render = () => { $("#money").textContent = clp(tot.rev); $("#sold").textContent = Math.round(tot.sold); $("#meter").style.width = (tot.sold / 400 * 100) + "%"; };
+let acc = { rev: 2980000, sold: 248 };
+SALES.forEach((s, i) => {
+  tl.to("#t" + i, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, s.at);
+  acc = { rev: acc.rev + s.amount, sold: acc.sold + s.n };
+  tl.to(tot, { rev: acc.rev, sold: acc.sold, duration: 0.8, ease: "power2.out", onUpdate: render }, s.at + 0.1);
+});
+
+// ================= 12.9–17.3: escáner =================
+cap("#cap3", 13.0, 17.4); show("#L3", 13.0, 17.5);
+tl.to("#spin", { rotationY: 12, rotationX: 4, duration: 4.4, ease: "sine.inOut" }, 13.0);
+const scan = (t0, tOk, num, ent) => {
+  tl.set("#sc-ok", { opacity: 0, y: 24 }, t0);
+  tl.set("#sc-hint", { opacity: 1 }, t0);
+  tl.set("#sc-view", { borderColor: "rgba(255,255,255,.1)", boxShadow: "0 0 0 0 rgba(52,211,153,0)" }, t0);
+  tl.set(".sc-corner", { borderColor: "#fff" }, t0);
+  tl.set("#sc-line", { opacity: 1 }, t0);
+  tl.fromTo("#sc-line", { y: 0 }, { y: 50 * PX, duration: tOk - t0, ease: "sine.inOut" }, t0);
+  tl.set("#sc-line", { opacity: 0 }, tOk);
+  tl.to("#sc-view", { borderColor: "#34d399", boxShadow: "0 0 0 1cqw rgba(52,211,153,.25)", duration: 0.2 }, tOk);
+  tl.to(".sc-corner", { borderColor: "#34d399", duration: 0.2 }, tOk);
+  tl.to("#sc-hint", { opacity: 0, duration: 0.15 }, tOk);
+  tl.call(() => { $("#ok-small").textContent = "General · Entrada #0" + ent; }, null, tOk);
+  tl.to("#sc-ok", { opacity: 1, y: 0, duration: 0.35, ease: "back.out(1.7)" }, tOk);
+  const o = { v: num - 1 };
+  tl.to(o, { v: num, duration: 0.25, snap: { v: 1 }, onUpdate: () => { $("#in-n").textContent = o.v; } }, tOk + 0.05);
+  tl.fromTo(".sc-num", { scale: 1.3, color: "#34d399" }, { scale: 1, color: "#ffffff", duration: 0.5, ease: "power2.out", immediateRender: false }, tOk + 0.05);
+};
+scan(13.4, 14.6, 188, 188);
+scan(15.5, 16.4, 189, 189);
+
+// ================= 17.3–20.7: embajadores =================
+cap("#cap4", 17.4, 20.8); show("#L4", 17.4, 20.9);
+tl.to("#spin", { rotationY: -14, rotationX: 5, duration: 3.2, ease: "sine.inOut" }, 17.4);
+tl.to(".ar", { opacity: 1, x: 0, duration: 0.5, stagger: 0.22, ease }, 17.8);
+tl.to(".am-bar span", { scaleX: 1, duration: 0.9, stagger: 0.22, ease }, 18.1);
+tl.to("#am-code", { opacity: 1, x: 0, duration: 0.5, ease }, 19.1);
+tl.to("#am-pay", { opacity: 1, x: 0, duration: 0.5, ease }, 19.8);
+
+// ================= 20.8–24: cierre =================
+tl.to("#spin", { y: WIDE ? 900 : 1500, rotationY: -40, rotationX: 12, duration: 0.8, ease: "power3.in" }, 20.7);
+tl.set("#stage", { autoAlpha: 0 }, 21.55);
+tl.to("#brand", { opacity: 0, duration: 0.3 }, 20.8);
+tl.set("#outro", { autoAlpha: 1 }, 21.2);
+tl.to("#o-logo", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 21.3);
+lines("#outro", 21.5, 0.7);
+tl.to("#o-pill", { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.8)" }, 22.3);
+tl.to("#o-sub", { opacity: 1, duration: 0.5 }, 22.6);
+tl.to({}, { duration: 0.01 }, DUR - 0.01);
+
+window.__timelines = window.__timelines || {};
+window.__timelines["main"] = tl;
+tl.seek(0);
+
+</script>
+</body>
+</html>

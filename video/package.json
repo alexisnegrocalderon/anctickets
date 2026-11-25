@@ -1,0 +1,13 @@
+{
+  "name": "anc-video",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Video promocional de ANC Tickets (Hyperframes). Proyecto aparte: NO es dependencia de la app Next.",
+  "scripts": {
+    "render:9x16": "hyperframes render 9x16 -o out/anc-9x16-silent.mp4",
+    "render:16x9": "hyperframes render 16x9 -o out/anc-16x9-silent.mp4"
+  },
+  "devDependencies": {
+    "hyperframes": "0.9.68"
+  }
+}

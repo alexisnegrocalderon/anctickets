@@ -1,0 +1,58 @@
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:{{W}}px;height:{{H}}px;overflow:hidden;background:#1d1d1d;font-family:Geist,sans-serif;color:#fff}
+#root{position:absolute;inset:0;overflow:hidden;background:#1d1d1d}
+/* El video se mueve solo con GSAP: se anulan las animaciones CSS del celular. */
+*{animation:none!important}
+.glow{position:absolute;border-radius:50%;pointer-events:none}
+#glow-a{width:1500px;height:1500px;left:-500px;top:-600px;background:radial-gradient(closest-side,rgba(252,76,19,.34),transparent 70%)}
+#glow-b{width:1300px;height:1300px;right:-500px;bottom:-500px;background:radial-gradient(closest-side,rgba(255,130,86,.2),transparent 70%)}
+.mono{font-family:"Geist Mono",monospace;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+.anton{font-family:Anton,sans-serif;text-transform:uppercase;line-height:.95}
+.v{color:#fc4c13}
+.ln{display:block;overflow:hidden;padding:.14em 0 .06em;margin-top:-.14em}
+.ln>span{display:block}
+.cap,.intro,.outro{position:absolute}
+.stage{position:absolute;perspective:1800px;display:flex;justify-content:center}
+.stage .ph-stage{padding:0}
+.ph-glow{display:none}
+.layer{position:absolute;left:0;right:0;top:13cqw;bottom:0;height:auto!important;opacity:0}
+#brand{position:absolute;display:flex;align-items:center;gap:18px;opacity:0}
+#brand img{width:64px;height:64px}
+#brand b{font:400 52px Anton;text-transform:uppercase}
+.pill{display:inline-flex;align-items:center;border-radius:999px;background:#fc4c13;color:#1d1d1d;font-weight:900;text-transform:uppercase}
+
+/* ---- 9:16 ---- */
+.f916 .ph{--pw:620px}
+.f916 .stage{left:0;right:0;top:500px}
+.f916 #brand{left:70px;top:70px}
+.f916 .cap{left:70px;right:70px;top:150px;text-align:center}
+.f916 .cap .mono{font-size:30px;color:#fc4c13}
+.f916 .cap .anton{font-size:138px;margin-top:22px}
+.f916 .intro{left:60px;right:60px;top:420px;text-align:center}
+.f916 .intro img{width:190px;height:190px;margin-bottom:40px}
+.f916 .intro .anton{font-size:172px}
+.f916 .intro .mono{font-size:30px;margin-top:40px;color:#bdbdbd}
+.f916 .outro{left:60px;right:60px;top:500px;text-align:center}
+.f916 .outro img{width:170px;height:170px}
+.f916 .outro .anton{font-size:230px;margin-top:40px}
+.f916 .outro .pill{margin-top:70px;font-size:54px;padding:34px 60px}
+.f916 .outro .mono{font-size:24px;letter-spacing:.12em;margin-top:50px;color:#bdbdbd}
+
+/* ---- 16:9 ---- */
+.f169 .ph{--pw:420px}
+.f169 .stage{left:1100px;width:700px;top:70px}
+.f169 #brand{left:110px;top:70px}
+.f169 .cap{left:110px;width:900px;top:300px}
+.f169 .cap .mono{font-size:26px;color:#fc4c13}
+.f169 .cap .anton{font-size:150px;margin-top:20px}
+.f169 .cap p{font-size:34px;line-height:1.35;color:#d0d0d0;margin-top:30px;max-width:760px}
+.f169 .intro{left:0;right:0;top:110px;text-align:center}
+.f169 .intro img{width:130px;height:130px;margin-bottom:24px}
+.f169 .intro .anton{font-size:132px}
+.f169 .intro .mono{font-size:26px;margin-top:30px;color:#bdbdbd}
+.f169 .outro{left:0;right:0;top:170px;text-align:center}
+.f169 .outro img{width:120px;height:120px}
+.f169 .outro .anton{font-size:200px;margin-top:20px}
+.f169 .outro .pill{margin-top:46px;font-size:46px;padding:26px 50px}
+.f169 .outro .mono{font-size:24px;margin-top:36px;color:#bdbdbd}
+.f916 .cap p{display:none}
