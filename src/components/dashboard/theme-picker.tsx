@@ -28,7 +28,7 @@ export default function ThemePicker({
       <input type="hidden" name="theme" value={theme} />
       <input type="hidden" name="accent_color" value={theme === "custom" && isValidHex(accentColor) ? accentColor : ""} />
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
         {EVENT_THEME_OPTIONS.map((option) => {
           const style = EVENT_THEME_STYLES[option.value];
           const selected = theme === option.value;

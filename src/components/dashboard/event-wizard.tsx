@@ -396,7 +396,7 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
                             type="button"
                             onClick={() => setTheme(option.value)}
                             whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
-                            animate={prefersReducedMotion ? undefined : { scale: selected ? 1.04 : 1 }}
+                            animate={prefersReducedMotion ? undefined : { scale: selected ? 1.02 : 1 }}
                             transition={{ type: "spring", stiffness: 320, damping: 20 }}
                             className="relative flex h-28 flex-col justify-end overflow-hidden rounded-2xl p-4 text-left"
                             style={{
@@ -422,7 +422,7 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
                         type="button"
                         onClick={() => setTheme("custom")}
                         whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
-                        animate={prefersReducedMotion ? undefined : { scale: theme === "custom" ? 1.04 : 1 }}
+                        animate={prefersReducedMotion ? undefined : { scale: theme === "custom" ? 1.02 : 1 }}
                         transition={{ type: "spring", stiffness: 320, damping: 20 }}
                         className="relative col-span-2 flex h-20 items-center justify-between overflow-hidden rounded-2xl border border-dashed border-white/20 p-4 text-left"
                         style={{
