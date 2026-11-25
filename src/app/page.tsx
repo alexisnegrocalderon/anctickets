@@ -73,8 +73,9 @@ export default async function Home() {
         <div className="hero-scrim" aria-hidden="true" />
 
         <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-5 pt-24 sm:px-8 md:pb-8 md:pt-32 lg:px-12 lg:pb-24 lg:pt-28">
-          <h1 className="max-w-4xl text-[clamp(1.95rem,9vw,5.6rem)] uppercase leading-[.93] text-white [text-shadow:0_2px_24px_rgba(0,0,0,.55)]">
+          <h1 className="max-w-4xl text-[clamp(1.95rem,9vw,5.6rem)] lg:text-[4.6rem] xl:text-[5rem] 2xl:text-[5.6rem] uppercase leading-[.93] text-white [text-shadow:0_2px_24px_rgba(0,0,0,.55)]">
             Todo tu evento en{" "}
+            <br className="hidden lg:block" />
             <span className="text-[var(--anc-vermilion)]">la palma de tu mano</span>
           </h1>
           <p className="mt-3 max-w-[52ch] text-[0.95rem] leading-6 text-white/95 [text-shadow:0_1px_12px_rgba(0,0,0,.6)] sm:mt-4 sm:text-lg sm:leading-7">
