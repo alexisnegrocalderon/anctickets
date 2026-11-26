@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Event, Profile, TicketType } from "@/lib/database.types";
 import EventPublicView from "@/components/event-public-view";
+import { serverClock } from "@/lib/tiers";
 
 async function getEvent(slug: string) {
   const supabase = await createClient();
@@ -81,6 +82,7 @@ export default async function EventPublicPage({
       ticketTypes={ticketTypes}
       isLoggedIn={!!user}
       organizerName={organizerProfile?.organizer_name ?? null}
+      serverNow={serverClock()}
     />
   );
 }

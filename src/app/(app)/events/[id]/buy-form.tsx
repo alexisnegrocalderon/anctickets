@@ -5,6 +5,15 @@ import type { CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import type { TicketType } from "@/lib/database.types";
 import { priceOrder } from "@/lib/pricing";
+import {
+  formatChileDate,
+  isLastTickets,
+  remainingTickets,
+  sortTiers,
+  tierStatus,
+  type TierStatus,
+} from "@/lib/tiers";
+import { TierCountdown, TierStatusBadge, useTierClock } from "@/components/tier-status";
 
 /** Cada tipo de entrada toma un color del sistema "Retro Future", en orden de aparición. */
 const TIER_ACCENTS = [
@@ -14,8 +23,6 @@ const TIER_ACCENTS = [
   { base: "#222222", light: "#4a4a4a", ink: "#f5f4f1" }, // charcoal -> texto claro
 ] as const;
 
-const LOW_STOCK_THRESHOLD = 5;
-
 interface PreviewTotals {
   baseTotal: number;
   discountTotal: number;
@@ -23,17 +30,71 @@ interface PreviewTotals {
   totalAmount: number;
 }
 
+/** Texto de estado de una tanda que no está en venta. */
+function statusDetail(tt: TicketType, status: TierStatus): string | null {
+  switch (status) {
+    case "upcoming":
+      return `Abre el ${formatChileDate(tt.sales_start)}`;
+    case "ended":
+      return tt.sales_end ? `Venta cerrada el ${formatChileDate(tt.sales_end)}` : "Venta cerrada";
+    case "sold_out":
+      return "Se agotaron las entradas de esta tanda";
+    case "paused":
+      return "Pausada por el productor";
+    default:
+      return null;
+  }
+}
+
+/** Mensaje destacado cuando ninguna tanda se puede comprar. */
+function NoSaleBanner({
+  tiers,
+  statusById,
+}: {
+  tiers: TicketType[];
+  statusById: Map<string, TierStatus>;
+}) {
+  const upcoming = tiers
+    .filter((t) => statusById.get(t.id) === "upcoming" && t.sales_start)
+    .map((t) => t.sales_start!)
+    .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  const statuses = [...statusById.values()];
+  let title: string;
+  if (upcoming.length > 0) title = `La venta abre el ${formatChileDate(upcoming[0])}`;
+  else if (statuses.every((st) => st === "sold_out")) title = "Entradas agotadas";
+  else if (statuses.some((st) => st === "paused") && !statuses.some((st) => st === "ended")) title = "La venta está pausada por el productor";
+  else title = "La venta terminó";
+  return (
+    <div role="status" className="rounded-2xl border border-white/25 bg-white/[.07] px-4 py-4">
+      <p className="font-mono text-[10px] font-bold uppercase tracking-[.18em] text-neutral-400">Por ahora no se puede comprar</p>
+      <p className="mt-1 text-lg font-black leading-tight text-white">{title}</p>
+    </div>
+  );
+}
+
 export default function BuyForm({
   eventId,
   eventSlug,
-  ticketTypes,
+  ticketTypes: rawTicketTypes,
   isLoggedIn,
+  serverNow,
 }: {
   eventId: string;
   eventSlug: string;
   ticketTypes: TicketType[];
   isLoggedIn: boolean;
+  /** Hora del servidor al renderizar: primer render y corrección del reloj del navegador. */
+  serverNow: number;
 }) {
+  const ticketTypes = useMemo(() => sortTiers(rawTicketTypes), [rawTicketTypes]);
+  const now = useTierClock(serverNow, ticketTypes);
+  const statusById = useMemo(() => {
+    const map = new Map<string, TierStatus>();
+    for (const tt of ticketTypes) map.set(tt.id, tierStatus(tt, now));
+    return map;
+  }, [ticketTypes, now]);
+  const anyOnSale = [...statusById.values()].some((st) => st === "on_sale");
+  const [closedNotice, setClosedNotice] = useState<string[]>([]);
   const router = useRouter();
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
@@ -43,6 +104,23 @@ export default function BuyForm({
   const [codeMessage, setCodeMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [codeChecking, setCodeChecking] = useState(false);
   const [discounted, setDiscounted] = useState<PreviewTotals | null>(null);
+
+  // Si una tanda con cantidades elegidas deja de estar en venta mientras la página
+  // está abierta, se limpia la selección y se avisa (ajuste de estado durante el render).
+  const staleIds = Object.entries(quantities)
+    .filter(([id, qty]) => qty > 0 && statusById.has(id) && statusById.get(id) !== "on_sale")
+    .map(([id]) => id);
+  if (staleIds.length > 0) {
+    setQuantities((prev) => {
+      const next = { ...prev };
+      for (const id of staleIds) delete next[id];
+      return next;
+    });
+    setClosedNotice((prev) => [
+      ...prev,
+      ...staleIds.map((id) => ticketTypes.find((t) => t.id === id)?.name ?? "").filter(Boolean),
+    ]);
+  }
 
   const cartItems = useMemo(
     () =>
@@ -120,6 +198,7 @@ export default function BuyForm({
   }, [cartItems, appliedCode]);
 
   function setQty(ticketTypeId: string, value: number, max: number) {
+    setClosedNotice([]);
     const clamped = Math.max(0, Math.min(value, max));
     setQuantities((prev) => ({ ...prev, [ticketTypeId]: clamped }));
   }
@@ -155,65 +234,88 @@ export default function BuyForm({
 
   return (
     <div className="flex flex-col gap-3">
+      {!anyOnSale ? <NoSaleBanner tiers={ticketTypes} statusById={statusById} /> : null}
+
+      {closedNotice.length > 0 ? (
+        <p role="status" className="rounded-xl border border-white/20 bg-white/[.06] px-4 py-3 text-sm text-white">
+          {closedNotice.length === 1
+            ? `La tanda "${closedNotice[0]}" acaba de cerrar y la quitamos de tu selección.`
+            : `Las tandas ${closedNotice.map((n) => `"${n}"`).join(", ")} acaban de cerrar y las quitamos de tu selección.`}
+        </p>
+      ) : null}
+
       {ticketTypes.map((tt, index) => {
-        const remaining = Math.max(tt.quantity - tt.sold_count - tt.reserved_count, 0);
-        const qty = quantities[tt.id] ?? 0;
-        const soldOut = remaining <= 0;
-        const lowStock = !soldOut && remaining <= LOW_STOCK_THRESHOLD;
+        const status = statusById.get(tt.id) ?? "on_sale";
+        const onSale = status === "on_sale";
+        const remaining = remainingTickets(tt);
+        const qty = onSale ? (quantities[tt.id] ?? 0) : 0;
+        const last = onSale && isLastTickets(tt);
         const accent = TIER_ACCENTS[index % TIER_ACCENTS.length];
         const ink = qty > 0 ? accent.ink : "#f5f4f1";
         const tierStyle = {
           "--tier-accent": accent.base,
           "--tier-accent-light": accent.light,
           "--tier-ink": ink,
-          borderLeftColor: accent.base,
+          borderLeftColor: onSale ? accent.base : "rgba(255,255,255,.18)",
           ...(qty > 0 ? { backgroundColor: accent.base, borderColor: accent.base } : {}),
         } as CSSProperties;
-        const nameColor = qty > 0 ? accent.ink : "#f5f4f1";
+        const nameColor = qty > 0 ? accent.ink : onSale ? "#f5f4f1" : "#c9c8c4";
         const priceColor = qty > 0 ? accent.ink : undefined;
+        const detail = statusDetail(tt, status);
         return (
           <div
             key={tt.id}
             style={tierStyle}
+            data-tier-status={status}
             className={`flex items-center justify-between gap-3 rounded-xl border border-l-4 px-4 py-3.5 transition ${
-              qty > 0 ? "" : "border-white/10 bg-[#101010]"
+              qty > 0 ? "" : onSale ? "border-white/10 bg-[#101010]" : "border-white/10 bg-[#0c0c0c]"
             }`}
           >
-            <div className="min-w-0">
-              <p className="flex items-center gap-2 truncate font-semibold" style={{ color: nameColor }}>
-                <span className="truncate">{tt.name}</span>
+            <div className="min-w-0 flex-1">
+              <div className="mb-1.5">
+                <TierStatusBadge status={status} />
+              </div>
+              <p className="truncate font-semibold" style={{ color: nameColor }}>
+                {tt.name}
               </p>
               <p className={qty > 0 ? "text-sm" : "text-sm text-neutral-400"} style={priceColor ? { color: priceColor } : undefined}>
                 {Number(tt.base_price) === 0 ? "Gratis" : `$${Number(tt.base_price).toLocaleString("es-CL", { maximumFractionDigits: 0 })}`}
-                {soldOut ? (
-                  <span className="text-red-400"> · agotado</span>
-                ) : lowStock ? (
-                  <span style={{ color: qty > 0 ? accent.ink : "var(--anc-yellow)" }} className="font-bold">
-                    {" "}
-                    · ¡quedan {remaining}!
-                  </span>
-                ) : (
-                  ` · ${remaining} disponibles`
-                )}
+                {onSale && !last ? ` · ${remaining} disponibles` : ""}
               </p>
+              {onSale ? (
+                <div className="mt-1 flex flex-col gap-0.5 text-sm" style={{ color: qty > 0 ? accent.ink : undefined }}>
+                  {last ? (
+                    <span className="font-bold" style={{ color: qty > 0 ? accent.ink : "var(--anc-vermilion)" }}>
+                      {remaining === 1 ? "¡Última entrada!" : `¡Últimas ${remaining} entradas!`}
+                    </span>
+                  ) : null}
+                  {tt.sales_end ? (
+                    <TierCountdown endIso={tt.sales_end} now={now} className={qty > 0 ? "font-semibold" : "font-semibold text-neutral-200"} />
+                  ) : null}
+                </div>
+              ) : detail ? (
+                <p className="mt-1 text-sm text-neutral-300">{detail}</p>
+              ) : null}
             </div>
-            <div className="flex shrink-0 items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2">
               <button
                 type="button"
+                aria-label={`Quitar una entrada de ${tt.name}`}
                 onClick={() => setQty(tt.id, qty - 1, remaining)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--tier-ink)]/30 text-[var(--tier-ink)] transition duration-100 hover:border-[var(--tier-ink)] active:scale-90 disabled:opacity-30 disabled:active:scale-100"
-                disabled={soldOut || qty === 0}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--tier-ink)]/30 text-lg text-[var(--tier-ink)] transition duration-100 hover:border-[var(--tier-ink)] active:scale-90 disabled:opacity-30 disabled:active:scale-100"
+                disabled={!onSale || qty === 0}
               >
                 −
               </button>
-              <span key={qty} className="anc-qty-pop w-5 text-center font-black" style={{ color: ink }}>
+              <span key={qty} className="anc-qty-pop w-5 text-center font-black" style={{ color: onSale ? ink : "#8a8985" }}>
                 {qty}
               </span>
               <button
                 type="button"
+                aria-label={`Agregar una entrada de ${tt.name}`}
                 onClick={() => setQty(tt.id, qty + 1, remaining)}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--tier-ink)]/30 text-[var(--tier-ink)] transition duration-100 hover:border-[var(--tier-ink)] active:scale-90 disabled:opacity-30 disabled:active:scale-100"
-                disabled={soldOut}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--tier-ink)]/30 text-lg text-[var(--tier-ink)] transition duration-100 hover:border-[var(--tier-ink)] active:scale-90 disabled:opacity-30 disabled:active:scale-100"
+                disabled={!onSale}
               >
                 +
               </button>
@@ -282,7 +384,7 @@ export default function BuyForm({
       <button
         type="button"
         onClick={handleCheckout}
-        disabled={totalQty === 0 || loading}
+        disabled={totalQty === 0 || loading || !anyOnSale}
         data-cursor-hover
         className="rounded-full bg-[var(--anc-accent)] px-6 py-3.5 text-sm font-black uppercase tracking-[.05em] text-[var(--anc-ink)] transition hover:bg-[var(--anc-accent-light)] active:scale-[.98] disabled:opacity-40"
       >
@@ -290,7 +392,9 @@ export default function BuyForm({
           ? isFree
             ? "Reservando tus entradas..."
             : "Redirigiendo a Mercado Pago..."
-          : isLoggedIn
+          : !anyOnSale
+            ? "Venta no disponible"
+            : isLoggedIn
             ? totalQty > 0
               ? isFree
                 ? "Reservar gratis →"

@@ -11,11 +11,13 @@ export default function EventPublicView({
   ticketTypes,
   isLoggedIn,
   organizerName,
+  serverNow,
 }: {
   event: Event;
   ticketTypes: TicketType[] | null;
   isLoggedIn: boolean;
   organizerName: string | null;
+  serverNow: number;
 }) {
   const date = new Date(event.event_date);
   const weekday = date.toLocaleDateString("es-CL", { weekday: "long" });
@@ -155,6 +157,7 @@ export default function EventPublicView({
                 eventSlug={event.slug}
                 ticketTypes={ticketTypes!}
                 isLoggedIn={isLoggedIn}
+                serverNow={serverNow}
               />
             )}
           </div>
