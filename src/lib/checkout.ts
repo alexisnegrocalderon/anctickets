@@ -7,6 +7,7 @@ import {
   type DiscountRule,
 } from "@/lib/discount";
 import { priceOrder, type PricedOrder } from "@/lib/pricing";
+import { formatChileDate, tierStatus } from "@/lib/tiers";
 
 type Admin = SupabaseClient<Database>;
 
@@ -35,6 +36,17 @@ export interface Quote {
   ticketTypes: Map<string, TicketType>;
 }
 
+/** Mensaje para el comprador cuando una tanda no está a la venta. */
+export function tierRejectionMessage(
+  status: ReturnType<typeof tierStatus>,
+  tier?: Pick<TicketType, "sales_start" | "sales_end">
+): string {
+  if (status === "upcoming" && tier?.sales_start) return `Esta tanda abre el ${formatChileDate(tier.sales_start)}`;
+  if (status === "paused") return "Esta tanda está pausada";
+  if (status === "sold_out") return "Esta tanda está agotada";
+  return "Esta tanda ya no está a la venta";
+}
+
 /** Mapea los errores de las RPC a mensajes para el comprador. */
 export function friendlyRpcError(message: string, ticketTypes?: Map<string, TicketType>): CheckoutError | null {
   const sold = /SOLD_OUT:([0-9a-f-]{36})/i.exec(message);
@@ -46,6 +58,12 @@ export function friendlyRpcError(message: string, ticketTypes?: Map<string, Tick
         : "Ya no quedan suficientes entradas. Alguien más las acaba de reservar.",
       409
     );
+  }
+  const notOnSale = /NOT_ON_SALE:([0-9a-f-]{36})/i.exec(message);
+  if (notOnSale) {
+    const tt = ticketTypes?.get(notOnSale[1]);
+    const status = tt ? tierStatus(tt, Date.now()) : "ended";
+    return new CheckoutError(tierRejectionMessage(status, tt), 409);
   }
   if (message.includes("CODE_EXHAUSTED")) {
     return new CheckoutError("Este código de descuento ya alcanzó su límite de usos.", 409);
@@ -102,11 +120,10 @@ export async function buildQuote(
   const lines = [...merged.entries()].map(([ticketTypeId, quantity]) => {
     const tt = ticketTypes.get(ticketTypeId)!;
     if (!params.skipSalesWindow) {
-      if (tt.sales_start && now < new Date(tt.sales_start).getTime()) {
-        throw new CheckoutError(`La venta de "${tt.name}" aún no comienza`);
-      }
-      if (tt.sales_end && now > new Date(tt.sales_end).getTime()) {
-        throw new CheckoutError(`La venta de "${tt.name}" ya finalizó`);
+      const status = tierStatus(tt, now);
+      // Agotada se resuelve con el mensaje de stock de abajo (conserva el nombre de la tanda).
+      if (status !== "on_sale" && status !== "sold_out") {
+        throw new CheckoutError(`${tt.name}: ${tierRejectionMessage(status, tt)}`, 409);
       }
     }
     if (quantity > tt.quantity - tt.sold_count - tt.reserved_count) {

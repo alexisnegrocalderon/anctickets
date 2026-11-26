@@ -61,6 +61,8 @@ export type TicketType = {
   reserved_count: number;
   sales_start: string | null;
   sales_end: string | null;
+  /** Pausa manual de la tanda (migración 0009). */
+  paused: boolean;
   created_at: string;
   updated_at: string;
 };

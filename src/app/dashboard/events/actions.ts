@@ -8,6 +8,7 @@ import { slugify } from "@/lib/slug";
 import { isReservedSlug, safeSlug } from "@/lib/reserved-slugs";
 import { isValidHex } from "@/lib/color";
 import { chileLocalToIso } from "@/lib/datetime";
+import { validateTierDates } from "@/lib/tiers";
 import { normalizeCode } from "@/lib/discount";
 import { deliverOrderEmail } from "@/lib/orders";
 import { buildQuote, CheckoutError, friendlyRpcError, orderRpcArgs } from "@/lib/checkout";
@@ -329,44 +330,50 @@ function parseTicketTypeForm(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const basePrice = Number(formData.get("base_price"));
   const quantity = Number(formData.get("quantity"));
-  const startRaw = String(formData.get("sales_start") ?? "").trim();
-  const endRaw = String(formData.get("sales_end") ?? "").trim();
-  const salesStart = startRaw ? chileLocalToIso(startRaw) : null;
-  const salesEnd = endRaw ? chileLocalToIso(endRaw) : null;
+  const dates = validateTierDates(
+    String(formData.get("sales_start") ?? ""),
+    String(formData.get("sales_end") ?? "")
+  );
+  const pausedRaw = String(formData.get("paused") ?? "");
+  const paused = pausedRaw === "on" || pausedRaw === "true";
 
   if (!name) throw new Error("Ponle un nombre a la entrada");
   if (!Number.isInteger(basePrice) || basePrice < 0) throw new Error("El precio debe ser un monto en pesos, sin decimales");
   if (!Number.isInteger(quantity) || quantity < 0) throw new Error("El cupo debe ser un número entero");
-  if ((startRaw && !salesStart) || (endRaw && !salesEnd)) throw new Error("Fecha de venta inválida");
-  if (salesStart && salesEnd && new Date(salesEnd) <= new Date(salesStart)) {
-    throw new Error("El cierre de ventas debe ser posterior al inicio");
-  }
+  if (dates.error) throw new Error(dates.error);
 
-  return { name, basePrice, quantity, salesStart, salesEnd };
+  return { name, basePrice, quantity, salesStart: dates.startIso, salesEnd: dates.endIso, paused };
 }
 
-export async function createTicketType(eventId: string, formData: FormData) {
+/** Crea una tanda (tipo de entrada) y devuelve su id. Lo usan el panel y el asistente. */
+export async function createTicketType(eventId: string, formData: FormData): Promise<{ id: string }> {
   const { supabase } = await requireUser();
   const t = parseTicketTypeForm(formData);
 
-  const { error } = await supabase.from("ticket_types").insert({
-    event_id: eventId,
-    name: t.name,
-    base_price: t.basePrice,
-    quantity: t.quantity,
-    sales_start: t.salesStart,
-    sales_end: t.salesEnd,
-  });
+  const { data, error } = await supabase
+    .from("ticket_types")
+    .insert({
+      event_id: eventId,
+      name: t.name,
+      base_price: t.basePrice,
+      quantity: t.quantity,
+      sales_start: t.salesStart,
+      sales_end: t.salesEnd,
+      paused: t.paused,
+    })
+    .select("id")
+    .single();
 
-  if (error) throw new Error(error.message);
+  if (error || !data) throw new Error(error?.message ?? "No se pudo agregar la entrada");
 
   revalidatePath(`/dashboard/events/${eventId}/edit`);
+  return { id: data.id };
 }
 
 export async function createTicketTypeForm(eventId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
   try {
     await createTicketType(eventId, formData);
-    return { ok: true, message: "Entrada agregada" };
+    return { ok: true, message: "Tanda agregada" };
   } catch (err) {
     return fail(err);
   }
@@ -399,6 +406,7 @@ export async function updateTicketTypeForm(
       };
     }
 
+    // Cambiar el precio con ventas es válido: las órdenes ya creadas guardan el precio que pagaron.
     const { error } = await supabase
       .from("ticket_types")
       .update({
@@ -407,6 +415,7 @@ export async function updateTicketTypeForm(
         quantity: t.quantity,
         sales_start: t.salesStart,
         sales_end: t.salesEnd,
+        paused: t.paused,
         updated_at: new Date().toISOString(),
       })
       .eq("id", ticketTypeId)
@@ -416,7 +425,61 @@ export async function updateTicketTypeForm(
 
     revalidatePath(`/dashboard/events/${eventId}/edit`);
     revalidatePath("/", "layout");
-    return { ok: true, message: "Entrada actualizada" };
+    return { ok: true, message: "Tanda actualizada" };
+  } catch (err) {
+    return fail(err);
+  }
+}
+
+/** Pausa o reanuda la venta de una tanda sin tocar nada más. */
+export async function setTicketTypePaused(eventId: string, ticketTypeId: string, paused: boolean): Promise<ActionState> {
+  try {
+    const { supabase } = await requireUser();
+    const { data, error } = await supabase
+      .from("ticket_types")
+      .update({ paused, updated_at: new Date().toISOString() })
+      .eq("id", ticketTypeId)
+      .eq("event_id", eventId)
+      .select("id");
+    if (error) return { error: error.message };
+    if (!data || data.length === 0) return { error: "Entrada no encontrada" };
+
+    revalidatePath(`/dashboard/events/${eventId}/edit`);
+    revalidatePath("/", "layout");
+    return { ok: true, message: paused ? "Venta pausada" : "Venta reanudada" };
+  } catch (err) {
+    return fail(err);
+  }
+}
+
+/**
+ * Copia nombre, precio y cupo en una tanda nueva "<nombre> (copia)", sin fechas.
+ * Nace pausada para que no salga a la venta antes de que el productor ponga sus fechas.
+ */
+export async function duplicateTicketType(eventId: string, ticketTypeId: string): Promise<ActionState> {
+  try {
+    const { supabase } = await requireUser();
+    const { data: src } = await supabase
+      .from("ticket_types")
+      .select("name, base_price, quantity")
+      .eq("id", ticketTypeId)
+      .eq("event_id", eventId)
+      .single();
+    if (!src) return { error: "Entrada no encontrada" };
+
+    const { error } = await supabase.from("ticket_types").insert({
+      event_id: eventId,
+      name: `${src.name} (copia)`,
+      base_price: src.base_price,
+      quantity: src.quantity,
+      sales_start: null,
+      sales_end: null,
+      paused: true,
+    });
+    if (error) return { error: error.message };
+
+    revalidatePath(`/dashboard/events/${eventId}/edit`);
+    return { ok: true, message: "Tanda duplicada. Quedó pausada: ponle fechas y reanuda la venta." };
   } catch (err) {
     return fail(err);
   }
@@ -446,7 +509,7 @@ export async function deleteTicketTypeForm(
     if (tt.sold_count > 0 || tt.reserved_count > 0 || (itemCount ?? 0) > 0) {
       return {
         error:
-          "Esta entrada ya tiene ventas o compras en curso, así que no se puede eliminar. Puedes dejar el cupo igual a lo vendido para cerrarla.",
+          "Esta entrada ya tiene ventas o compras en curso, así que no se puede eliminar. Puedes pausar la venta o dejar el cupo igual a lo vendido para cerrarla.",
       };
     }
 
