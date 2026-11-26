@@ -64,23 +64,23 @@ function DateTimeField({
             Ahora
           </button>
         ) : (
-          <>
-            <button type="button" className={chip} onClick={() => onChange(todayEndChileInput())}>
-              23:59 de hoy
-            </button>
-            <button
-              type="button"
-              className={chip}
-              disabled={!eventDateLocal}
-              onClick={() => eventDateLocal && onChange(eventDateLocal)}
-            >
-              Hasta el inicio del evento
-            </button>
-          </>
+          <button type="button" className={chip} onClick={() => onChange(todayEndChileInput())}>
+            23:59 de hoy
+          </button>
         )}
         <button type="button" className={chip} disabled={!value} onClick={() => onChange("")}>
           Limpiar
         </button>
+        {kind === "close" ? (
+          <button
+            type="button"
+            className={chip}
+            disabled={!eventDateLocal}
+            onClick={() => eventDateLocal && onChange(eventDateLocal)}
+          >
+            Hasta el inicio del evento
+          </button>
+        ) : null}
       </div>
       <p className="text-xs text-neutral-400" aria-live="polite">
         {when

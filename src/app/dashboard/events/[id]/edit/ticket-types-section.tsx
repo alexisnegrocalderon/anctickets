@@ -86,7 +86,7 @@ function TierCard({
     <li className="rounded-2xl border border-white/10 bg-white/[.03] p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-base font-semibold text-[#f5f4f1]">{tt.name}</p>
+          <p className="break-words text-base font-semibold text-[#f5f4f1]">{tt.name}</p>
           <p className="mt-0.5 text-sm text-neutral-400">
             {Number(tt.base_price) === 0 ? "Gratis" : `${clp(Number(tt.base_price))} · comprador paga ${clp(fees.totalAmount)}`}
           </p>
@@ -112,7 +112,7 @@ function TierCard({
           aria-label={`${tt.name}: ${tt.sold_count} de ${tt.quantity} vendidas`}
           className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10"
         >
-          <div className="h-full rounded-full bg-[var(--anc-vermilion)]" style={{ width: `${pct}%` }} />
+          <div className="h-full rounded-full bg-neutral-200" style={{ width: `${pct}%` }} />
         </div>
         {committed > tt.sold_count ? <span className="sr-only">Hay entradas reservadas en compras en curso</span> : null}
       </div>

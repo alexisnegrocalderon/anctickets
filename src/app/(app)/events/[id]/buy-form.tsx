@@ -275,7 +275,7 @@ export default function BuyForm({
               <div className="mb-1.5">
                 <TierStatusBadge status={status} />
               </div>
-              <p className="truncate font-semibold" style={{ color: nameColor }}>
+              <p className="break-words font-semibold" style={{ color: nameColor }}>
                 {tt.name}
               </p>
               <p className={qty > 0 ? "text-sm" : "text-sm text-neutral-400"} style={priceColor ? { color: priceColor } : undefined}>

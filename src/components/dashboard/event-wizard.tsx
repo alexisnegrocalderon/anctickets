@@ -81,7 +81,7 @@ function TierSummary({
       }`}
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="min-w-0 truncate text-base font-semibold text-[#f5f4f1]">{tier.name}</p>
+        <p className="min-w-0 break-words text-base font-semibold text-[#f5f4f1]">{tier.name}</p>
         <p className="shrink-0 text-sm text-neutral-300">{tier.base_price === 0 ? "Gratis" : clp(tier.base_price)}</p>
       </div>
       <p className="mt-0.5 text-sm text-neutral-400">Cupo {tier.quantity}</p>
