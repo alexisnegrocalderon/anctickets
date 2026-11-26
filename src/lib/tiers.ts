@@ -171,3 +171,12 @@ export function nowChileInput(now: Instant = Date.now()): string {
 export function todayEndChileInput(now: Instant = Date.now()): string {
   return `${nowChileInput(now).slice(0, 10)}T23:59`;
 }
+
+/**
+ * Reloj del servidor para pasar como `serverNow` a las páginas. Va en una
+ * función aparte porque las páginas del servidor se ejecutan una vez por
+ * petición (no se re-renderizan como un componente de cliente).
+ */
+export function serverClock(): number {
+  return Date.now();
+}

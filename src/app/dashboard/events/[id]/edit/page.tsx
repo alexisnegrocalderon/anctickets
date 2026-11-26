@@ -23,6 +23,7 @@ import EditTabs from "./edit-tabs";
 import EventActionsSheet from "./event-actions-sheet";
 import SalesSection, { type SalesData } from "./sales-section";
 import TicketTypesSection from "./ticket-types-section";
+import { serverClock } from "@/lib/tiers";
 import DiscountCodesSection from "./discount-codes-section";
 import AmbassadorsSection from "./ambassadors-section";
 import StaffSection from "./staff-section";
@@ -317,7 +318,7 @@ export default async function EditEventPage({
         initialTab={tab}
         tabs={[
           { id: "resumen", label: "Resumen", content: resumen },
-          { id: "entradas", label: "Entradas", content: <TicketTypesSection eventId={id} ticketTypes={ticketTypes} /> },
+          { id: "entradas", label: "Entradas", content: <TicketTypesSection eventId={id} ticketTypes={ticketTypes} serverNow={serverClock()} eventDateIso={event.event_date} /> },
           {
             id: "descuentos",
             label: "Descuentos",

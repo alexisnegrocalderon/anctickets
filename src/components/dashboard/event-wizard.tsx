@@ -7,13 +7,23 @@
  * Atrás. Apenas se completan título+fecha el evento queda guardado como
  * borrador: si el usuario abandona, retoma desde "Eventos" → editar.
  */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { createDraftEvent, updateEvent, createTicketType, setEventStatus } from "@/app/dashboard/events/actions";
+import {
+  createDraftEvent,
+  updateEvent,
+  createTicketType,
+  updateTicketTypeForm,
+  deleteTicketTypeForm,
+  setEventStatus,
+} from "@/app/dashboard/events/actions";
 import { Button, Field, Input, Textarea } from "@/components/dashboard/ui";
 import ImageUpload from "@/components/dashboard/image-upload";
+import TierFields, { EMPTY_TIER_DRAFT, tierDraftError, type TierDraft } from "@/components/dashboard/tier-fields";
+import { isoToChileInput, chileLocalToIso } from "@/lib/datetime";
+import { tierDatesSummary } from "@/lib/tiers";
 import { isValidHex } from "@/lib/color";
 import { EVENT_THEME_OPTIONS, EVENT_THEME_STYLES, resolveEventTheme } from "@/lib/event-themes";
 import { slugify } from "@/lib/slug";
@@ -21,7 +31,94 @@ import type { EventTheme } from "@/lib/database.types";
 
 const SITE_HOST = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "") || "tickets.ancdigital.cl";
 
-type DraftTicketType = { name: string; base_price: number; quantity: number };
+/** Una tanda ya guardada en la base como parte del borrador (id real). */
+type DraftTicketType = {
+  id: string;
+  name: string;
+  base_price: number;
+  quantity: number;
+  sales_start: string | null;
+  sales_end: string | null;
+};
+
+const clp = (n: number) => `$${n.toLocaleString("es-CL", { maximumFractionDigits: 0 })}`;
+
+function tierToDraft(tt: DraftTicketType): TierDraft {
+  return {
+    name: tt.name,
+    price: String(tt.base_price),
+    quantity: String(tt.quantity),
+    start: isoToChileInput(tt.sales_start),
+    end: isoToChileInput(tt.sales_end),
+    paused: false,
+  };
+}
+
+/** Tarjeta de una tanda del borrador, con Editar y Quitar (con confirmación breve). */
+function TierSummary({
+  tier,
+  editing,
+  confirming,
+  busy,
+  onEdit,
+  onAskRemove,
+  onCancelRemove,
+  onRemove,
+}: {
+  tier: DraftTicketType;
+  editing: boolean;
+  confirming: boolean;
+  busy: boolean;
+  onEdit: () => void;
+  onAskRemove: () => void;
+  onCancelRemove: () => void;
+  onRemove: () => void;
+}) {
+  return (
+    <li
+      className={`rounded-2xl border p-4 ${
+        editing ? "border-[var(--anc-vermilion)]/60 bg-[var(--anc-vermilion)]/[.06]" : "border-white/10 bg-white/[.03]"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <p className="min-w-0 truncate text-base font-semibold text-[#f5f4f1]">{tier.name}</p>
+        <p className="shrink-0 text-sm text-neutral-300">{tier.base_price === 0 ? "Gratis" : clp(tier.base_price)}</p>
+      </div>
+      <p className="mt-0.5 text-sm text-neutral-400">Cupo {tier.quantity}</p>
+      <p className="mt-1 text-sm text-neutral-300">{tierDatesSummary(tier)}</p>
+      {editing ? (
+        <p className="mt-2 font-mono text-[11px] font-bold uppercase tracking-[.14em] text-[var(--anc-vermilion)]">
+          Editando abajo
+        </p>
+      ) : null}
+      <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-white/10 pt-3">
+        {confirming ? (
+          <>
+            <span className="mr-auto text-sm text-neutral-200">¿Quitar esta tanda?</span>
+            <Button variant="danger" disabled={busy} onClick={onRemove}>
+              Sí, quitar
+            </Button>
+            <Button variant="outline" disabled={busy} onClick={onCancelRemove}>
+              No
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant="outline" disabled={busy} onClick={onEdit} aria-label={`Editar ${tier.name}`}>
+              <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+                <path d="M13.5 3.5l3 3L7 16H4v-3l9.5-9.5Z" strokeLinejoin="round" />
+              </svg>
+              Editar
+            </Button>
+            <Button variant="danger" disabled={busy} onClick={onAskRemove} aria-label={`Quitar ${tier.name}`}>
+              Quitar
+            </Button>
+          </>
+        )}
+      </div>
+    </li>
+  );
+}
 
 const STEP_LABELS = [
   "Marca",
@@ -137,9 +234,10 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
   const [imageUrl, setImageUrl] = useState("");
 
   const [ticketTypes, setTicketTypes] = useState<DraftTicketType[]>([]);
-  const [ttName, setTtName] = useState("");
-  const [ttPrice, setTtPrice] = useState("");
-  const [ttQuantity, setTtQuantity] = useState("");
+  const [tierDraft, setTierDraft] = useState<TierDraft>(EMPTY_TIER_DRAFT);
+  const [editingTierId, setEditingTierId] = useState<string | null>(null);
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+  const tierFormRef = useRef<HTMLDivElement>(null);
 
   function buildFormData() {
     const data = new FormData();
@@ -229,28 +327,91 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
     return go(target);
   }
 
-  async function handleAddTicketType() {
-    if (!eventId || !ttName.trim() || !ttPrice || !ttQuantity) return;
+  function resetTierForm() {
+    setTierDraft(EMPTY_TIER_DRAFT);
+    setEditingTierId(null);
+  }
+
+  function startEditTier(tier: DraftTicketType) {
+    setConfirmRemoveId(null);
+    setEditingTierId(tier.id);
+    setTierDraft(tierToDraft(tier));
+    setError(null);
+    // Lleva la vista al formulario (sin animación si el usuario prefiere menos movimiento).
+    requestAnimationFrame(() =>
+      tierFormRef.current?.scrollIntoView({ block: "start", behavior: prefersReducedMotion ? "auto" : "smooth" })
+    );
+  }
+
+  function tierFormData() {
+    const data = new FormData();
+    data.set("name", tierDraft.name);
+    data.set("base_price", tierDraft.price);
+    data.set("quantity", tierDraft.quantity);
+    data.set("sales_start", tierDraft.start);
+    data.set("sales_end", tierDraft.end);
+    return data;
+  }
+
+  const tierDraftIncomplete = !tierDraft.name.trim() || tierDraft.price === "" || tierDraft.quantity === "";
+  const tierDateError = tierDraftError(tierDraft, eventDate);
+
+  /** Agrega la tanda o, si se está editando una, guarda los cambios (también en la base). */
+  async function handleSubmitTier() {
+    if (!eventId || tierDraftIncomplete || tierDateError) {
+      if (!eventId) setError("Primero guarda el título y la fecha del evento para poder agregar entradas.");
+      return;
+    }
 
     setSaving(true);
     setError(null);
 
     try {
-      const data = new FormData();
-      data.set("name", ttName);
-      data.set("base_price", ttPrice);
-      data.set("quantity", ttQuantity);
-      await createTicketType(eventId, data);
+      const data = tierFormData();
+      const salesStart = tierDraft.start ? chileLocalToIso(tierDraft.start) : null;
+      const salesEnd = tierDraft.end ? chileLocalToIso(tierDraft.end) : null;
+      const fields = {
+        name: tierDraft.name.trim(),
+        base_price: Number(tierDraft.price),
+        quantity: Number(tierDraft.quantity),
+        sales_start: salesStart,
+        sales_end: salesEnd,
+      };
 
-      setTicketTypes((list) => [
-        ...list,
-        { name: ttName, base_price: Number(ttPrice), quantity: Number(ttQuantity) },
-      ]);
-      setTtName("");
-      setTtPrice("");
-      setTtQuantity("");
+      if (editingTierId) {
+        const result = await updateTicketTypeForm(eventId, editingTierId, null, data);
+        if (result?.error) {
+          setError(result.error);
+          return;
+        }
+        setTicketTypes((list) => list.map((tt) => (tt.id === editingTierId ? { ...tt, ...fields } : tt)));
+      } else {
+        const created = await createTicketType(eventId, data);
+        setTicketTypes((list) => [...list, { id: created.id, ...fields }]);
+      }
+      resetTierForm();
     } catch (err) {
-      setError(readableError(err, "No se pudo agregar la entrada. Revisa los datos e inténtalo de nuevo."));
+      setError(readableError(err, "No se pudo guardar la tanda. Revisa los datos e inténtalo de nuevo."));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleRemoveTier(tier: DraftTicketType) {
+    if (!eventId) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const result = await deleteTicketTypeForm(eventId, tier.id, null);
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+      setTicketTypes((list) => list.filter((tt) => tt.id !== tier.id));
+      if (editingTierId === tier.id) resetTierForm();
+      setConfirmRemoveId(null);
+    } catch (err) {
+      setError(readableError(err, "No se pudo quitar la tanda. Inténtalo de nuevo."));
     } finally {
       setSaving(false);
     }
@@ -586,61 +747,58 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
                     ¿Qué entradas vas a vender?
                   </h1>
                   <p className="text-sm text-neutral-400">
-                    Puedes saltar este paso y agregar tipos de entrada más tarde desde el evento.
+                    Cada tanda tiene su precio, cupo y, si quieres, fechas de apertura y cierre. Puedes saltar este paso y agregarlas más tarde desde el evento.
                   </p>
 
                   {ticketTypes.length > 0 ? (
-                    <ul className="flex flex-col gap-2">
-                      <AnimatePresence initial={false}>
-                        {ticketTypes.map((tt, index) => (
-                          <motion.li
-                            key={`${tt.name}-${index}`}
-                            initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9 }}
-                            transition={{ type: "spring", stiffness: 320, damping: 24 }}
-                            className="flex items-center justify-between rounded-lg border border-white/10 px-3 py-2 text-sm"
-                          >
-                            <span className="text-[#f5f4f1]">{tt.name}</span>
-                            <span className="text-neutral-400">
-                              ${tt.base_price.toLocaleString("es-CL", { maximumFractionDigits: 0 })} · cupo {tt.quantity}
-                            </span>
-                          </motion.li>
+                    <div className="flex flex-col gap-2">
+                      <h2 className="font-mono text-[11px] font-bold uppercase tracking-[.16em] text-neutral-400">
+                        Tandas agregadas ({ticketTypes.length})
+                      </h2>
+                      <ul className="flex flex-col gap-3">
+                        {ticketTypes.map((tt) => (
+                          <TierSummary
+                            key={tt.id}
+                            tier={tt}
+                            editing={editingTierId === tt.id}
+                            confirming={confirmRemoveId === tt.id}
+                            busy={saving}
+                            onEdit={() => startEditTier(tt)}
+                            onAskRemove={() => setConfirmRemoveId(tt.id)}
+                            onCancelRemove={() => setConfirmRemoveId(null)}
+                            onRemove={() => handleRemoveTier(tt)}
+                          />
                         ))}
-                      </AnimatePresence>
-                    </ul>
+                      </ul>
+                    </div>
                   ) : null}
 
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <Input
-                      placeholder="Nombre (ej. General)"
-                      value={ttName}
-                      onChange={(e) => setTtName(e.target.value)}
+                  <div ref={tierFormRef} className="scroll-mt-4 rounded-2xl border border-white/10 p-4">
+                    <h2 className="mb-4 text-xl uppercase text-white">
+                      {editingTierId ? "Editar tanda" : ticketTypes.length > 0 ? "Agregar otra tanda" : "Tu primera tanda"}
+                    </h2>
+                    <TierFields
+                      idPrefix="wizard-tier"
+                      value={tierDraft}
+                      onChange={setTierDraft}
+                      eventDateLocal={eventDate}
                     />
-                    <Input
-                      type="number"
-                      min="0"
-                      placeholder="Precio base ($)"
-                      value={ttPrice}
-                      onChange={(e) => setTtPrice(e.target.value)}
-                    />
-                    <Input
-                      type="number"
-                      min="0"
-                      placeholder="Cupo"
-                      value={ttQuantity}
-                      onChange={(e) => setTtQuantity(e.target.value)}
-                    />
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <Button
+                        type="button"
+                        variant={editingTierId ? "primary" : "outline"}
+                        disabled={saving || tierDraftIncomplete || !!tierDateError}
+                        onClick={handleSubmitTier}
+                      >
+                        {saving ? "Guardando…" : editingTierId ? "Guardar cambios" : "+ Agregar tanda"}
+                      </Button>
+                      {editingTierId ? (
+                        <Button type="button" variant="outline" disabled={saving} onClick={resetTierForm}>
+                          Cancelar
+                        </Button>
+                      ) : null}
+                    </div>
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="self-start"
-                    disabled={saving || !ttName.trim() || !ttPrice || !ttQuantity}
-                    onClick={handleAddTicketType}
-                  >
-                    + Agregar tipo de entrada
-                  </Button>
                 </div>
               ) : null}
 
@@ -657,9 +815,35 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
                     </p>
                     <p className="mt-3 text-[var(--anc-muted-text)]">
                       {ticketTypes.length > 0
-                        ? `${ticketTypes.length} tipo(s) de entrada cargados`
-                        : "Sin tipos de entrada todavía"}
+                        ? `${ticketTypes.length} ${ticketTypes.length === 1 ? "tanda cargada" : "tandas cargadas"}`
+                        : "Sin tandas de entrada todavía"}
                     </p>
+                    {ticketTypes.length > 0 ? (
+                      <ul className="mt-3 flex flex-col gap-2">
+                        {ticketTypes.map((tt) => (
+                          <li key={tt.id} className="flex items-start justify-between gap-3 rounded-xl border border-white/10 p-3">
+                            <div className="min-w-0">
+                              <p className="truncate font-semibold text-white">{tt.name}</p>
+                              <p className="text-neutral-400">
+                                {tt.base_price === 0 ? "Gratis" : clp(tt.base_price)} · cupo {tt.quantity}
+                              </p>
+                              <p className="text-neutral-300">{tierDatesSummary(tt)}</p>
+                            </div>
+                            <Button
+                              variant="outline"
+                              disabled={saving}
+                              aria-label={`Editar ${tt.name}`}
+                              onClick={async () => {
+                                await go(5);
+                                startEditTier(tt);
+                              }}
+                            >
+                              Editar
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
                   </div>
 
                   {reviewIssues.length > 0 ? (
