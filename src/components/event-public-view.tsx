@@ -5,6 +5,7 @@ import BuyForm from "@/app/(app)/events/[id]/buy-form";
 import FloatingAccessButton from "@/components/floating-access-button";
 import ScrollReveal from "@/components/scroll-reveal";
 import { resolveEventTheme } from "@/lib/event-themes";
+import { eventDateParts } from "@/lib/event-date";
 
 export default function EventPublicView({
   event,
@@ -22,11 +23,7 @@ export default function EventPublicView({
   /** La productora está suspendida: se muestra el aviso y se deshabilita la compra. */
   salesSuspended?: boolean;
 }) {
-  const date = new Date(event.event_date);
-  const weekday = date.toLocaleDateString("es-CL", { weekday: "long" });
-  const day = date.toLocaleDateString("es-CL", { day: "2-digit" });
-  const month = date.toLocaleDateString("es-CL", { month: "short" }).replace(".", "").toUpperCase();
-  const time = date.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" });
+  const { weekday, day, month, time } = eventDateParts(event.event_date);
   const hasTickets = !!ticketTypes && ticketTypes.length > 0;
   const theme = resolveEventTheme(event.theme, event.accent_color);
 
