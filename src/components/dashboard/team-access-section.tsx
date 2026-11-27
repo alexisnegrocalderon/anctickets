@@ -35,8 +35,8 @@ export default function TeamAccessSection({ email, hasTotp, hasPassword, viaGoog
     <Card>
       <h2 className="text-2xl uppercase text-white">Acceso con clave y 2 pasos</h2>
       <p className={muted}>
-        Una forma alternativa de entrar a la administración sin Google. La clave sola nunca abre el panel: siempre
-        pide además el código de 6 dígitos.
+        Una forma alternativa de entrar a la administración sin Google. Entras con correo, clave y código en un solo
+        paso. La clave sola no sirve de nada: sin el código no se crea ninguna sesión.
       </p>
 
       <div className="mt-3 flex flex-wrap gap-2">

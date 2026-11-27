@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { decideAdminAccess, extractAmrMethods, getAdminEmails, hasVerifiedEmail, isAdminEmail, isAdminUser, parseAdminEmails } from "./admin";
+import { decideAdminAccess, extractAmrMethods, getAdminEmails, hasVerifiedEmail, isAdminEmail, isAdminUser, isWeakAdminSession, parseAdminEmails } from "./admin";
 
 afterEach(() => vi.unstubAllEnvs());
 
@@ -68,55 +68,60 @@ describe("hasVerifiedEmail / isAdminUser", () => {
 });
 
 describe("decideAdminAccess (tabla de decisión)", () => {
-  const base = { isAdmin: true, amrMethods: [] as string[] | null | undefined, aal: "aal1" as string | null | undefined, hasVerifiedTotp: false };
+  const amrCases: (string[] | null | undefined)[] = [["oauth"], ["password"], ["password", "totp"], ["totp"], [], undefined, null];
+  const aalCases: (string | null | undefined)[] = ["aal1", "aal2", "aal3", null, undefined];
 
-  it("no admin: siempre deny, aunque tenga oauth o aal2", () => {
-    for (const amrMethods of [["oauth"], ["password"], [], undefined, null]) {
-      for (const aal of ["aal1", "aal2", null, undefined]) {
-        for (const hasVerifiedTotp of [true, false]) {
-          expect(decideAdminAccess({ isAdmin: false, amrMethods, aal, hasVerifiedTotp })).toBe("deny");
+  it("exhaustivo: allow solo si es admin Y (amr incluye oauth O aal === aal2)", () => {
+    for (const amrMethods of amrCases) {
+      for (const aal of aalCases) {
+        for (const isAdmin of [true, false]) {
+          const expected = isAdmin && (!!amrMethods?.includes("oauth") || aal === "aal2") ? "allow" : "deny";
+          expect(decideAdminAccess({ isAdmin, amrMethods, aal })).toBe(expected);
         }
       }
     }
   });
-  it("oauth (Google): allow con o sin factor enrolado, con cualquier aal", () => {
-    for (const aal of ["aal1", "aal2", null, undefined]) {
-      for (const hasVerifiedTotp of [true, false]) {
-        expect(decideAdminAccess({ ...base, amrMethods: ["oauth"], aal, hasVerifiedTotp })).toBe("allow");
+  it("no admin: deny aunque tenga oauth o aal2", () => {
+    expect(decideAdminAccess({ isAdmin: false, amrMethods: ["oauth"], aal: "aal2" })).toBe("deny");
+  });
+  it("oauth (Google): allow con cualquier aal", () => {
+    for (const aal of aalCases) expect(decideAdminAccess({ isAdmin: true, amrMethods: ["oauth"], aal })).toBe("allow");
+  });
+  it("aal2 sin oauth (clave + código): allow, también con amr vacío o ausente", () => {
+    for (const amrMethods of [["password", "totp"], [], undefined, null]) {
+      expect(decideAdminAccess({ isAdmin: true, amrMethods, aal: "aal2" })).toBe("allow");
+    }
+  });
+  it("clave sola (aal1) o sin garantías: deny", () => {
+    for (const aal of ["aal1", null, undefined]) {
+      for (const amrMethods of [["password"], [], undefined, null]) {
+        expect(decideAdminAccess({ isAdmin: true, amrMethods, aal })).toBe("deny");
       }
     }
   });
-  it("oauth junto a otros métodos: allow", () => {
-    expect(decideAdminAccess({ ...base, amrMethods: ["password", "oauth", "totp"], aal: "aal2" })).toBe("allow");
+  it("método parecido a oauth o aal desconocido no cuenta", () => {
+    expect(decideAdminAccess({ isAdmin: true, amrMethods: ["OAuth", "oauth2", "google"], aal: "aal1" })).toBe("deny");
+    expect(decideAdminAccess({ isAdmin: true, amrMethods: ["password"], aal: "aal3" })).toBe("deny");
   });
-  it("aal2 sin oauth (clave + código): allow", () => {
-    expect(decideAdminAccess({ ...base, amrMethods: ["password", "totp"], aal: "aal2", hasVerifiedTotp: true })).toBe("allow");
-    expect(decideAdminAccess({ ...base, amrMethods: ["password"], aal: "aal2" })).toBe("allow");
+});
+
+describe("isWeakAdminSession (seguro de sesión solo-clave)", () => {
+  it("correo admin con clave sola (aal1): débil", () => {
+    vi.stubEnv("ADMIN_EMAILS", "admin@test.cl");
+    expect(isWeakAdminSession({ email: "Admin@Test.cl", amrMethods: ["password"], aal: "aal1" })).toBe(true);
+    expect(isWeakAdminSession({ email: "admin@test.cl", amrMethods: [], aal: null })).toBe(true);
   });
-  it("aal2 con amr vacío o ausente: allow (lo decide el aal verificado)", () => {
-    expect(decideAdminAccess({ ...base, amrMethods: [], aal: "aal2" })).toBe("allow");
-    expect(decideAdminAccess({ ...base, amrMethods: undefined, aal: "aal2" })).toBe("allow");
-    expect(decideAdminAccess({ ...base, amrMethods: null, aal: "aal2" })).toBe("allow");
+  it("admin con Google o con aal2: no es débil", () => {
+    vi.stubEnv("ADMIN_EMAILS", "admin@test.cl");
+    expect(isWeakAdminSession({ email: "admin@test.cl", amrMethods: ["oauth"], aal: "aal1" })).toBe(false);
+    expect(isWeakAdminSession({ email: "admin@test.cl", amrMethods: ["password", "totp"], aal: "aal2" })).toBe(false);
   });
-  it("clave sola (aal1) con factor verificado: verify", () => {
-    expect(decideAdminAccess({ ...base, amrMethods: ["password"], aal: "aal1", hasVerifiedTotp: true })).toBe("verify");
-  });
-  it("clave sola (aal1) sin factor: deny", () => {
-    expect(decideAdminAccess({ ...base, amrMethods: ["password"], aal: "aal1", hasVerifiedTotp: false })).toBe("deny");
-  });
-  it("amr vacío o ausente y aal1/ausente: sin garantías, verify o deny según el factor", () => {
-    for (const amrMethods of [[], undefined, null]) {
-      for (const aal of ["aal1", null, undefined]) {
-        expect(decideAdminAccess({ ...base, amrMethods, aal, hasVerifiedTotp: true })).toBe("verify");
-        expect(decideAdminAccess({ ...base, amrMethods, aal, hasVerifiedTotp: false })).toBe("deny");
-      }
-    }
-  });
-  it("método parecido a oauth no cuenta (solo 'oauth' exacto)", () => {
-    expect(decideAdminAccess({ ...base, amrMethods: ["OAuth", "oauth2", "google"], aal: "aal1", hasVerifiedTotp: false })).toBe("deny");
-  });
-  it("aal desconocido no equivale a aal2", () => {
-    expect(decideAdminAccess({ ...base, amrMethods: ["password"], aal: "aal3", hasVerifiedTotp: false })).toBe("deny");
+  it("correo que no es admin (o sin correo, o sin ADMIN_EMAILS): nunca débil", () => {
+    vi.stubEnv("ADMIN_EMAILS", "admin@test.cl");
+    expect(isWeakAdminSession({ email: "otra@test.cl", amrMethods: ["password"], aal: "aal1" })).toBe(false);
+    expect(isWeakAdminSession({ email: null, amrMethods: ["password"], aal: "aal1" })).toBe(false);
+    vi.stubEnv("ADMIN_EMAILS", "");
+    expect(isWeakAdminSession({ email: "admin@test.cl", amrMethods: ["password"], aal: "aal1" })).toBe(false);
   });
 });
 
