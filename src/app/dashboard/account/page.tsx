@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getClaimsUser, getOrganizerProfile } from "@/lib/auth";
+import { getAdminUser } from "@/lib/admin";
 import { InstallAppButton } from "@/components/pwa/install-app-button";
 import { Badge, Button, Card, LinkButton, PageHeader } from "@/components/dashboard/ui";
 
@@ -8,6 +9,8 @@ export default async function DashboardAccountPage() {
   if (!user) redirect("/login?next=/dashboard/account");
 
   const profile = await getOrganizerProfile(user.id);
+  // Verificación fuerte en el servidor: solo un admin ve el enlace.
+  const isAdmin = !!(await getAdminUser());
 
   return (
     <div className="max-w-2xl">
@@ -59,6 +62,18 @@ export default async function DashboardAccountPage() {
             <InstallAppButton />
           </div>
         </Card>
+
+        {isAdmin ? (
+          <Card>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="text-2xl uppercase text-white">Administración</h2>
+                <p className="mt-1 text-sm text-[var(--anc-muted-text)]">Productoras, ventas, comisiones y salud del sistema.</p>
+              </div>
+              <LinkButton href="/admin">Panel de administración</LinkButton>
+            </div>
+          </Card>
+        ) : null}
 
         <form action="/auth/signout" method="post">
           <Button type="submit" variant="outline" className="w-full sm:w-auto">

@@ -49,6 +49,10 @@ export function tierRejectionMessage(
 
 /** Mapea los errores de las RPC a mensajes para el comprador. */
 export function friendlyRpcError(message: string, ticketTypes?: Map<string, TicketType>): CheckoutError | null {
+  // Productora suspendida por ANC (migración 0010): no se crean órdenes nuevas.
+  if (message.includes("ORGANIZER_SUSPENDED")) {
+    return new CheckoutError("Las ventas de este evento no están disponibles por ahora.", 403);
+  }
   const sold = /SOLD_OUT:([0-9a-f-]{36})/i.exec(message);
   if (sold) {
     const name = ticketTypes?.get(sold[1])?.name;

@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { Event, Profile, TicketType } from "@/lib/database.types";
 import EventPublicView from "@/components/event-public-view";
 import { serverClock } from "@/lib/tiers";
+import { readSuspendedAt } from "@/lib/suspension";
 
 async function getEvent(slug: string) {
   const supabase = await createClient();
@@ -76,6 +77,9 @@ export default async function EventPublicPage({
     .eq("id", event.organizer_id)
     .single<Pick<Profile, "organizer_name">>();
 
+  // Productora suspendida por ANC: la página se ve, pero no se puede comprar.
+  const salesSuspended = !!(await readSuspendedAt(admin, event.organizer_id));
+
   return (
     <EventPublicView
       event={event}
@@ -83,6 +87,7 @@ export default async function EventPublicPage({
       isLoggedIn={!!user}
       organizerName={organizerProfile?.organizer_name ?? null}
       serverNow={serverClock()}
+      salesSuspended={salesSuspended}
     />
   );
 }

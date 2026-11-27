@@ -13,6 +13,7 @@ import { normalizeCode } from "@/lib/discount";
 import { deliverOrderEmail } from "@/lib/orders";
 import { buildQuote, CheckoutError, friendlyRpcError, orderRpcArgs } from "@/lib/checkout";
 import type { EventTheme } from "@/lib/database.types";
+import { suspendedActionError } from "@/lib/suspension";
 
 /** Resultado de las acciones de formulario del panel (se muestra bajo el botón). */
 export type ActionState = { ok?: boolean; error?: string; message?: string } | null;
@@ -221,6 +222,10 @@ export async function setEventStatus(
   const { supabase, user } = await requireUser();
 
   if (status === "published") {
+    // Una productora suspendida no puede publicar eventos.
+    const suspended = await suspendedActionError(supabase, user.id);
+    if (suspended) return { error: suspended };
+
     const { data: ev } = await supabase
       .from("events")
       .select("title, event_date")
@@ -347,7 +352,9 @@ function parseTicketTypeForm(formData: FormData) {
 
 /** Crea una tanda (tipo de entrada) y devuelve su id. Lo usan el panel y el asistente. */
 export async function createTicketType(eventId: string, formData: FormData): Promise<{ id: string }> {
-  const { supabase } = await requireUser();
+  const { supabase, user } = await requireUser();
+  const suspended = await suspendedActionError(supabase, user.id);
+  if (suspended) throw new Error(suspended);
   const t = parseTicketTypeForm(formData);
 
   const { data, error } = await supabase
@@ -458,7 +465,9 @@ export async function setTicketTypePaused(eventId: string, ticketTypeId: string,
  */
 export async function duplicateTicketType(eventId: string, ticketTypeId: string): Promise<ActionState> {
   try {
-    const { supabase } = await requireUser();
+    const { supabase, user } = await requireUser();
+    const suspended = await suspendedActionError(supabase, user.id);
+    if (suspended) return { error: suspended };
     const { data: src } = await supabase
       .from("ticket_types")
       .select("name, base_price, quantity")

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getOrganizerProfile, getVerifiedUser } from "@/lib/auth";
+import { getOwnSuspendedAt, SUSPENDED_ACCOUNT_MESSAGE } from "@/lib/suspension";
 import DashboardNav from "@/components/dashboard/dashboard-nav";
 
 export default async function DashboardLayout({
@@ -21,6 +22,8 @@ export default async function DashboardLayout({
     redirect("/onboarding");
   }
 
+  const suspendedAt = await getOwnSuspendedAt(user.id);
+
   return (
     <div className="min-h-dvh bg-[var(--anc-bg)] text-white md:flex">
       <div className="anc-progress" aria-hidden="true" />
@@ -30,9 +33,19 @@ export default async function DashboardLayout({
           <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
             Productora
           </p>
-          <p className="mb-6 mt-1 truncate font-display text-lg uppercase text-[var(--anc-muted-text)]">
-            {profile.organizer_name}
-          </p>
+          <div className="mb-6">
+            <p className="mt-1 truncate font-display text-lg uppercase text-[var(--anc-muted-text)]">
+              {profile.organizer_name}
+            </p>
+            {suspendedAt ? (
+              <p
+                role="alert"
+                className="mt-3 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-200"
+              >
+                {SUSPENDED_ACCOUNT_MESSAGE}
+              </p>
+            ) : null}
+          </div>
           {children}
         </div>
       </main>

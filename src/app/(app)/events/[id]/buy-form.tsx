@@ -78,6 +78,7 @@ export default function BuyForm({
   ticketTypes: rawTicketTypes,
   isLoggedIn,
   serverNow,
+  salesSuspended = false,
 }: {
   eventId: string;
   eventSlug: string;
@@ -85,6 +86,8 @@ export default function BuyForm({
   isLoggedIn: boolean;
   /** Hora del servidor al renderizar: primer render y corrección del reloj del navegador. */
   serverNow: number;
+  /** La productora está suspendida: no se puede comprar nada. */
+  salesSuspended?: boolean;
 }) {
   const ticketTypes = useMemo(() => sortTiers(rawTicketTypes), [rawTicketTypes]);
   const now = useTierClock(serverNow, ticketTypes);
@@ -93,7 +96,7 @@ export default function BuyForm({
     for (const tt of ticketTypes) map.set(tt.id, tierStatus(tt, now));
     return map;
   }, [ticketTypes, now]);
-  const anyOnSale = [...statusById.values()].some((st) => st === "on_sale");
+  const anyOnSale = !salesSuspended && [...statusById.values()].some((st) => st === "on_sale");
   const [closedNotice, setClosedNotice] = useState<string[]>([]);
   const router = useRouter();
   const [quantities, setQuantities] = useState<Record<string, number>>({});
@@ -234,7 +237,14 @@ export default function BuyForm({
 
   return (
     <div className="flex flex-col gap-3">
-      {!anyOnSale ? <NoSaleBanner tiers={ticketTypes} statusById={statusById} /> : null}
+      {salesSuspended ? (
+        <div role="status" className="rounded-2xl border border-white/25 bg-white/[.07] px-4 py-4">
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[.18em] text-neutral-400">Por ahora no se puede comprar</p>
+          <p className="mt-1 text-lg font-black leading-tight text-white">Las ventas de este evento no están disponibles por ahora.</p>
+        </div>
+      ) : !anyOnSale ? (
+        <NoSaleBanner tiers={ticketTypes} statusById={statusById} />
+      ) : null}
 
       {closedNotice.length > 0 ? (
         <p role="status" className="rounded-xl border border-white/20 bg-white/[.06] px-4 py-3 text-sm text-white">
@@ -246,7 +256,7 @@ export default function BuyForm({
 
       {ticketTypes.map((tt, index) => {
         const status = statusById.get(tt.id) ?? "on_sale";
-        const onSale = status === "on_sale";
+        const onSale = status === "on_sale" && !salesSuspended;
         const remaining = remainingTickets(tt);
         const qty = onSale ? (quantities[tt.id] ?? 0) : 0;
         const last = onSale && isLastTickets(tt);

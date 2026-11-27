@@ -12,12 +12,15 @@ export default function EventPublicView({
   isLoggedIn,
   organizerName,
   serverNow,
+  salesSuspended = false,
 }: {
   event: Event;
   ticketTypes: TicketType[] | null;
   isLoggedIn: boolean;
   organizerName: string | null;
   serverNow: number;
+  /** La productora está suspendida: se muestra el aviso y se deshabilita la compra. */
+  salesSuspended?: boolean;
 }) {
   const date = new Date(event.event_date);
   const weekday = date.toLocaleDateString("es-CL", { weekday: "long" });
@@ -96,7 +99,11 @@ export default function EventPublicView({
             </dl>
 
             <div id="hero-cta" className="mt-7">
-              {hasTickets ? (
+              {salesSuspended ? (
+                <p role="status" className="inline-flex min-h-12 items-center rounded-full border border-white/25 bg-white/[.07] px-6 text-sm font-semibold text-white">
+                  Ventas no disponibles por ahora
+                </p>
+              ) : hasTickets ? (
                 <a
                   href="#entradas"
                   className="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-full bg-[var(--anc-vermilion)] px-9 text-base font-black uppercase tracking-[.04em] text-[var(--anc-ink)] shadow-[0_18px_50px_-14px_rgba(252,76,19,.7)] transition duration-300 [transition-timing-function:var(--ease-out)] hover:brightness-95 active:scale-[.98] sm:w-auto"
@@ -158,6 +165,7 @@ export default function EventPublicView({
                 ticketTypes={ticketTypes!}
                 isLoggedIn={isLoggedIn}
                 serverNow={serverNow}
+                salesSuspended={salesSuspended}
               />
             )}
           </div>

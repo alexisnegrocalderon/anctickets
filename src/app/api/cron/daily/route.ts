@@ -26,5 +26,17 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: aliveError.message }, { status: 500 });
   }
 
+  // Deja constancia de la corrida para la pantalla de salud de /admin. Si falla no
+  // se rompe el cron: solo se registra el error.
+  const { error: statusError } = await admin.from("system_status").upsert(
+    {
+      key: "daily_cron",
+      value: { ran_at: new Date().toISOString(), expired_orders: typeof expired === "number" ? expired : 0 },
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "key" }
+  );
+  if (statusError) console.error("system_status (daily_cron) falló:", statusError);
+
   return NextResponse.json({ ok: true, expired });
 }
