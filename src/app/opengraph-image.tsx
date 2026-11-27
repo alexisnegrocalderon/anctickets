@@ -8,7 +8,7 @@ export const alt = "ANC Tickets — vive el evento: descubre fechas, compra entr
 
 /**
  * Tarjeta al compartir el link principal (WhatsApp, Instagram, etc.): afiche de
- * fiesta con Anton gigante, Tico (la mascota) grande y las dos puertas del sitio.
+ * fiesta con Anton gigante, Tico (la mascota, cubo ANC con carita) grande y las dos puertas del sitio.
  */
 export default async function Image() {
   const [tico, anton] = await Promise.all([getTicoDataUri(), getPosterFont()]);
@@ -40,9 +40,9 @@ export default async function Image() {
         <img
           src={tico}
           alt=""
-          width={500}
-          height={500}
-          style={{ position: "absolute", right: "52px", top: "62px", transform: "rotate(8deg)" }}
+          width={560}
+          height={395}
+          style={{ position: "absolute", right: "38px", top: "118px" }}
         />
 
         <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "50px 64px", height: "100%", width: "800px" }}>
