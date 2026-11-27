@@ -278,6 +278,14 @@ export type AdminSalesDayRow = {
 /** Fila de admin_health() (migración 0010). */
 export type AdminHealthRow = { clave: string; cantidad: number; detalle: string | null };
 
+/** Migración 0015: reacción con emoji en la Cartelera (cada persona ve solo las suyas). */
+export type EventReaction = {
+  event_id: string;
+  user_id: string;
+  emoji: "fuego" | "manos" | "amor" | "fiesta";
+  created_at: string;
+};
+
 type Table<Row, Insert = Partial<Row>, Update = Partial<Row>> = {
   Row: Row;
   Insert: Insert;
@@ -304,9 +312,15 @@ export type Database = {
       system_status: Table<SystemStatus>;
       event_notices: Table<EventNotice>;
       email_test_log: Table<EmailTestLog>;
+      event_reactions: Table<EventReaction, Pick<EventReaction, "event_id" | "user_id" | "emoji">>;
     };
     Views: Record<string, never>;
     Functions: {
+      /** Migración 0015: totales de reacciones por evento y emoji (sin exponer personas). */
+      event_reaction_counts: {
+        Args: { p_event_ids: string[] };
+        Returns: { event_id: string; emoji: string; total: number }[];
+      };
       /** Migración 0014: contadores de las puertas (solo service_role). */
       bump_entry_metric: {
         Args: { p_metric: string };
