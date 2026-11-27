@@ -1,7 +1,8 @@
 import "server-only";
 import { cache } from "react";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdmin } from "@/lib/admin";
+import { getAdminEmails, requireAdmin } from "@/lib/admin";
+import { isMissingFunctionError, normalizeProtectedEmails, parsePreview, type DeletePreview } from "@/lib/admin-delete";
 import type {
   AdminAudit,
   AdminHealthRow,
@@ -326,4 +327,26 @@ export async function getEventDetail(id: string): Promise<EventDetail | null> {
     checkedIn: tickets.get(id)?.used ?? 0,
     unsentEmails: unsentRes.count ?? 0,
   };
+}
+
+/**
+ * Vista previa del borrado de una productora. "unavailable" si la migración 0013 aún
+ * no está aplicada (o la lectura falló): la ficha muestra el botón desactivado en vez de romper.
+ */
+export type DeletePreviewResult = { state: "ok"; preview: DeletePreview } | { state: "unavailable"; migration: boolean };
+
+export async function getDeletePreview(id: string): Promise<DeletePreviewResult> {
+  await requireAdmin();
+  if (!isUuid(id)) return { state: "unavailable", migration: false };
+  try {
+    const { data, error } = await createAdminClient().rpc("admin_organizer_delete_preview", {
+      p_organizer_id: id,
+      p_protected_emails: normalizeProtectedEmails(getAdminEmails()),
+    });
+    if (error) return { state: "unavailable", migration: isMissingFunctionError(error.message) };
+    const preview = parsePreview(data);
+    return preview ? { state: "ok", preview } : { state: "unavailable", migration: false };
+  } catch {
+    return { state: "unavailable", migration: false };
+  }
 }
