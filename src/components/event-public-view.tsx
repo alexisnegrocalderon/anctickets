@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Event, TicketType } from "@/lib/database.types";
 import BuyForm from "@/app/(app)/events/[id]/buy-form";
 import FloatingAccessButton from "@/components/floating-access-button";
 import ScrollReveal from "@/components/scroll-reveal";
+import Tico from "@/components/tico";
 import { resolveEventTheme } from "@/lib/event-themes";
 import { eventDateParts } from "@/lib/event-date";
 
@@ -149,8 +149,13 @@ export default function EventPublicView({
         </div>
 
         <section id="entradas" className="reveal min-w-0 scroll-mt-24">
-          <p className="font-mono text-[11px] font-bold uppercase tracking-[.18em] text-[var(--anc-muted-text)]">Tu acceso</p>
-          <h2 className="mt-1 text-4xl uppercase leading-none text-white">Entradas</h2>
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.18em] text-[var(--anc-muted-text)]">Tu acceso</p>
+              <h2 className="mt-1 text-4xl uppercase leading-none text-white">Entradas</h2>
+            </div>
+            <Tico pose="pulgar" width={78} className="-mb-1 shrink-0" />
+          </div>
 
           <div className="mt-5">
             {!hasTickets ? (
@@ -174,7 +179,7 @@ export default function EventPublicView({
           href="/productores"
           className="inline-flex min-h-11 items-center gap-1.5 border-t border-white/10 pt-4 font-mono text-[10px] uppercase tracking-[.16em] text-neutral-500 transition-colors hover:text-neutral-300"
         >
-          <Image src="/anc-mark.png" alt="" width={12} height={12} className="opacity-60" />
+          <Tico pose="idle" width={34} motion="none" className="opacity-90" />
           Powered by ANC Tickets — crea tu propio evento gratis
         </Link>
       </div>

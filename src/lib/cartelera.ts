@@ -3,6 +3,7 @@
  * fecha, calendario y la frase de Tico. Todo sale de datos reales de la base
  * (tandas y fecha del evento); nada se inventa. Hora de Chile.
  */
+import type { TicoPose } from "@/lib/tico";
 import { remainingTickets, tierStatus, type TierLike } from "@/lib/tiers";
 
 const TZ = "America/Santiago";
@@ -129,20 +130,25 @@ export function calendarDays(eventIsos: string[], now: number, count = 21): { da
   });
 }
 
-/** Frase de Tico según los datos reales del evento. */
-export function ticoLine(eventIso: string, tiers: CarteleraTier[], now: number): string {
+/** Lo que dice Tico en un evento y la pose con que lo dice, según los datos reales. */
+export function ticoSay(eventIso: string, tiers: CarteleraTier[], now: number): { text: string; pose: TicoPose } {
   const badges = eventBadges(tiers, now);
   const at = Date.parse(eventIso);
   const days = Number.isNaN(at) ? 99 : chileDaysBetween(now, at);
-  if (badges.some((b) => b.text === "Agotado")) return "Se agotó. Atento a la próxima fecha.";
-  if (badges.some((b) => b.text.startsWith("Queda"))) return "¡Quedan pocas! Yo no lo pensaría mucho.";
-  if (days === 0) return "¡Es hoy! Prepara la mejor pinta.";
-  if (days === 1) return "Mañana se arma. ¿Ya tienes tu entrada?";
-  if (badges.some((b) => b.text.startsWith("Preventa · sube"))) return "La preventa se acaba pronto. Aprovecha el precio.";
-  if (badges.some((b) => b.text === "Próximamente")) return "Todavía no abren las entradas. Guárdalo.";
-  if (badges.some((b) => b.text === "Última tanda")) return "Es la última tanda. Después, nada.";
-  if (days <= 7) return "Es esta semana. Avísale a tu gente.";
-  return "Anótalo en el calendario, este viene bueno.";
+  if (badges.some((b) => b.text === "Agotado")) return { text: "Se agotó. Atento a la próxima fecha.", pose: "idle" };
+  if (badges.some((b) => b.text.startsWith("Queda"))) return { text: "¡Quedan pocas! Yo no lo pensaría mucho.", pose: "saluda" };
+  if (days === 0) return { text: "¡Es hoy! Prepara la mejor pinta.", pose: "celebra" };
+  if (days === 1) return { text: "Mañana se arma. ¿Ya tienes tu entrada?", pose: "pulgar" };
+  if (badges.some((b) => b.text.startsWith("Preventa · sube"))) return { text: "La preventa se acaba pronto. Aprovecha el precio.", pose: "saluda" };
+  if (badges.some((b) => b.text === "Próximamente")) return { text: "Todavía no abren las entradas. Guárdalo.", pose: "idle" };
+  if (badges.some((b) => b.text === "Última tanda")) return { text: "Es la última tanda. Después, nada.", pose: "saluda" };
+  if (days <= 7) return { text: "Es esta semana. Avísale a tu gente.", pose: "pulgar" };
+  return { text: "Anótalo en el calendario, este viene bueno.", pose: "bienvenida" };
+}
+
+/** Solo la frase (compatibilidad y pruebas). */
+export function ticoLine(eventIso: string, tiers: CarteleraTier[], now: number): string {
+  return ticoSay(eventIso, tiers, now).text;
 }
 
 /** Reacciones permitidas: la clave va a la base (CHECK); el carácter solo se muestra. */

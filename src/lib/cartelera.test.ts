@@ -6,6 +6,7 @@ import {
   matchesFilter,
   reactionCountLabel,
   ticoLine,
+  ticoSay,
   type CarteleraTier,
 } from "./cartelera";
 
@@ -111,6 +112,19 @@ describe("ticoLine", () => {
     expect(ticoLine("2026-11-27T23:00:00Z", [tier({})], NOW)).toBe("¡Es hoy! Prepara la mejor pinta.");
     expect(ticoLine("2026-12-20T23:00:00Z", [tier({ sold_count: 100 })], NOW)).toMatch(/agotó/);
     expect(ticoLine("2026-12-20T23:00:00Z", [tier({ quantity: 100, sold_count: 95 })], NOW)).toMatch(/Quedan pocas/);
+  });
+});
+
+describe("ticoSay (pose según el evento)", () => {
+  it("celebra cuando es hoy, pulgar mañana, saluda cuando quedan pocas", () => {
+    expect(ticoSay("2026-11-27T23:00:00Z", [tier({})], NOW).pose).toBe("celebra");
+    expect(ticoSay("2026-11-28T23:00:00Z", [tier({})], NOW).pose).toBe("pulgar");
+    expect(ticoSay("2026-12-20T23:00:00Z", [tier({ quantity: 100, sold_count: 95 })], NOW).pose).toBe("saluda");
+  });
+
+  it("agotado y próximamente: en reposo", () => {
+    expect(ticoSay("2026-12-20T23:00:00Z", [tier({ sold_count: 100 })], NOW).pose).toBe("idle");
+    expect(ticoSay("2026-12-20T23:00:00Z", [tier({ sales_start: new Date(NOW + 3 * D).toISOString() })], NOW).pose).toBe("idle");
   });
 });
 

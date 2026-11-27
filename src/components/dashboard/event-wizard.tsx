@@ -448,7 +448,7 @@ export default function EventWizard({ mpConnected = true }: { mpConnected?: bool
           return;
         }
       }
-      router.push(`/dashboard/events/${id}/edit`);
+      router.push(`/dashboard/events/${id}/edit${publish ? "?publicado=1" : ""}`);
     } catch (err) {
       setError(readableError(err, "No se pudo publicar. Tu borrador quedó guardado; revisa lo que falta e inténtalo de nuevo."));
       setSaving(false);

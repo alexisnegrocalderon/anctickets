@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Tico from "@/components/tico";
 import { getVerifiedUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Badge, Card } from "@/components/dashboard/ui";
@@ -95,12 +96,15 @@ export default async function MyTicketsPage({
       {hasPendingHighlighted ? <div className="mt-4"><OrderPoller /></div> : null}
 
       {orders.length === 0 ? (
-        <p className="mt-8 text-neutral-400">
-          Todavía no tienes entradas. Cuando compres, aparecerán aquí con su código QR.{" "}
-          <Link href="/eventos" className="text-[var(--anc-accent-light)] underline">
-            Ver eventos
-          </Link>
-        </p>
+        <div className="mt-8 flex flex-col items-center gap-2 text-center sm:flex-row sm:text-left">
+          <Tico pose="idle" width={120} className="shrink-0" />
+          <p className="text-neutral-400">
+            Todavía no tienes entradas. Cuando compres, aparecerán aquí con su código QR.{" "}
+            <Link href="/eventos" className="text-[var(--anc-accent-light)] underline">
+              Ver eventos
+            </Link>
+          </p>
+        </div>
       ) : (
         <div className="mt-8 flex flex-col gap-6">
           {orders.map((order) => (

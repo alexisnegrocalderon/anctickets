@@ -7,7 +7,7 @@ let cachedMarkDataUri: string | null = null;
 export async function getMarkDataUri(): Promise<string> {
   if (cachedMarkDataUri) return cachedMarkDataUri;
 
-  const filePath = path.join(process.cwd(), "src/app/icon.png");
+  const filePath = path.join(process.cwd(), "src/assets/anc-mark.png");
   const buffer = await readFile(filePath);
   cachedMarkDataUri = `data:image/png;base64,${buffer.toString("base64")}`;
   return cachedMarkDataUri;
@@ -51,4 +51,16 @@ export async function getTicoDataUri(): Promise<string> {
   const buffer = await readFile(path.join(process.cwd(), "src/assets/tico.png"));
   cachedTicoDataUri = `data:image/png;base64,${buffer.toString("base64")}`;
   return cachedTicoDataUri;
+}
+
+const cachedPoses = new Map<string, string>();
+
+/** Una pose de Tico (PNG de /public/tico) como data URI, para las imágenes al compartir. */
+export async function getTicoPoseDataUri(pose: "idle" | "celebra" | "lentes" | "pulgar" | "saluda" | "bienvenida"): Promise<string> {
+  const hit = cachedPoses.get(pose);
+  if (hit) return hit;
+  const buffer = await readFile(path.join(process.cwd(), "public/tico", `${pose}.png`));
+  const uri = `data:image/png;base64,${buffer.toString("base64")}`;
+  cachedPoses.set(pose, uri);
+  return uri;
 }

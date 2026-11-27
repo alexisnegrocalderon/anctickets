@@ -322,7 +322,11 @@ describe("renderTicketEmail: ataques", () => {
     expect(r.html).not.toMatch(/<svg/i);
     expect(r.html).not.toMatch(/href="javascript:/i);
     expect(r.html).not.toMatch(/src="(?:javascript|data):/i);
-    expect(r.html.match(/<img\b/g)?.length ?? 0).toBe(0);
+    // La única imagen permitida es el sello fijo de Tico (nuestra propia URL); ninguna imagen
+    // puede venir de los campos que controla quien escribe.
+    const withoutSeal = r.html.replace(/<img src="[^"]*\/tico\/pulgar\.png"[^>]*>/g, "");
+    expect(withoutSeal.match(/<img\b/g)?.length ?? 0).toBe(0);
+    expect(r.html.match(/<img\b/g)?.length ?? 0).toBeLessThanOrEqual(1);
     expect(r.subject).not.toMatch(/[\r\n]/);
     expect(r.replyTo).toBeNull();
   });
@@ -524,5 +528,19 @@ describe("avisos y correos de ANC", () => {
     for (const t of ["Cambiamos la hora a las 22:30.", "La puerta ahora es la 2, gracias."]) {
       expect(hasLink(t)).toBe(false);
     }
+  });
+});
+
+describe("Tico en los correos", () => {
+  it("el correo de la entrada lleva a Tico en el pie, con URL absoluta propia y texto alternativo", () => {
+    const r = renderTicketEmail(baseData());
+    const seal = r.html.match(/<img src="([^"]*\/tico\/pulgar\.png)"[^>]*>/);
+    expect(seal?.[1]).toBe(`${SITE}/tico/pulgar.png`);
+    expect(seal?.[0]).toMatch(/alt="Tico, de ANC Tickets"/);
+  });
+
+  it("solo hay una imagen de Tico en el correo", () => {
+    const r = renderTicketEmail(baseData());
+    expect(r.html.match(/\/tico\//g)?.length).toBe(1);
   });
 });

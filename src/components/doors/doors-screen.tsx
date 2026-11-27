@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import HeroVideo from "@/components/hero-video";
+import Tico from "@/components/tico";
 import { CREATE_EVENT_PATH } from "@/lib/entry-routing";
 import { startGoogle } from "./google-start";
 import { rememberSide, restoreSideCookie } from "./remember-side";
@@ -74,10 +75,14 @@ export default function DoorsScreen() {
       </header>
 
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center gap-5 px-4 pb-[calc(env(safe-area-inset-bottom,0px)+20px)] pt-6 sm:gap-8 sm:px-8">
-        <h1 className="doors-title font-display uppercase">
-          ¿Qué vienes
-          <br /> a hacer <span className="text-[var(--doors-yellow)]">hoy?</span>
-        </h1>
+        <div className="flex items-end justify-between gap-2">
+          <h1 className="doors-title font-display uppercase">
+            ¿Qué vienes
+            <br /> a hacer <span className="text-[var(--doors-yellow)]">hoy?</span>
+          </h1>
+          {/* Tico saluda desde la esquina; en pantallas bajas se achica para no empujar las puertas. */}
+          <Tico pose="saluda" width={150} priority className="doors-tico -mb-1 shrink-0" />
+        </div>
 
         {error ? (
           <p role="alert" className="rounded-xl bg-black/60 px-4 py-3 text-sm font-semibold text-[#ffb39c]">
@@ -133,9 +138,12 @@ export default function DoorsScreen() {
         <div className="doors-sheet-body">
           <span className="doors-sheet-grip" aria-hidden="true" />
           <div className="flex items-center justify-between gap-3">
-            <h2 id="doors-sheet-title" className="font-display text-3xl uppercase">
-              Soy productor
-            </h2>
+            <div className="flex items-center gap-2">
+              <Tico pose="pulgar" width={64} />
+              <h2 id="doors-sheet-title" className="font-display text-3xl uppercase">
+                Soy productor
+              </h2>
+            </div>
             <button
               type="button"
               className="doors-sheet-close"

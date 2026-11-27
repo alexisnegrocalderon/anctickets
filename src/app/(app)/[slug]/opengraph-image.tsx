@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { createClient } from "@supabase/supabase-js";
-import { fetchPosterDataUri, getMarkDataUri, getPosterFont } from "@/lib/brand-assets";
+import { fetchPosterDataUri, getMarkDataUri, getPosterFont, getTicoPoseDataUri } from "@/lib/brand-assets";
 import type { Event } from "@/lib/database.types";
 import { resolveEventTheme } from "@/lib/event-themes";
 import { formatChileDate } from "@/lib/tiers";
@@ -29,7 +29,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     .eq("status", "published")
     .maybeSingle<Row>();
 
-  const [mark, anton] = await Promise.all([getMarkDataUri(), getPosterFont()]);
+  const [mark, anton, tico] = await Promise.all([getMarkDataUri(), getPosterFont(), getTicoPoseDataUri("saluda")]);
   const poster = { fontFamily: "Anton", fontWeight: 400, textTransform: "uppercase" as const };
 
   // Evento que no existe o no está publicado: tarjeta de marca, sin datos.
@@ -39,7 +39,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     : { from: "#3a1a0c", to: "#121212", ink: "#ffffff", text: "#ff8256" };
   const photo = data ? await fetchPosterDataUri(data.image_url) : null;
   const when = data ? formatChileDate(data.event_date) : "";
-  const titleSize = title.length > 34 ? 84 : title.length > 22 ? 104 : 128;
+  const titleSize = title.length > 34 ? 78 : title.length > 20 ? 98 : 124;
 
   return new ImageResponse(
     (
@@ -65,6 +65,9 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           }}
         />
 
+        {/* Tico, la mascota, firma la tarjeta desde la esquina. */}
+        <img src={tico} alt="" width={230} height={214} style={{ position: "absolute", right: "34px", bottom: "26px" }} />
+
         <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "44px 60px 50px", height: "100%", width: "100%" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", ...poster, fontSize: 36, letterSpacing: "0.06em" }}>
@@ -83,7 +86,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             {when ? (
               <span style={{ ...poster, fontSize: 44, letterSpacing: "0.04em", color: "#ffd60a", textShadow: "0 2px 16px rgba(0,0,0,.7)" }}>{when}</span>
             ) : null}
-            <span style={{ ...poster, fontSize: titleSize, lineHeight: 0.95, color: "#ffffff", marginTop: 6, textShadow: "0 4px 30px rgba(0,0,0,.65)", maxWidth: 1080 }}>
+            <span style={{ ...poster, fontSize: titleSize, lineHeight: 0.95, color: "#ffffff", marginTop: 6, textShadow: "0 4px 30px rgba(0,0,0,.65)", maxWidth: 820 }}>
               {title}
             </span>
             {data?.venue ? (

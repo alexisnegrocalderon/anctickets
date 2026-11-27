@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button, Field, Input } from "@/components/dashboard/ui";
+import Tico from "@/components/tico";
 import { onboardingNext } from "@/lib/safe-redirect";
 import { setOrganizerName } from "./actions";
 
@@ -29,6 +30,7 @@ export default async function OnboardingPage({
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center gap-8 px-4">
       <div>
+        <Tico pose="saluda" width={110} priority className="mb-2" />
         <p className="font-mono text-xs font-bold uppercase tracking-[.2em] text-[var(--anc-accent)]">
           Último paso
         </p>

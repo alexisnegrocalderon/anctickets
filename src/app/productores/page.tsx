@@ -26,6 +26,7 @@ import ScrollReveal from "@/components/scroll-reveal";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import SideSwitch from "@/components/doors/side-switch";
+import Tico from "@/components/tico";
 import { SIDE_COOKIE, parseSide } from "@/lib/entry-routing";
 import { createClient } from "@/lib/supabase/server";
 import type { Event } from "@/lib/database.types";
@@ -94,6 +95,12 @@ export default async function ProductoresPage() {
         <div className="hero-scrim" aria-hidden="true" />
 
         <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-5 pt-24 sm:px-8 md:pb-8 md:pt-32 lg:px-12 lg:pb-24 lg:pt-28">
+          <div className="mb-3 flex items-center gap-2 sm:mb-4">
+            <Tico pose="saluda" width={64} priority />
+            <p className="glass rounded-2xl px-3.5 py-2 text-sm font-semibold text-white" style={{ ["--gr" as string]: "16px" }}>
+              ¡Hola! Soy Tico. Te ayudo a publicar.
+            </p>
+          </div>
           <h1 className="max-w-4xl text-[clamp(1.95rem,9vw,5.6rem)] lg:text-[4.6rem] xl:text-[5rem] 2xl:text-[5.6rem] uppercase leading-[.93] text-white [text-shadow:0_2px_24px_rgba(0,0,0,.55)]">
             Todo tu evento en{" "}
             <br className="hidden lg:block" />
@@ -163,9 +170,12 @@ export default async function ProductoresPage() {
       {/* ---------------- FAQ ---------------- */}
       <section id="preguntas" className="relative z-[1] px-4 py-10 sm:px-8 sm:py-14 lg:px-12 lg:py-24">
         <div className="mx-auto max-w-3xl">
-          <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
-            Preguntas frecuentes
-          </p>
+          <div className="flex items-end justify-between gap-3">
+            <p className="font-mono text-xs font-black uppercase tracking-[.2em] text-[var(--anc-vermilion)]">
+              Preguntas frecuentes
+            </p>
+            <Tico pose="lentes" width={84} className="-mb-1" />
+          </div>
           <RevealHeading
             className="mt-3 text-[clamp(2.4rem,6vw,4.2rem)] uppercase leading-[.98] text-white"
             parts={[{ t: "Lo que preguntan antes de publicar." }]}
@@ -178,6 +188,9 @@ export default async function ProductoresPage() {
 
       {/* ---------------- CIERRE ---------------- */}
       <section id="cierre" className="relative z-[1] px-4 pb-10 sm:px-8 sm:pb-14 lg:px-12 lg:pb-24">
+        <div className="mx-auto -mb-6 flex max-w-5xl justify-center sm:-mb-8">
+          <Tico pose="celebra" width={150} className="relative z-[2]" />
+        </div>
         <div className="reveal glass relative mx-auto max-w-5xl px-6 py-10 text-center sm:px-16 sm:py-20" style={{ ["--gr" as string]: "32px" }} data-glow>
           <RevealHeading
             className="text-[clamp(2.8rem,8vw,5.5rem)] uppercase leading-[.95] text-white"

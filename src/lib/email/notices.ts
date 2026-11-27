@@ -7,7 +7,7 @@ import { escapeHtml as esc } from "@/lib/html";
 import { formatEventWhen } from "@/lib/event-date";
 import type { EventTheme } from "@/lib/database.types";
 import { buildPalette, LIGHT, resolveAccent } from "./color";
-import { BAND, FONT, button, emailShell, h1, infoRow, kicker, money, para, row, softBox } from "./layout";
+import { BAND, FONT, button, emailShell, h1, infoRow, kicker, money, para, row, softBox, ticoSeal } from "./layout";
 import { EMAIL_LIMITS, firstNameOf, safeSenderName, safeSubject, sanitizeText, textToHtml, validateContactEmail } from "./sanitize";
 import type { RenderedEmail } from "./template";
 
@@ -19,7 +19,7 @@ function ancHeader(p: ReturnType<typeof buildPalette>): string {
 }
 
 const ancFooter = (site: string) =>
-  `<strong>ANC Tickets</strong><br>Aviso automático para tu productora<br><a href="${esc(site)}/dashboard" class="em-muted" style="color:${LIGHT.muted};text-decoration:underline;">${esc(site.replace(/^https?:\/\//, ""))}/dashboard</a>`;
+  `${ticoSeal(site)}<strong>ANC Tickets</strong><br>Aviso automático para tu productora<br><a href="${esc(site)}/dashboard" class="em-muted" style="color:${LIGHT.muted};text-decoration:underline;">${esc(site.replace(/^https?:\/\//, ""))}/dashboard</a>`;
 
 // ---------------------------------------------------------------------------
 // Aviso de venta
@@ -261,7 +261,7 @@ export function renderEventNoticeEmail(d: EventNoticeData): RenderedEmail {
       preheader: cancelled ? `${title} fue cancelado` : `Cambios en ${title}`,
       palette: p,
       rows,
-      footerHtml: `<strong>${esc(producer)}</strong><br>Entradas por ANC Tickets`,
+      footerHtml: `${ticoSeal(d.siteUrl)}<strong>${esc(producer)}</strong><br>Entradas por ANC Tickets`,
     }),
     text,
     replyTo: contactEmail,

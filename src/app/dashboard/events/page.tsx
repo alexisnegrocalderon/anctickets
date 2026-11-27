@@ -5,6 +5,7 @@ import type { Event } from "@/lib/database.types";
 import { LinkButton, PageHeader } from "@/components/dashboard/ui";
 import InstallBanner from "@/components/pwa/install-banner";
 import CopyEventLinkButton from "@/components/dashboard/copy-event-link-button";
+import Tico from "@/components/tico";
 import { resolveEventTheme } from "@/lib/event-themes";
 
 const statusLabel: Record<Event["status"], string> = {
@@ -65,6 +66,7 @@ export default async function DashboardEventsPage() {
 
       {!events || events.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-white/20 px-6 py-14 text-center">
+          <Tico pose="bienvenida" width={190} className="mx-auto mb-2" />
           <p className="font-display text-3xl uppercase text-white">Aún no hay eventos</p>
           <p className="mx-auto mt-2 max-w-sm text-sm text-[var(--anc-muted-text)]">
             Crea el primero en unos minutos y comparte el link para empezar a vender.

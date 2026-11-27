@@ -20,6 +20,7 @@ import {
   para,
   row,
   softBox,
+  ticoSeal,
 } from "./layout";
 import {
   EMAIL_LIMITS,
@@ -131,7 +132,7 @@ ${cover}<tr><td class="em-bar" height="4" bgcolor="${p.btnBg}" style="height:4px
 }
 
 export function footerFor(producerName: string, siteUrl: string, extra = ""): string {
-  return `${extra}<strong>${esc(producerName)}</strong><br><span style="opacity:.85;">Entradas por ANC Tickets</span><br><a href="${esc(siteUrl)}/mis-entradas" class="em-muted" style="color:${LIGHT.muted};text-decoration:underline;">${esc(siteUrl.replace(/^https?:\/\//, ""))}/mis-entradas</a>`;
+  return `${ticoSeal(siteUrl)}${extra}<strong>${esc(producerName)}</strong><br><span style="opacity:.85;">Entradas por ANC Tickets</span><br><a href="${esc(siteUrl)}/mis-entradas" class="em-muted" style="color:${LIGHT.muted};text-decoration:underline;">${esc(siteUrl.replace(/^https?:\/\//, ""))}/mis-entradas</a>`;
 }
 
 function ticketCard(

@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import "./skeleton.css";
 import "./nav-feedback.css";
+import Tico from "@/components/tico";
 
 /**
  * Esqueletos de carga del panel y de Mis entradas. Replican el layout de cada
@@ -18,6 +19,9 @@ function Busy({ label, className = "", children }: { label: string; className?: 
     <div className={className} role="status" aria-busy="true" aria-live="polite" data-route-loading="">
       <span className="sr-only">{label}</span>
       {children}
+      <div className="pointer-events-none fixed bottom-[calc(6.5rem+env(safe-area-inset-bottom))] right-4 z-10 md:bottom-6" aria-hidden="true">
+        <Tico pose="idle" width={56} />
+      </div>
     </div>
   );
 }

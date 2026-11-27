@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import BuyForm from "@/app/(app)/events/[id]/buy-form";
 import { setReaction } from "@/app/eventos/actions";
 import ProducerLink from "@/components/doors/producer-link";
+import Tico from "@/components/tico";
 import { startGoogle } from "@/components/doors/google-start";
 import {
   FILTER_LABEL,
@@ -24,7 +25,7 @@ import {
   eventBadges,
   matchesFilter,
   reactionCountLabel,
-  ticoLine,
+  ticoSay,
   type CarteleraFilter,
   type ReactionKey,
 } from "@/lib/cartelera";
@@ -163,6 +164,8 @@ export default function CarteleraWall({
   const [counts, setCounts] = useState<Record<string, Partial<Record<ReactionKey, number>>>>(() =>
     Object.fromEntries(events.map((e) => [e.id, e.counts])),
   );
+  // Evento donde Tico está celebrando una reacción (unos segundos).
+  const [celebrating, setCelebrating] = useState<string | null>(null);
   const [bursts, setBursts] = useState<{ id: number; emoji: string; x: number; y: number; dx: number; r: number; delay: number }[]>([]);
 
   const list = useMemo(
@@ -270,6 +273,8 @@ export default function CarteleraWall({
       setMine((m) => ({ ...m, [ev.id]: on ? [...(m[ev.id] ?? []), key] : (m[ev.id] ?? []).filter((k) => k !== key) }));
       setCounts((c) => ({ ...c, [ev.id]: { ...c[ev.id], [key]: Math.max(0, (c[ev.id]?.[key] ?? 0) + (on ? 1 : -1)) } }));
       if (on) {
+        setCelebrating(ev.id);
+        window.setTimeout(() => setCelebrating((id) => (id === ev.id ? null : id)), 1800);
         if (btn) burst(btn, REACTIONS.find((r) => r.key === key)!.emoji);
         try {
           navigator.vibrate?.(12);
@@ -425,7 +430,7 @@ export default function CarteleraWall({
         {shown === 0 ? (
           <section className="cw-slide cw-empty">
             <div>
-              <div className="text-6xl" aria-hidden="true">🐯</div>
+              <Tico pose="idle" width={170} className="mx-auto" />
               <p className="font-display mt-3 text-4xl uppercase">Nada por ahora</p>
               <p className="mt-2 text-sm text-[var(--cw-mut)]">
                 {filter === "todo" ? "Tico está atento: cuando se publique un evento, aparece aquí." : "Prueba con “Todo” o mira el calendario."}
@@ -449,6 +454,7 @@ export default function CarteleraWall({
           const isLast = i === totalSlides - 1;
           const nextTitle = i + 1 < shown ? list[i + 1].title : withComingSoon ? "Próximamente" : null;
           const near = loaded.has(i);
+          const tico = ticoSay(ev.eventDate, ev.tiers, serverNow);
           const artStyle = { "--from": ev.theme.from, "--to": ev.theme.to } as CSSProperties;
           return (
             <section key={ev.id} className="cw-slide" aria-label={ev.title}>
@@ -468,8 +474,8 @@ export default function CarteleraWall({
               <div className="cw-shade" aria-hidden="true" />
 
               <div className="cw-tico">
-                <div className="cw-tico-face" aria-hidden="true">🐯</div>
-                <p className="cw-tico-say cw-glass">{ticoLine(ev.eventDate, ev.tiers, serverNow)}</p>
+                <Tico pose={celebrating === ev.id ? "celebra" : tico.pose} width={78} motion={celebrating === ev.id ? "pop" : "bob"} />
+                <p className="cw-tico-say cw-glass">{tico.text}</p>
               </div>
 
               <div className="cw-react" aria-label="Reacciones">
@@ -562,7 +568,7 @@ export default function CarteleraWall({
         {withComingSoon ? (
           <section className="cw-slide cw-empty" aria-label="Próximamente">
             <div>
-              <div className="text-6xl" aria-hidden="true">🐯</div>
+              <Tico pose="saluda" width={190} className="mx-auto" />
               <p className="font-display mt-3 text-5xl uppercase">Próximamente</p>
               <p className="mt-2 text-sm text-[var(--cw-mut)]">Más fechas en camino. Vuelve pronto.</p>
               <p className="mt-6 text-sm text-[var(--cw-mut)]">

@@ -85,6 +85,16 @@ ${opts.rows}
 </html>`;
 }
 
+/**
+ * Tico (la mascota) como sello del pie de los correos. PNG alojado en /tico
+ * (los clientes de correo no leen webp). Si el cliente bloquea imágenes, queda
+ * el texto alternativo y el correo se lee igual.
+ */
+export function ticoSeal(siteUrl: string): string {
+  const site = siteUrl.replace(/\/+$/, "");
+  return `<img src="${esc(site)}/tico/pulgar.png" alt="Tico, de ANC Tickets" width="56" height="54" style="display:block;margin:0 auto 10px;width:56px;height:54px;border:0;">`;
+}
+
 /** Fila de la tarjeta con el relleno estándar. */
 export function row(inner: string, pad = "0 28px 22px"): string {
   return `<tr><td class="em-pad" style="padding:${pad};font-family:${FONT};">${inner}</td></tr>`;

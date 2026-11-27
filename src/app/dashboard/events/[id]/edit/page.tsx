@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import Tico from "@/components/tico";
 import { createClient } from "@/lib/supabase/server";
 import type {
   Ambassador,
@@ -56,10 +57,10 @@ export default async function EditEventPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; publicado?: string }>;
 }) {
   const { id } = await params;
-  const { tab } = await searchParams;
+  const { tab, publicado } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -318,6 +319,17 @@ export default async function EditEventPage({
 
   return (
     <div>
+      {publicado === "1" && event.status === "published" ? (
+        <div role="status" className="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-400/40 bg-emerald-400/10 px-4 py-3">
+          <Tico pose="celebra" width={96} motion="pop" className="shrink-0" />
+          <div className="min-w-0">
+            <p className="font-display text-2xl uppercase leading-none text-white">¡Tu evento está en vivo!</p>
+            <p className="mt-1 text-sm text-emerald-100/90">
+              Copia el link y compártelo en tus redes para empezar a vender.
+            </p>
+          </div>
+        </div>
+      ) : null}
       <PageHeader
         title={event.title}
         subtitle={`Estado: ${statusText}`}
