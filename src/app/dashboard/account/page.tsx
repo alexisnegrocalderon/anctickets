@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
-import { getClaimsUser, getOrganizerProfile, getSupabase } from "@/lib/auth";
-import { getAdminUser } from "@/lib/admin";
+import { getClaimsUser, getOrganizerProfile, getSupabase, getVerifiedUser } from "@/lib/auth";
+import { getAdminUser, getSessionAssurance, hasVerifiedTotpFactor } from "@/lib/admin";
+import { siteUrl } from "@/lib/site";
+import TeamAccessSection from "@/components/dashboard/team-access-section";
 import { InstallAppButton } from "@/components/pwa/install-app-button";
 import { Badge, Button, Card, LinkButton, PageHeader } from "@/components/dashboard/ui";
 import NotifySalesForm from "./notify-sales-form";
@@ -12,7 +14,24 @@ export default async function DashboardAccountPage() {
 
   const profile = await getOrganizerProfile(user.id);
   // Verificación fuerte en el servidor: solo un admin ve el enlace.
-  const isAdmin = !!(await getAdminUser());
+  const admin = await getAdminUser();
+  const isAdmin = !!admin;
+
+  // Datos de la sección de acceso con clave: solo se calculan para un admin.
+  let team: { hasTotp: boolean; hasPassword: boolean; viaGoogle: boolean } | null = null;
+  if (admin) {
+    const [{ amrMethods }, hasTotp, verified] = await Promise.all([
+      getSessionAssurance(),
+      hasVerifiedTotpFactor(),
+      getVerifiedUser(),
+    ]);
+    const providers = Array.isArray(verified?.app_metadata?.providers) ? (verified.app_metadata.providers as string[]) : [];
+    team = {
+      hasTotp,
+      hasPassword: providers.includes("email") || !!verified?.identities?.some((i) => i.provider === "email"),
+      viaGoogle: amrMethods.includes("oauth"),
+    };
+  }
 
   // Preferencia de aviso de ventas (migración 0011). Si la columna aún no existe, queda en "cada venta".
   const supabase = await getSupabase();
@@ -88,6 +107,16 @@ export default async function DashboardAccountPage() {
               <LinkButton href="/admin">Panel de administración</LinkButton>
             </div>
           </Card>
+        ) : null}
+
+        {admin && team ? (
+          <TeamAccessSection
+            email={admin.email}
+            hasTotp={team.hasTotp}
+            hasPassword={team.hasPassword}
+            viaGoogle={team.viaGoogle}
+            accessUrl={`${siteUrl()}/acceso-equipo`}
+          />
         ) : null}
 
         <form action="/auth/signout" method="post">

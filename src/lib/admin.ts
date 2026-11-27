@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { notFound, redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { getSupabase, getVerifiedUser } from "@/lib/auth";
@@ -129,13 +130,12 @@ export async function hasVerifiedTotpFactor(): Promise<boolean> {
 }
 
 /**
- * Exige admin en el servidor. No admin o clave sola sin factor: 404 (no revela
- * que /admin existe). Clave sola con factor: redirige a pedir el código.
- * `next` es a dónde volver tras verificar (por defecto /admin).
+ * Decisión de acceso de la petición actual, sin lanzar nada. Devuelve el admin
+ * (si lo es) y la decisión según el método de ingreso.
  */
-export async function requireAdmin(next: string = "/admin"): Promise<{ id: string; email: string }> {
+export const getAdminAccess = cache(async (): Promise<{ admin: { id: string; email: string } | null; decision: AdminAccessDecision }> => {
   const admin = await getAdminUser();
-  if (!admin) notFound();
+  if (!admin) return { admin: null, decision: "deny" };
 
   const { amrMethods, aal } = await getSessionAssurance();
   let decision = decideAdminAccess({ isAdmin: true, amrMethods, aal, hasVerifiedTotp: false });
@@ -143,6 +143,17 @@ export async function requireAdmin(next: string = "/admin"): Promise<{ id: strin
     // Solo se consulta el factor cuando hace falta (sesión con clave, aal1).
     decision = decideAdminAccess({ isAdmin: true, amrMethods, aal, hasVerifiedTotp: await hasVerifiedTotpFactor() });
   }
+  return { admin, decision };
+});
+
+/**
+ * Exige admin en el servidor. No admin o clave sola sin factor: 404 (no revela
+ * que /admin existe). Clave sola con factor: redirige a pedir el código.
+ * `next` es a dónde volver tras verificar (por defecto /admin).
+ */
+export async function requireAdmin(next: string = "/admin"): Promise<{ id: string; email: string }> {
+  const { admin, decision } = await getAdminAccess();
+  if (!admin) notFound();
   if (decision === "verify") redirect(`/acceso-equipo/verificar?next=${encodeURIComponent(safeNextPath(next, "/admin"))}`);
   if (decision !== "allow") notFound();
   return admin;

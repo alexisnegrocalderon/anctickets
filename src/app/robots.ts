@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 
-/** El panel de administración no se indexa. */
+/** El panel de administración y el acceso del equipo no se indexan. */
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin"] }],
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin", "/acceso-equipo"] }],
   };
 }
