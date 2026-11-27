@@ -97,7 +97,7 @@ export default async function MyTicketsPage({
       {orders.length === 0 ? (
         <p className="mt-8 text-neutral-400">
           Todavía no tienes entradas. Cuando compres, aparecerán aquí con su código QR.{" "}
-          <Link href="/" className="text-[var(--anc-accent-light)] underline">
+          <Link href="/eventos" className="text-[var(--anc-accent-light)] underline">
             Ver eventos
           </Link>
         </p>

@@ -1,14 +1,22 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button, Field, Input } from "@/components/dashboard/ui";
+import { onboardingNext } from "@/lib/safe-redirect";
 import { setOrganizerName } from "./actions";
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  // A dónde seguir después de poner el nombre (p. ej. el asistente de crear
+  // evento cuando se viene de "Crear evento"). Solo rutas del panel.
+  const next = onboardingNext((await searchParams).next);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login?next=/onboarding");
+  if (!user) redirect(`/login?next=${encodeURIComponent(`/onboarding?next=${encodeURIComponent(next)}`)}`);
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -16,7 +24,7 @@ export default async function OnboardingPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.organizer_name) redirect("/dashboard/events");
+  if (profile?.organizer_name) redirect(next);
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center gap-8 px-4">
@@ -34,6 +42,7 @@ export default async function OnboardingPage() {
       </div>
 
       <form action={setOrganizerName} className="flex flex-col gap-4">
+        <input type="hidden" name="next" value={next} />
         <Field label="Nombre de tu productora">
           <Input
             name="organizer_name"

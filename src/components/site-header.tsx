@@ -23,7 +23,7 @@ export default async function SiteHeader() {
         </Link>
 
         <nav className="flex items-center gap-x-4 font-mono text-xs font-semibold uppercase tracking-[.08em] text-neutral-300 sm:gap-x-6">
-          <Link href="/" className={`${linkClass} hidden sm:inline-flex`}>
+          <Link href="/eventos" className={`${linkClass} hidden sm:inline-flex`}>
             Eventos
           </Link>
           {user ? (

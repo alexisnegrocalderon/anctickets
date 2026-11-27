@@ -1099,3 +1099,237 @@ html {
 .ibar { padding: 6px 8px; height: 56px; min-height: 56px; gap: 6px; --gr: 28px; }
 .ibar .gbtn { min-height: 44px; height: 44px; padding: 0 0.6rem; font-size: 0.82rem; }
 .ibar-x { width: 40px; height: 40px; }
+
+/* =====================================================================
+   Puertas de la raíz (/): "Próximos eventos" o "Soy productor".
+   La animación de la portada queda de fondo, oscurecida. Amarillo = público
+   y "Crear evento"; vermilion = lado productor.
+   ===================================================================== */
+:root { --doors-yellow: #ffd60a; }
+
+.doors .hero-poster,
+.doors .hero-video { top: 0; height: 100%; object-position: center 30%; filter: brightness(0.9) saturate(1); }
+/* Oscurecido parejo + degradados arriba y abajo: el texto se lee en cualquier cuadro del video. */
+.doors-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(to bottom, rgba(18, 18, 18, 0.97) 0%, rgba(18, 18, 18, 0.9) 14%, rgba(18, 18, 18, 0.6) 30%, rgba(18, 18, 18, 0.62) 55%, rgba(18, 18, 18, 0.95) 100%),
+    rgba(18, 18, 18, 0.38);
+}
+
+.doors-logo {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0 0.9rem 0 0.7rem;
+}
+.doors-enter {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0 0.7rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+}
+.doors-enter:hover { color: #fff; }
+.doors-create {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 1rem;
+  border-radius: 9999px;
+  background: var(--doors-yellow);
+  color: #1d1d1d;
+  font-size: 0.875rem;
+  font-weight: 900;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px -10px rgba(255, 214, 10, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: transform 0.18s var(--ease-out), filter 0.2s;
+}
+.doors-create:hover { filter: brightness(1.06); }
+.doors-create:active { transform: scale(0.97); }
+.doors-create:disabled { opacity: 0.7; cursor: progress; }
+
+.doors-title {
+  font-size: clamp(2.6rem, 13vw, 5.4rem);
+  line-height: 0.92;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
+}
+
+.door {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 1.1rem 1.15rem 1rem;
+  border-radius: 24px;
+  text-align: left;
+  color: #fff;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  transition: transform 0.2s var(--ease-out), box-shadow 0.25s;
+  -webkit-tap-highlight-color: transparent;
+}
+.door:hover { transform: translateY(-2px); }
+.door:active { transform: scale(0.985); }
+.door--events {
+  border: 1px solid rgba(255, 214, 10, 0.55);
+  background: linear-gradient(160deg, rgba(255, 214, 10, 0.24), rgba(60, 52, 10, 0.55) 60%, rgba(30, 28, 12, 0.7));
+  box-shadow: 0 20px 50px -24px rgba(255, 214, 10, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.door--producer {
+  border: 1px solid rgba(252, 76, 19, 0.6);
+  background: linear-gradient(160deg, rgba(252, 76, 19, 0.26), rgba(70, 22, 8, 0.6) 60%, rgba(34, 16, 10, 0.72));
+  box-shadow: 0 20px 50px -24px rgba(252, 76, 19, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.door:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.door-title { font-size: clamp(1.9rem, 8.5vw, 2.6rem); line-height: 1; }
+.door-text { max-width: 40ch; font-size: 0.95rem; line-height: 1.4; color: rgba(255, 255, 255, 0.9); }
+.door-foot {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.25rem;
+  font-weight: 800;
+}
+.door--events .door-foot { color: var(--doors-yellow); }
+.door--producer .door-foot { color: #ff8a5c; }
+.door-arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  font-size: 1.1rem;
+  color: #1d1d1d;
+}
+.door--events .door-arrow { background: var(--doors-yellow); }
+.door--producer .door-arrow { background: var(--anc-vermilion); color: #fff; }
+.door-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.45);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.door-chip i { width: 7px; height: 7px; border-radius: 50%; background: var(--anc-vermilion); box-shadow: 0 0 8px var(--anc-vermilion); }
+
+/* Hoja "Soy productor" (dialog nativo: foco atrapado y Esc para cerrar). */
+.doors-sheet {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 34rem;
+  max-height: 92dvh;
+  padding: 0;
+  border: 0;
+  border-radius: 28px 28px 0 0;
+  background: #222;
+  color: #fff;
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6);
+}
+.doors-sheet::backdrop { background: rgba(0, 0, 0, 0.6); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+.doors-sheet[open] { animation: doors-sheet-in 0.32s var(--ease-out); }
+@keyframes doors-sheet-in { from { transform: translateY(40px); opacity: 0; } }
+@media (min-width: 640px) {
+  .doors-sheet { margin: auto; border-radius: 28px; }
+}
+.doors-sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 0.75rem 1.1rem calc(1.1rem + env(safe-area-inset-bottom, 0px));
+}
+.doors-sheet-grip { align-self: center; width: 40px; height: 5px; border-radius: 9999px; background: rgba(255, 255, 255, 0.25); }
+.doors-sheet-close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 1rem;
+}
+.path {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  min-height: 72px;
+  padding: 0.9rem 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  text-align: left;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.18s var(--ease-out), background 0.2s;
+}
+.path:hover { background: rgba(255, 255, 255, 0.09); }
+.path:active { transform: scale(0.985); }
+.path:disabled { opacity: 0.7; cursor: progress; }
+.path:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.path--fast { border-color: rgba(252, 76, 19, 0.75); background: rgba(252, 76, 19, 0.16); }
+.path--fast:hover { background: rgba(252, 76, 19, 0.24); }
+.path-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 1.2rem;
+}
+.path-icon--fast { background: var(--anc-vermilion); }
+.path-title { display: block; font-size: 1.05rem; font-weight: 800; }
+.path-text { display: block; margin-top: 0.15rem; font-size: 0.85rem; line-height: 1.35; color: rgba(255, 255, 255, 0.75); }
+
+/* Interruptor de lado en /productores (solo para quien ya eligió una vez). */
+.side-switch {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.side-switch-opt {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.8);
+}
+.side-switch-opt[data-on] { background: var(--anc-vermilion); color: #fff; }
+a.side-switch-opt:hover { color: #fff; }
+/* Celular chico: el interruptor convive con "Ya tengo cuenta" sin montarse. */
+@media (max-width: 419px) {
+  .side-switch-opt { padding: 0 0.6rem; font-size: 0.75rem; }
+  .side-switch-opt > span { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .door, .doors-create, .path { transition: none; }
+  .door:hover { transform: none; }
+  .doors-sheet[open] { animation: none; }
+}

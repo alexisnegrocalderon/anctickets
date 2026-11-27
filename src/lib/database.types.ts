@@ -307,6 +307,11 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      /** Migración 0014: contadores de las puertas (solo service_role). */
+      bump_entry_metric: {
+        Args: { p_metric: string };
+        Returns: undefined;
+      };
       create_pending_order: {
         Args: {
           p_buyer_id: string;

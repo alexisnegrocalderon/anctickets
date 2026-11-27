@@ -171,7 +171,7 @@ export default function EventPublicView({
 
       <div className="mx-auto mt-14 w-full max-w-6xl px-4 sm:px-8">
         <Link
-          href="/"
+          href="/productores"
           className="inline-flex min-h-11 items-center gap-1.5 border-t border-white/10 pt-4 font-mono text-[10px] uppercase tracking-[.16em] text-neutral-500 transition-colors hover:text-neutral-300"
         >
           <Image src="/anc-mark.png" alt="" width={12} height={12} className="opacity-60" />
