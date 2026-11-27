@@ -151,25 +151,26 @@ begin
 
   if lower(btrim(coalesce(v_email, ''))) = any (v_prot)
      or lower(btrim(coalesce(v_auth_email, ''))) = any (v_prot) then
-    v_bloqueos := v_bloqueos || 'cuenta_protegida';
+    -- array_append y no `||`: con un literal sin tipo, Postgres lee 'texto' como un arreglo y falla (malformed array literal).
+    v_bloqueos := array_append(v_bloqueos, 'cuenta_protegida');
   end if;
 
   select count(*) into v_ventas
   from public.orders o
   where o.event_id = any (v_events) and o.status in ('approved', 'refunded', 'charged_back');
-  if v_ventas > 0 then v_bloqueos := v_bloqueos || 'con_ventas'; end if;
+  if v_ventas > 0 then v_bloqueos := array_append(v_bloqueos, 'con_ventas'); end if;
 
   select count(*) into v_ventas_comp
   from public.orders o
   where o.buyer_id = p_organizer_id and o.status in ('approved', 'refunded', 'charged_back');
-  if v_ventas_comp > 0 then v_bloqueos := v_bloqueos || 'con_ventas_como_comprador'; end if;
+  if v_ventas_comp > 0 then v_bloqueos := array_append(v_bloqueos, 'con_ventas_como_comprador'); end if;
 
   select count(*), max(o.reserved_until) into v_pend, v_pend_vence
   from public.orders o
   where (o.event_id = any (v_events) or o.buyer_id = p_organizer_id)
     and o.status = 'pending'
     and (o.reserved_until is null or o.reserved_until > now());
-  if v_pend > 0 then v_bloqueos := v_bloqueos || 'compras_pendientes'; end if;
+  if v_pend > 0 then v_bloqueos := array_append(v_bloqueos, 'compras_pendientes'); end if;
 
   select count(*) into v_tandas from public.ticket_types t where t.event_id = any (v_events);
   select count(*) into v_codigos from public.discount_codes c where c.event_id = any (v_events);
