@@ -42,3 +42,13 @@ export async function fetchPosterDataUri(url: string | null | undefined): Promis
     return null;
   }
 }
+
+let cachedTicoDataUri: string | null = null;
+
+/** Tico (🐯, Noto Emoji, licencia Apache 2.0) embebido para las imágenes al compartir. */
+export async function getTicoDataUri(): Promise<string> {
+  if (cachedTicoDataUri) return cachedTicoDataUri;
+  const buffer = await readFile(path.join(process.cwd(), "src/assets/tico.png"));
+  cachedTicoDataUri = `data:image/png;base64,${buffer.toString("base64")}`;
+  return cachedTicoDataUri;
+}

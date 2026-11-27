@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getMarkDataUri, getPosterFont } from "@/lib/brand-assets";
+import { getPosterFont, getTicoDataUri } from "@/lib/brand-assets";
 
 export const runtime = "nodejs";
 export const size = { width: 1200, height: 630 };
@@ -8,10 +8,10 @@ export const alt = "ANC Tickets — vive el evento: descubre fechas, compra entr
 
 /**
  * Tarjeta al compartir el link principal (WhatsApp, Instagram, etc.): afiche de
- * fiesta con Anton gigante, el isotipo ANC grande y las dos puertas del sitio.
+ * fiesta con Anton gigante, Tico (la mascota) grande y las dos puertas del sitio.
  */
 export default async function Image() {
-  const [mark, anton] = await Promise.all([getMarkDataUri(), getPosterFont()]);
+  const [tico, anton] = await Promise.all([getTicoDataUri(), getPosterFont()]);
   const poster = { fontFamily: "Anton", fontWeight: 400, textTransform: "uppercase" as const };
 
   return new ImageResponse(
@@ -37,7 +37,13 @@ export default async function Image() {
             backgroundImage: "repeating-linear-gradient(115deg, rgba(255,255,255,.055) 0px, rgba(255,255,255,.055) 2px, transparent 2px, transparent 30px)",
           }}
         />
-        <img src={mark} alt="" width={560} height={560} style={{ position: "absolute", right: "-70px", top: "35px", opacity: 0.96 }} />
+        <img
+          src={tico}
+          alt=""
+          width={500}
+          height={500}
+          style={{ position: "absolute", right: "52px", top: "62px", transform: "rotate(8deg)" }}
+        />
 
         <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "50px 64px", height: "100%", width: "800px" }}>
           <div style={{ display: "flex", alignItems: "center", ...poster, fontSize: 40, letterSpacing: "0.06em" }}>
