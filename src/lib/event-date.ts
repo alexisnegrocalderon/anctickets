@@ -18,5 +18,5 @@ export function eventDateParts(iso: string) {
 export function formatEventWhen(iso: string): string {
   if (Number.isNaN(new Date(iso).getTime())) return "";
   const { weekday, day, month, time } = eventDateParts(iso);
-  return `${weekday} ${day} ${month} · ${time} hrs`;
+  return `${weekday} ${day} ${month} · ${time}`;
 }

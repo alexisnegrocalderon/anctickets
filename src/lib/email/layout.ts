@@ -72,7 +72,7 @@ export function emailShell(opts: {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="em-page" bgcolor="${LIGHT.page}" style="background:${LIGHT.page};">
 <tr><td align="center" class="em-outer" style="padding:24px 12px;">
 <!--[if mso]><table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="em-card" bgcolor="${LIGHT.card}" style="width:100%;max-width:600px;background:${LIGHT.card};border-radius:18px;overflow:hidden;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="em-card" bgcolor="${LIGHT.card}" style="width:100%;max-width:600px;table-layout:fixed;background:${LIGHT.card};border-radius:18px;overflow:hidden;">
 ${opts.rows}
 </table>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
@@ -130,13 +130,13 @@ export function button(opts: { href: string; label: string; p: EmailPalette; wid
   const border = p.btnBorder ?? p.btnBg;
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0;"><tr><td align="center" class="em-btn" bgcolor="${p.btnBg}" style="border-radius:999px;background:${p.btnBg};border:2px solid ${border};">
 <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${href}" style="height:48px;v-text-anchor:middle;width:${w}px;" arcsize="50%" stroke="f" fillcolor="${p.btnBg}"><w:anchorlock/><center style="color:${p.btnText};font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">${label}</center></v:roundrect><![endif]-->
-<!--[if !mso]><!--><a href="${href}" target="_blank" class="em-btn-a" style="display:inline-block;min-height:44px;padding:13px 30px;font-family:${FONT};font-size:16px;line-height:20px;font-weight:700;color:${p.btnText};text-decoration:none;border-radius:999px;mso-hide:all;">${label}</a><!--<![endif]-->
+<!--[if !mso]><!--><a href="${href}" target="_blank" class="em-btn-a" style="display:block;padding:13px 32px;font-family:${FONT};font-size:16px;line-height:20px;font-weight:700;text-align:center;color:${p.btnText};text-decoration:none;border-radius:999px;mso-hide:all;">${label}</a><!--<![endif]-->
 </td></tr></table>`;
 }
 
 /** Botón secundario (contorno) para Instagram, WhatsApp, Maps. */
 export function ghostButton(opts: { href: string; label: string; p: EmailPalette }): string {
-  return `<a href="${esc(opts.href)}" target="_blank" class="em-ghost em-ink" style="display:inline-block;margin:0 8px 8px 0;padding:11px 20px;min-height:44px;box-sizing:border-box;border:2px solid ${opts.p.inkLight};border-radius:999px;font-family:${FONT};font-size:14px;line-height:18px;font-weight:700;color:${opts.p.inkLight};text-decoration:none;">${esc(opts.label)}</a>`;
+  return `<a href="${esc(opts.href)}" target="_blank" class="em-ghost em-ink" style="display:inline-block;margin:0 8px 8px 0;padding:11px 20px;min-height:44px;box-sizing:border-box;max-width:100%;word-break:break-word;overflow-wrap:anywhere;border:2px solid ${opts.p.inkLight};border-radius:999px;font-family:${FONT};font-size:14px;line-height:18px;font-weight:700;color:${opts.p.inkLight};text-decoration:none;">${esc(opts.label)}</a>`;
 }
 
 /** Cuadro con borde y fondo suave (tarjetas de entrada, mensajes). */
