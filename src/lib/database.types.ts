@@ -362,6 +362,25 @@ export type Database = {
         Args: { p_organizer_id: string; p_suspend: boolean; p_reason: string | null; p_admin_email: string };
         Returns: { changed: boolean; suspended_at: string | null };
       };
+      /** Migración 0013. La forma exacta está en DeletePreview (lib/admin-delete). */
+      admin_organizer_delete_preview: {
+        Args: { p_organizer_id: string; p_protected_emails: string[] };
+        Returns: Record<string, unknown>;
+      };
+      admin_delete_organizer: {
+        Args: { p_organizer_id: string; p_confirm: string; p_admin_email: string; p_protected_emails: string[] };
+        Returns: {
+          borrada: boolean;
+          nombre: string | null;
+          eventos: number;
+          tandas: number;
+          codigos: number;
+          embajadores: number;
+          staff: number;
+          ordenes_borradas: number;
+          tenia_mercado_pago: boolean;
+        };
+      };
     };
   };
 };
