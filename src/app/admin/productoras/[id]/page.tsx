@@ -1,7 +1,6 @@
 import { serverClock } from "@/lib/tiers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/admin";
 import { getOrganizerDetail } from "@/lib/admin-data";
 import { aggregateByEvent, aggregateOrders } from "@/lib/admin-stats";
@@ -11,7 +10,6 @@ import { EventStatusBadge, SectionTitle, StatTile, TierReadCard } from "@/compon
 import SuspendControl from "@/components/admin/suspend-control";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Productora — Administración ANC", robots: { index: false, follow: false } };
 
 const MP_WARN_DAYS = 30;
 

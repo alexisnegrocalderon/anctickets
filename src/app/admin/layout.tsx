@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
-import { requireAdmin } from "@/lib/admin";
+import { getAdminUser, requireAdmin } from "@/lib/admin";
 import AdminTabs from "@/components/admin/admin-tabs";
 import { LinkButton } from "@/components/dashboard/ui";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Administración ANC",
-  robots: { index: false, follow: false, nocache: true },
-};
+/**
+ * El título y el robots solo se ponen si quien pide la página es admin: un 404 para otra persona
+ * no debe delatar que /admin existe (el <title> del 404 saldría igual al de cualquier
+ * ruta inexistente).
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const admin = await getAdminUser();
+  // Para quien no es admin no se agrega nada: la 404 ya sale con noindex.
+  return admin ? { title: "Administración ANC", robots: { index: false, follow: false, nocache: true } } : {};
+}
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   // Primera barrera: si no es admin, 404 antes de renderizar nada. Cada página y

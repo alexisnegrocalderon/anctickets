@@ -1,12 +1,10 @@
 import { serverClock } from "@/lib/tiers";
-import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/admin";
 import { getCronRow, getHealthRows } from "@/lib/admin-data";
 import { CRON_MAX_AGE_HOURS, cronStatus, evaluateHealth } from "@/lib/admin-stats";
 import { fechaHoraChile, haceCuanto, int } from "@/lib/admin-format";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Salud — Administración ANC", robots: { index: false, follow: false } };
 
 function Light({ alert }: { alert: boolean }) {
   return (

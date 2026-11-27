@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/admin";
 import { getEventDetail } from "@/lib/admin-data";
 import { aggregateByAmbassador, aggregateOrders } from "@/lib/admin-stats";
@@ -10,7 +9,6 @@ import { Badge, Card } from "@/components/dashboard/ui";
 import { EventStatusBadge, SectionTitle, StatTile, TierReadCard } from "@/components/admin/parts";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Evento — Administración ANC", robots: { index: false, follow: false } };
 
 /**
  * "Ver el evento como la productora", SOLO LECTURA. Sin formularios ni botones
@@ -82,7 +80,7 @@ export default async function AdminEventPage({ params }: { params: Promise<{ id:
         <StatTile label="Recaudado (productora)" value={clp(totals.ventaBase)} sub={`${int(totals.ordenes)} órdenes aprobadas`} />
         <StatTile label="Comisión ANC" value={clp(totals.comisionAnc)} sub={`Cargo de servicio ${clp(totals.cargoServicio)}`} />
         <StatTile label="Vendidas" value={`${int(sold)}/${int(capacity)}`} sub={`${int(totals.cortesias)} cortesías`} />
-        <StatTile label="Ingresaron" value={`${int(d.checkedIn)}/${int(d.issued)}`} sub={d.unsentEmails > 0 ? `${int(d.unsentEmails)} correos sin enviar` : "Correos al día"} />
+        <StatTile label="Ingresaron" value={`${int(d.checkedIn)}/${int(d.issued)}`} sub={d.unsentEmails > 0 ? `${int(d.unsentEmails)} ${d.unsentEmails === 1 ? "correo sin enviar" : "correos sin enviar"}` : "Correos al día"} />
       </div>
 
       <SectionTitle>Tandas</SectionTitle>
