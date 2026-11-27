@@ -23,8 +23,14 @@ export type Profile = {
   /** Migración 0010: la productora está suspendida (no puede vender) desde esta fecha. */
   suspended_at: string | null;
   suspended_reason: string | null;
+  /** Migración 0011: cuándo avisar de las ventas a la productora. */
+  notify_sales: NotifySales;
+  /** Migración 0011: último día (Chile) cuyo resumen diario ya se envió. Solo lo escribe el servidor. */
+  sales_summary_on: string | null;
   created_at: string;
 };
+
+export type NotifySales = "each" | "daily" | "off";
 
 export type MpAccount = {
   organizer_id: string;
@@ -50,6 +56,15 @@ export type Event = {
   theme: EventTheme;
   accent_color: string | null;
   organizer_logo_url: string | null;
+  /** Migración 0011: textos del correo (solo texto; la validación vive en el servidor y en CHECK). */
+  email_welcome: string | null;
+  email_access: string | null;
+  email_rules: string | null;
+  email_directions: string | null;
+  contact_email: string | null;
+  contact_instagram: string | null;
+  contact_whatsapp: string | null;
+  email_use_event_image: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -66,6 +81,8 @@ export type TicketType = {
   sales_end: string | null;
   /** Pausa manual de la tanda (migración 0009). */
   paused: boolean;
+  /** Migración 0011: mensaje que aparece junto a esta entrada en el correo. */
+  email_note: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -91,6 +108,8 @@ export type Order = {
   reserved_until: string | null;
   tickets_issued_at: string | null;
   email_sent_at: string | null;
+  /** Migración 0011: reclamo del aviso de venta a la productora. */
+  producer_notified_at: string | null;
   overbooked: boolean;
   created_at: string;
   updated_at: string;
@@ -190,6 +209,27 @@ export type AdminAudit = {
   created_at: string;
 };
 
+/** Migración 0011: avisos de cambio o cancelación enviados a los compradores. */
+export type EventNotice = {
+  id: string;
+  event_id: string;
+  kind: "cancelled" | "changed";
+  message: string;
+  recipients: number;
+  sent: number;
+  failed: number;
+  created_by: string;
+  created_at: string;
+};
+
+/** Migración 0011: registro de correos de prueba (límite de uno por minuto). */
+export type EmailTestLog = {
+  id: string;
+  event_id: string;
+  user_id: string;
+  created_at: string;
+};
+
 /** Migración 0010: estado del sistema (solo service_role). */
 export type SystemStatus = {
   key: string;
@@ -252,6 +292,8 @@ export type Database = {
       check_ins: Table<CheckIn>;
       admin_audit: Table<AdminAudit>;
       system_status: Table<SystemStatus>;
+      event_notices: Table<EventNotice>;
+      email_test_log: Table<EmailTestLog>;
     };
     Views: Record<string, never>;
     Functions: {
