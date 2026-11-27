@@ -20,6 +20,9 @@ export type Profile = {
   avatar_url: string | null;
   organizer_name: string | null;
   mp_connected: boolean;
+  /** Migración 0010: la productora está suspendida (no puede vender) desde esta fecha. */
+  suspended_at: string | null;
+  suspended_reason: string | null;
   created_at: string;
 };
 
@@ -176,6 +179,56 @@ export type CheckInResponse = {
   counts: { checked_in: number; total: number } | null;
 };
 
+/** Migración 0010: registro de auditoría (solo service_role). */
+export type AdminAudit = {
+  id: string;
+  admin_email: string;
+  action: string;
+  target_type: string;
+  target_id: string | null;
+  detail: Record<string, unknown>;
+  created_at: string;
+};
+
+/** Migración 0010: estado del sistema (solo service_role). */
+export type SystemStatus = {
+  key: string;
+  value: Record<string, unknown>;
+  updated_at: string;
+};
+
+/** Fila de admin_organizers() (migración 0010). */
+export type AdminOrganizerRow = {
+  id: string;
+  organizer_name: string | null;
+  email: string | null;
+  created_at: string;
+  mp_connected: boolean;
+  suspended_at: string | null;
+  suspended_reason: string | null;
+  eventos_total: number;
+  eventos_publicados: number;
+  ordenes_aprobadas: number;
+  entradas_emitidas: number;
+  entradas_ingresadas: number;
+  venta_base: number;
+  comision_anc: number;
+  ultimo_evento_en: string | null;
+};
+
+/** Fila de admin_sales_by_day() (migración 0010). */
+export type AdminSalesDayRow = {
+  dia: string;
+  ordenes: number;
+  entradas: number;
+  total_cobrado: number;
+  cargo_servicio: number;
+  comision_anc: number;
+};
+
+/** Fila de admin_health() (migración 0010). */
+export type AdminHealthRow = { clave: string; cantidad: number; detalle: string | null };
+
 type Table<Row, Insert = Partial<Row>, Update = Partial<Row>> = {
   Row: Row;
   Insert: Insert;
@@ -197,6 +250,8 @@ export type Database = {
       ambassadors: Table<Ambassador>;
       event_staff: Table<EventStaff>;
       check_ins: Table<CheckIn>;
+      admin_audit: Table<AdminAudit>;
+      system_status: Table<SystemStatus>;
     };
     Views: Record<string, never>;
     Functions: {
@@ -248,6 +303,13 @@ export type Database = {
         Returns: CheckInResponse;
       };
       keep_alive: { Args: Record<string, never>; Returns: number };
+      admin_organizers: { Args: Record<string, never>; Returns: AdminOrganizerRow[] };
+      admin_sales_by_day: { Args: { p_days: number }; Returns: AdminSalesDayRow[] };
+      admin_health: { Args: Record<string, never>; Returns: AdminHealthRow[] };
+      admin_set_suspension: {
+        Args: { p_organizer_id: string; p_suspend: boolean; p_reason: string | null; p_admin_email: string };
+        Returns: { changed: boolean; suspended_at: string | null };
+      };
     };
   };
 };
