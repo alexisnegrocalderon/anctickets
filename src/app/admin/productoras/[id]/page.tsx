@@ -2,12 +2,14 @@ import { serverClock } from "@/lib/tiers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/admin";
-import { getOrganizerDetail } from "@/lib/admin-data";
+import { getDeletePreview, getOrganizerDetail } from "@/lib/admin-data";
+import { buildBlockers } from "@/lib/admin-delete";
 import { aggregateByEvent, aggregateOrders } from "@/lib/admin-stats";
 import { clp, fechaChile, fechaHoraChile, haceCuanto, int } from "@/lib/admin-format";
 import { Badge, Card } from "@/components/dashboard/ui";
 import { EventStatusBadge, SectionTitle, StatTile, TierReadCard } from "@/components/admin/parts";
 import SuspendControl from "@/components/admin/suspend-control";
+import DeleteControl from "@/components/admin/delete-control";
 
 export const dynamic = "force-dynamic";
 
@@ -16,11 +18,20 @@ const MP_WARN_DAYS = 30;
 export default async function AdminOrganizerPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
   const { id } = await params;
-  const d = await getOrganizerDetail(id);
+  const [d, deletion] = await Promise.all([getOrganizerDetail(id), getDeletePreview(id)]);
   if (!d) notFound();
 
   const now = serverClock();
   const { profile, summary, mp } = d;
+  const blockers =
+    deletion.state === "ok"
+      ? (() => {
+          const list = buildBlockers(deletion.preview);
+          return list.length === 0 && !deletion.preview.puede_borrar
+            ? [{ key: "no_existe" as const, message: "No se puede borrar en este momento." }]
+            : list;
+        })()
+      : [];
   const name = profile.organizer_name ?? "Sin nombre";
   const totals = aggregateOrders(d.orders);
   const byEvent = aggregateByEvent(d.orders);
@@ -202,6 +213,65 @@ export default async function AdminOrganizerPage({ params }: { params: Promise<{
           })}
         </ul>
       )}
+
+      <section aria-labelledby="zona-peligro" className="mt-10 rounded-2xl border border-red-500/30 bg-red-500/[.04] p-4">
+        <h3 id="zona-peligro" className="text-xl uppercase text-red-300">
+          Zona de peligro
+        </h3>
+        <p className="mt-1 text-sm text-neutral-300">
+          Eliminar borra la productora y su cuenta de acceso, con sus eventos, tandas, códigos, embajadores, staff y conexión de
+          Mercado Pago. No se puede deshacer.
+        </p>
+        {deletion.state === "unavailable" ? (
+          <>
+            <button
+              type="button"
+              disabled
+              className="mt-4 inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center rounded-full border border-red-500/30 px-5 text-sm font-semibold text-red-300 opacity-50 sm:w-auto"
+            >
+              Eliminar productora
+            </button>
+            <p role="status" className="mt-2 text-sm text-neutral-400">
+              {deletion.migration ? "No disponible hasta aplicar la actualización." : "No disponible por ahora: no se pudo comprobar si se puede borrar."}
+            </p>
+          </>
+        ) : blockers.length > 0 ? (
+          <>
+            <button
+              type="button"
+              disabled
+              className="mt-4 inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center rounded-full border border-red-500/30 px-5 text-sm font-semibold text-red-300 opacity-50 sm:w-auto"
+            >
+              Eliminar productora
+            </button>
+            <ul className="mt-3 flex flex-col gap-2" aria-label="Por qué no se puede borrar">
+              {blockers.map((b) => (
+                <li key={b.key} className="break-words rounded-xl border border-white/10 bg-white/[.04] px-3 py-2 text-sm text-neutral-200">
+                  {b.message}
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <div className="mt-4">
+            <DeleteControl
+              organizerId={profile.id}
+              organizerName={profile.organizer_name}
+              organizerEmail={profile.email}
+              maskedEmail={deletion.preview.correo_enmascarado}
+              summary={{
+                eventos: deletion.preview.conteos.eventos ?? 0,
+                tandas: deletion.preview.conteos.tandas ?? 0,
+                codigos: deletion.preview.conteos.codigos ?? 0,
+                embajadores: deletion.preview.conteos.embajadores ?? 0,
+                staff: deletion.preview.conteos.staff ?? 0,
+                ordenes: deletion.preview.conteos.ordenes_vencidas ?? 0,
+                tieneMp: deletion.preview.conteos.tiene_mp ?? false,
+              }}
+            />
+          </div>
+        )}
+      </section>
     </div>
   );
 }

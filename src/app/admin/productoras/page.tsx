@@ -14,6 +14,7 @@ import {
 import { clp, fechaChile, haceCuanto, int } from "@/lib/admin-format";
 import type { AdminOrganizerRow } from "@/lib/database.types";
 import { Badge } from "@/components/dashboard/ui";
+import FlashNotice from "@/components/admin/flash-notice";
 
 export const dynamic = "force-dynamic";
 
@@ -54,10 +55,13 @@ function Badges({ o }: { o: AdminOrganizerRow }) {
 export default async function AdminOrganizersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string | string[]; f?: string | string[]; o?: string | string[] }>;
+  searchParams: Promise<{ q?: string | string[]; f?: string | string[]; o?: string | string[]; borrada?: string | string[]; archivos?: string | string[] }>;
 }) {
   await requireAdmin();
-  const { q, filter, order } = parseOrganizerQuery(await searchParams);
+  const sp = await searchParams;
+  const { q, filter, order } = parseOrganizerQuery(sp);
+  const deletedName = (Array.isArray(sp.borrada) ? sp.borrada[0] : sp.borrada)?.trim().slice(0, 80) || null;
+  const filesPending = (Array.isArray(sp.archivos) ? sp.archivos[0] : sp.archivos) === "pendiente";
   const [orgs, signIns] = await Promise.all([getOrganizerRows(), getLastSignIns()]);
   const now = serverClock();
 
@@ -71,6 +75,13 @@ export default async function AdminOrganizersPage({
 
   return (
     <div>
+      {deletedName ? (
+        <FlashNotice
+          message={`Productora «${deletedName}» eliminada con su cuenta de acceso.`}
+          detail={filesPending ? "No se pudieron borrar todas sus imágenes de Storage; quedaron archivos por limpiar a mano." : undefined}
+          cleanPath="/admin/productoras"
+        />
+      ) : null}
       <h2 className="text-3xl uppercase leading-none text-white">Productoras</h2>
       <p className="mt-1.5 text-sm text-[var(--anc-muted-text)]">
         {int(rows.length)} de {int(all.length)} {all.length === 1 ? "productora" : "productoras"}. Ventas = lo que recibe la
