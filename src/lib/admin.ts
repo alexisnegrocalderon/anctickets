@@ -1,6 +1,7 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
-import { getVerifiedUser } from "@/lib/auth";
+import { getSupabase, getVerifiedUser } from "@/lib/auth";
+import { safeNextPath } from "@/lib/safe-redirect";
 
 /**
  * Acceso al panel de administración de ANC.
@@ -13,6 +14,9 @@ import { getVerifiedUser } from "@/lib/auth";
  *    Auth) y se exige correo verificado.
  *  - Quien no cumple recibe 404 (nunca 403 ni redirección), para no revelar que
  *    /admin existe.
+ *  - Método de ingreso (ver decideAdminAccess): entrar con Google basta; entrar
+ *    con correo y clave exige además el código de 6 dígitos (aal2). La clave
+ *    sola nunca abre el panel.
  */
 
 /** Parsea la lista de correos: minúsculas, sin espacios, sin vacíos ni repetidos. */
@@ -66,9 +70,80 @@ export async function getAdminUser(): Promise<{ id: string; email: string } | nu
   return { id: user.id, email: user.email.trim().toLowerCase() };
 }
 
-/** Exige admin en el servidor; si no lo es responde 404. Devuelve el admin. */
-export async function requireAdmin(): Promise<{ id: string; email: string }> {
+export type AdminAccessDecision = "allow" | "verify" | "deny";
+
+/**
+ * Decisión PURA de acceso al panel según cómo se inició la sesión.
+ *  - No es admin: deny.
+ *  - amr incluye 'oauth' (Google): allow.
+ *  - Sesión aal2 (el código TOTP ya se verificó): allow.
+ *  - Si no (solo clave, aal1): con factor TOTP verificado -> verify (pedir el
+ *    código); sin factor -> deny (la clave sola nunca abre el panel).
+ * amrMethods ausente/vacío o aal ausente se tratan como "sin garantías": falla cerrado.
+ */
+export function decideAdminAccess(input: {
+  isAdmin: boolean;
+  amrMethods: readonly string[] | null | undefined;
+  aal: string | null | undefined;
+  hasVerifiedTotp: boolean;
+}): AdminAccessDecision {
+  if (!input.isAdmin) return "deny";
+  if (input.amrMethods?.includes("oauth")) return "allow";
+  if (input.aal === "aal2") return "allow";
+  return input.hasVerifiedTotp ? "verify" : "deny";
+}
+
+/** Nombres de método del claim amr (acepta strings RFC-8176 u objetos { method }). */
+export function extractAmrMethods(amr: unknown): string[] {
+  if (!Array.isArray(amr)) return [];
+  const methods: string[] = [];
+  for (const entry of amr) {
+    if (typeof entry === "string") methods.push(entry);
+    else if (entry && typeof entry === "object" && typeof (entry as { method?: unknown }).method === "string") {
+      methods.push((entry as { method: string }).method);
+    }
+  }
+  return methods;
+}
+
+/**
+ * Método de ingreso de la sesión actual, desde los claims con la firma
+ * verificada (getClaims; nunca se decodifica el JWT a mano).
+ */
+export async function getSessionAssurance(): Promise<{ amrMethods: string[]; aal: string | null }> {
+  const supabase = await getSupabase();
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  return {
+    amrMethods: extractAmrMethods(claims?.amr),
+    aal: typeof claims?.aal === "string" ? claims.aal : null,
+  };
+}
+
+/** ¿El usuario de la sesión tiene un factor TOTP verificado? Error de lectura: false. */
+export async function hasVerifiedTotpFactor(): Promise<boolean> {
+  const supabase = await getSupabase();
+  const { data, error } = await supabase.auth.mfa.listFactors();
+  if (error || !data) return false;
+  return data.totp.length > 0;
+}
+
+/**
+ * Exige admin en el servidor. No admin o clave sola sin factor: 404 (no revela
+ * que /admin existe). Clave sola con factor: redirige a pedir el código.
+ * `next` es a dónde volver tras verificar (por defecto /admin).
+ */
+export async function requireAdmin(next: string = "/admin"): Promise<{ id: string; email: string }> {
   const admin = await getAdminUser();
   if (!admin) notFound();
+
+  const { amrMethods, aal } = await getSessionAssurance();
+  let decision = decideAdminAccess({ isAdmin: true, amrMethods, aal, hasVerifiedTotp: false });
+  if (decision !== "allow") {
+    // Solo se consulta el factor cuando hace falta (sesión con clave, aal1).
+    decision = decideAdminAccess({ isAdmin: true, amrMethods, aal, hasVerifiedTotp: await hasVerifiedTotpFactor() });
+  }
+  if (decision === "verify") redirect(`/acceso-equipo/verificar?next=${encodeURIComponent(safeNextPath(next, "/admin"))}`);
+  if (decision !== "allow") notFound();
   return admin;
 }

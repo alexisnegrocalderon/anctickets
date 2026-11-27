@@ -230,6 +230,15 @@ export type EmailTestLog = {
   created_at: string;
 };
 
+/** Migración 0012: intentos de ingreso con clave, solo hashes (solo service_role). */
+export type AdminLoginAttempt = {
+  id: string;
+  email_hash: string;
+  ip_hash: string;
+  ok: boolean;
+  created_at: string;
+};
+
 /** Migración 0010: estado del sistema (solo service_role). */
 export type SystemStatus = {
   key: string;
@@ -291,6 +300,7 @@ export type Database = {
       event_staff: Table<EventStaff>;
       check_ins: Table<CheckIn>;
       admin_audit: Table<AdminAudit>;
+      admin_login_attempts: Table<AdminLoginAttempt, Pick<AdminLoginAttempt, "email_hash" | "ip_hash" | "ok"> & Partial<AdminLoginAttempt>>;
       system_status: Table<SystemStatus>;
       event_notices: Table<EventNotice>;
       email_test_log: Table<EmailTestLog>;

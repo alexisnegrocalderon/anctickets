@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getAdminEmails, hasVerifiedEmail, isAdminEmail, isAdminUser, parseAdminEmails } from "./admin";
+import { decideAdminAccess, extractAmrMethods, getAdminEmails, hasVerifiedEmail, isAdminEmail, isAdminUser, parseAdminEmails } from "./admin";
 
 afterEach(() => vi.unstubAllEnvs());
 
@@ -64,5 +64,69 @@ describe("hasVerifiedEmail / isAdminUser", () => {
     expect(isAdminUser(base)).toBe(false);
     expect(isAdminUser({ email: "otro@test.cl", email_confirmed_at: "2026-01-01T00:00:00Z", app_metadata: {} })).toBe(false);
     expect(isAdminUser(null)).toBe(false);
+  });
+});
+
+describe("decideAdminAccess (tabla de decisión)", () => {
+  const base = { isAdmin: true, amrMethods: [] as string[] | null | undefined, aal: "aal1" as string | null | undefined, hasVerifiedTotp: false };
+
+  it("no admin: siempre deny, aunque tenga oauth o aal2", () => {
+    for (const amrMethods of [["oauth"], ["password"], [], undefined, null]) {
+      for (const aal of ["aal1", "aal2", null, undefined]) {
+        for (const hasVerifiedTotp of [true, false]) {
+          expect(decideAdminAccess({ isAdmin: false, amrMethods, aal, hasVerifiedTotp })).toBe("deny");
+        }
+      }
+    }
+  });
+  it("oauth (Google): allow con o sin factor enrolado, con cualquier aal", () => {
+    for (const aal of ["aal1", "aal2", null, undefined]) {
+      for (const hasVerifiedTotp of [true, false]) {
+        expect(decideAdminAccess({ ...base, amrMethods: ["oauth"], aal, hasVerifiedTotp })).toBe("allow");
+      }
+    }
+  });
+  it("oauth junto a otros métodos: allow", () => {
+    expect(decideAdminAccess({ ...base, amrMethods: ["password", "oauth", "totp"], aal: "aal2" })).toBe("allow");
+  });
+  it("aal2 sin oauth (clave + código): allow", () => {
+    expect(decideAdminAccess({ ...base, amrMethods: ["password", "totp"], aal: "aal2", hasVerifiedTotp: true })).toBe("allow");
+    expect(decideAdminAccess({ ...base, amrMethods: ["password"], aal: "aal2" })).toBe("allow");
+  });
+  it("aal2 con amr vacío o ausente: allow (lo decide el aal verificado)", () => {
+    expect(decideAdminAccess({ ...base, amrMethods: [], aal: "aal2" })).toBe("allow");
+    expect(decideAdminAccess({ ...base, amrMethods: undefined, aal: "aal2" })).toBe("allow");
+    expect(decideAdminAccess({ ...base, amrMethods: null, aal: "aal2" })).toBe("allow");
+  });
+  it("clave sola (aal1) con factor verificado: verify", () => {
+    expect(decideAdminAccess({ ...base, amrMethods: ["password"], aal: "aal1", hasVerifiedTotp: true })).toBe("verify");
+  });
+  it("clave sola (aal1) sin factor: deny", () => {
+    expect(decideAdminAccess({ ...base, amrMethods: ["password"], aal: "aal1", hasVerifiedTotp: false })).toBe("deny");
+  });
+  it("amr vacío o ausente y aal1/ausente: sin garantías, verify o deny según el factor", () => {
+    for (const amrMethods of [[], undefined, null]) {
+      for (const aal of ["aal1", null, undefined]) {
+        expect(decideAdminAccess({ ...base, amrMethods, aal, hasVerifiedTotp: true })).toBe("verify");
+        expect(decideAdminAccess({ ...base, amrMethods, aal, hasVerifiedTotp: false })).toBe("deny");
+      }
+    }
+  });
+  it("método parecido a oauth no cuenta (solo 'oauth' exacto)", () => {
+    expect(decideAdminAccess({ ...base, amrMethods: ["OAuth", "oauth2", "google"], aal: "aal1", hasVerifiedTotp: false })).toBe("deny");
+  });
+  it("aal desconocido no equivale a aal2", () => {
+    expect(decideAdminAccess({ ...base, amrMethods: ["password"], aal: "aal3", hasVerifiedTotp: false })).toBe("deny");
+  });
+});
+
+describe("extractAmrMethods", () => {
+  it("acepta strings, objetos { method } y descarta basura", () => {
+    expect(extractAmrMethods(["oauth", { method: "totp", timestamp: 1 }, 5, null, {}, { method: 3 }])).toEqual(["oauth", "totp"]);
+  });
+  it("no es lista: vacío", () => {
+    expect(extractAmrMethods(undefined)).toEqual([]);
+    expect(extractAmrMethods("oauth")).toEqual([]);
+    expect(extractAmrMethods({ method: "oauth" })).toEqual([]);
   });
 });
