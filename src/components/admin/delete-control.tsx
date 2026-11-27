@@ -119,7 +119,7 @@ export default function DeleteControl({
           <div>
             <label htmlFor={inputId} className="text-sm text-neutral-300">
               Para confirmar, escribe {usesEmail ? "el correo completo" : "el nombre exacto"}:{" "}
-              <strong className="break-all text-white select-none">{expected}</strong>
+              <strong className="break-words text-white select-none [overflow-wrap:anywhere]">{expected}</strong>
             </label>
             <input
               id={inputId}
