@@ -12,6 +12,7 @@ import {
   type TierStatus,
 } from "@/lib/tiers";
 import { Button, Card } from "@/components/dashboard/ui";
+import { CountedTextarea } from "@/components/dashboard/counted-field";
 import ActionForm, { type ActionResult } from "@/components/dashboard/action-form";
 import Sheet from "@/components/dashboard/sheet";
 import TierFields, { EMPTY_TIER_DRAFT, PauseSwitch, type TierDraft } from "@/components/dashboard/tier-fields";
@@ -225,6 +226,15 @@ export default function TicketTypesSection({
               priceNotice={
                 hasSales && priceChanged ? "Los compradores anteriores conservan el precio que pagaron." : null
               }
+            />
+            <CountedTextarea
+              name="email_note"
+              label="Mensaje en el correo para esta entrada"
+              max={300}
+              rows={3}
+              defaultValue={editing?.email_note ?? ""}
+              help="Aparece junto a esta entrada en el correo. Opcional."
+              example="Retira tu pulsera en la barra."
             />
           </ActionForm>
 

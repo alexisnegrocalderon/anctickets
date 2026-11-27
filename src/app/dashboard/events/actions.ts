@@ -14,6 +14,7 @@ import { deliverOrderEmail } from "@/lib/orders";
 import { buildQuote, CheckoutError, friendlyRpcError, orderRpcArgs } from "@/lib/checkout";
 import type { EventTheme } from "@/lib/database.types";
 import { suspendedActionError } from "@/lib/suspension";
+import { parseTicketNote } from "@/lib/email/form";
 
 /** Resultado de las acciones de formulario del panel (se muestra bajo el botón). */
 export type ActionState = { ok?: boolean; error?: string; message?: string } | null;
@@ -377,9 +378,35 @@ export async function createTicketType(eventId: string, formData: FormData): Pro
   return { id: data.id };
 }
 
+/**
+ * Guarda el mensaje de correo de una tanda. Va aparte del resto de la tanda para
+ * que, si la migración 0011 aún no está aplicada, crear o editar tandas siga
+ * funcionando (solo se avisa si se intentó escribir una nota).
+ */
+async function saveTicketNote(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  eventId: string,
+  ticketTypeId: string,
+  formData: FormData
+): Promise<string | null> {
+  if (!formData.has("email_note")) return null;
+  const note = parseTicketNote(formData);
+  if (note.error) return note.error;
+  const { error } = await supabase.from("ticket_types").update({ email_note: note.value }).eq("id", ticketTypeId).eq("event_id", eventId);
+  if (!error) return null;
+  const missing = error.code === "42703" || /email_note|schema cache/i.test(error.message);
+  if (missing) return note.value ? "La tanda se guardó, pero el mensaje del correo aún no está disponible. Avísale a ANC." : null;
+  return "La tanda se guardó, pero no pudimos guardar el mensaje del correo.";
+}
+
 export async function createTicketTypeForm(eventId: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
   try {
-    await createTicketType(eventId, formData);
+    const note = parseTicketNote(formData);
+    if (note.error) return { error: note.error };
+    const { supabase } = await requireUser();
+    const { id } = await createTicketType(eventId, formData);
+    const noteError = await saveTicketNote(supabase, eventId, id, formData);
+    if (noteError) return { error: noteError };
     return { ok: true, message: "Tanda agregada" };
   } catch (err) {
     return fail(err);
@@ -395,6 +422,8 @@ export async function updateTicketTypeForm(
   try {
     const { supabase } = await requireUser();
     const t = parseTicketTypeForm(formData);
+    const noteCheck = parseTicketNote(formData);
+    if (noteCheck.error) return { error: noteCheck.error };
 
     const { data: current } = await supabase
       .from("ticket_types")
@@ -430,8 +459,10 @@ export async function updateTicketTypeForm(
 
     if (error) return { error: error.message };
 
+    const noteError = await saveTicketNote(supabase, eventId, ticketTypeId, formData);
     revalidatePath(`/dashboard/events/${eventId}/edit`);
     revalidatePath("/", "layout");
+    if (noteError) return { error: noteError };
     return { ok: true, message: "Tanda actualizada" };
   } catch (err) {
     return fail(err);

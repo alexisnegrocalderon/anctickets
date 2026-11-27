@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
-import { getClaimsUser, getOrganizerProfile } from "@/lib/auth";
+import { getClaimsUser, getOrganizerProfile, getSupabase } from "@/lib/auth";
 import { getAdminUser } from "@/lib/admin";
 import { InstallAppButton } from "@/components/pwa/install-app-button";
 import { Badge, Button, Card, LinkButton, PageHeader } from "@/components/dashboard/ui";
+import NotifySalesForm from "./notify-sales-form";
+import type { NotifySales } from "@/lib/database.types";
 
 export default async function DashboardAccountPage() {
   const user = await getClaimsUser();
@@ -11,6 +13,11 @@ export default async function DashboardAccountPage() {
   const profile = await getOrganizerProfile(user.id);
   // Verificación fuerte en el servidor: solo un admin ve el enlace.
   const isAdmin = !!(await getAdminUser());
+
+  // Preferencia de aviso de ventas (migración 0011). Si la columna aún no existe, queda en "cada venta".
+  const supabase = await getSupabase();
+  const { data: prefRow } = await supabase.from("profiles").select("notify_sales").eq("id", user.id).maybeSingle();
+  const notifySales = ((prefRow as { notify_sales?: NotifySales } | null)?.notify_sales ?? "each") as NotifySales;
 
   return (
     <div className="max-w-2xl">
@@ -49,6 +56,14 @@ export default async function DashboardAccountPage() {
               </LinkButton>
             </div>
           ) : null}
+        </Card>
+
+        <Card>
+          <h2 className="text-2xl uppercase text-white">Avisarme de las ventas</h2>
+          <p className="mt-1 text-sm text-[var(--anc-muted-text)]">
+            Te escribimos a {user.email ?? "tu correo"} cuando vendes entradas. No incluye datos de contacto de tus compradores.
+          </p>
+          <NotifySalesForm initial={notifySales} />
         </Card>
 
         <Card>

@@ -4,6 +4,7 @@ import type {
   Ambassador,
   DiscountCode,
   Event,
+  EventNotice,
   EventStaff,
   TicketType,
 } from "@/lib/database.types";
@@ -20,7 +21,12 @@ import SlugField from "@/components/dashboard/slug-field";
 import ThemePicker from "@/components/dashboard/theme-picker";
 import { siteUrl } from "@/lib/site";
 import EditTabs from "./edit-tabs";
-import EventActionsSheet from "./event-actions-sheet";
+import EventActionsSheet, { NoticeButton } from "./event-actions-sheet";
+import EmailSection from "./email-section";
+import type { NoticeSheetData } from "./event-notice-sheet";
+import { validateContactEmail } from "@/lib/email/sanitize";
+import { MAX_NOTICE_RECIPIENTS } from "@/lib/email/send";
+import { NOTICE_MAX_PER_EVENT } from "@/lib/email/deliver";
 import SalesSection, { type SalesData } from "./sales-section";
 import TicketTypesSection from "./ticket-types-section";
 import { serverClock } from "@/lib/tiers";
@@ -41,6 +47,9 @@ interface OrderStatsRow {
 }
 
 const PAGE_SIZE = 1000;
+
+// Los avisos masivos pueden tardar: se envían por lotes con pausa entre bloques.
+export const maxDuration = 60;
 
 export default async function EditEventPage({
   params,
@@ -156,6 +165,30 @@ export default async function EditEventPage({
       byAmbassador.set(order.ambassador_id, acc);
     }
   }
+
+  // Avisos a compradores: destinatarios únicos con correo válido e historial (tolera tabla ausente).
+  const noticeRecipients = new Set<string>();
+  for (const o of orders) {
+    const email = validateContactEmail(o.buyer_email);
+    if (email) noticeRecipients.add(email);
+  }
+  let notices: EventNotice[] = [];
+  try {
+    const { data: noticeRows } = await supabase
+      .from("event_notices")
+      .select("*")
+      .eq("event_id", id)
+      .order("created_at", { ascending: false })
+      .returns<EventNotice[]>();
+    notices = noticeRows ?? [];
+  } catch {
+    notices = [];
+  }
+  const noticeData: NoticeSheetData = {
+    recipientCount: Math.min(noticeRecipients.size, MAX_NOTICE_RECIPIENTS),
+    notices,
+    maxNotices: NOTICE_MAX_PER_EVENT,
+  };
 
   const unsentEmails = orders
     .filter((o) => !o.email_sent_at)
@@ -308,8 +341,9 @@ export default async function EditEventPage({
               <CopyEventLinkButton slug={event.slug} />
               <LinkButton href={`/${event.slug}`}>Ver página pública</LinkButton>
               <LinkButton href={`/scan/${id}`}>Validar entradas</LinkButton>
+              <NoticeButton eventId={id} notice={noticeData} />
             </div>
-            <EventActionsSheet slug={event.slug} eventId={id} />
+            <EventActionsSheet slug={event.slug} eventId={id} notice={noticeData} />
           </>
         }
       />
@@ -341,6 +375,26 @@ export default async function EditEventPage({
             id: "staff",
             label: "Staff",
             content: <StaffSection eventId={id} staff={staff} scanUrl={`${site}/scan/${id}`} />,
+          },
+          {
+            id: "correo",
+            label: "Correo",
+            content: (
+              <EmailSection
+                eventId={id}
+                sessionEmail={user.email ?? null}
+                initial={{
+                  welcome: event.email_welcome ?? "",
+                  access: event.email_access ?? "",
+                  rules: event.email_rules ?? "",
+                  directions: event.email_directions ?? "",
+                  contactEmail: event.contact_email ?? "",
+                  instagram: event.contact_instagram ?? "",
+                  whatsapp: event.contact_whatsapp ?? "",
+                  useEventImage: event.email_use_event_image ?? true,
+                }}
+              />
+            ),
           },
           { id: "cortesias", label: "Cortesías", content: <CourtesySection eventId={id} ticketTypes={ticketTypes} /> },
           { id: "ventas", label: "Ventas", content: <SalesSection eventId={id} data={sales} /> },

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendDailySummaries } from "@/lib/email/deliver";
 
 /**
  * Cron diario (ver vercel.json). Vercel lo llama con
@@ -38,5 +39,14 @@ export async function GET(request: Request) {
   );
   if (statusError) console.error("system_status (daily_cron) falló:", statusError);
 
-  return NextResponse.json({ ok: true, expired });
+  // Resumen diario de ventas a las productoras que lo eligieron. Aislado: si falla no
+  // cambia el resultado del cron (ya expiró reservas y tocó la base).
+  let summaries: { sent: number; skipped: number; failed: number } | null = null;
+  try {
+    summaries = await sendDailySummaries(admin);
+  } catch (err) {
+    console.error("Resumen diario falló:", err instanceof Error ? err.message : "error");
+  }
+
+  return NextResponse.json({ ok: true, expired, summaries });
 }

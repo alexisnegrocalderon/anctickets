@@ -162,6 +162,13 @@ html {
   }
 }
 
+@media (min-width: 768px) {
+  .anc-sheet[data-wide="true"] {
+    width: min(46rem, 100%);
+    margin-left: calc(min(46rem, 100%) / -2);
+  }
+}
+
 /* ---------- Navegación del panel ---------- */
 
 .anc-bottom-nav {

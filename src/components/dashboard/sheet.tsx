@@ -12,11 +12,14 @@ export default function Sheet({
   onClose,
   title,
   children,
+  wide = false,
 }: {
   open: boolean;
   onClose: () => void;
   title: string;
   children: ReactNode;
+  /** Más ancha en pantallas grandes (vista previa del correo). */
+  wide?: boolean;
 }) {
   const titleId = useId();
 
@@ -40,6 +43,7 @@ export default function Sheet({
       <div
         className="anc-sheet"
         data-open={open}
+        data-wide={wide || undefined}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
